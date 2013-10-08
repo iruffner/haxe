@@ -4,7 +4,7 @@ import m3.jq.JQ;
 
 class CrossMojo {
 
-	public static function jq(selector:Dynamic, ?arg2:js.JQuery):JQ {
+	public static function jq(selector:Dynamic, ?arg2:JQ):JQ {
 		var v:JQ;
 		if(arg2 == null) {
 			v = untyped __js__('$(selector)');

@@ -105,6 +105,7 @@ class Serializer {
 					case "String": new StringHandler();
 					case "Int": new IntHandler();
 					case "Array": new ArrayHandler(parms, this);
+					case "Date": new DateHandler();
 					// case "ui.observable.ObservableSet": new ObservableSetHandler(parms, this);
 					default:
 						new ClassHandler(Type.resolveClass(type.classname()), type.typename(), this);
@@ -335,6 +336,20 @@ class StringHandler implements TypeHandler {
 	public function write(value: Dynamic, writer: JsonWriter) {
 		return value;
 	}
+}
+
+class DateHandler implements TypeHandler {
+
+    public function new() {
+    }
+
+    public function read(fromJson: Dynamic, reader: JsonReader<Dynamic>, ?instance: Dynamic): Dynamic {
+        return Date.fromString(fromJson);
+    }
+
+    public function write(value: Dynamic, writer: JsonWriter): Dynamic {
+        return cast(value, Date).toString();
+    }
 }
 
 class FunctionHandler implements TypeHandler {

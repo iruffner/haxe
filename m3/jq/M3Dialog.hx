@@ -31,8 +31,8 @@ typedef M3DialogWidgetDef = {
 @:native("$")
 extern class M3Dialog extends JQ {
 	
-	@:overload(function(cmd : String):Bool{})
-	@:overload(function(cmd:String, opt:String, newVal:Dynamic):JQ{})
+	@:overload(function<T>(cmd : String):T{})
+	@:overload(function<T>(cmd:String, opt:String, ?newVal: Dynamic):T{})
 	function m3dialog(opts: M3DialogOptions): M3Dialog;
 
 	static var cur(get, null): M3Dialog;

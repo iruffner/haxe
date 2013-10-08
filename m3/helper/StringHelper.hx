@@ -3,6 +3,7 @@ package m3.helper;
 import m3.jq.JQ;
 
 using StringTools;
+using m3.helper.DateHelper;
 
 class StringHelper {
 
@@ -113,8 +114,18 @@ class StringHelper {
     }
 
     public static function contains( baseString: String, str: String): Bool {
-        if(baseString == null) baseString = "";
+        if(isBlank(baseString)) return false;
         return (baseString.indexOf(str) > -1);
+    }
+
+    public static function containsAny( baseString: String, sarray: Array<String>): Bool {
+        if(isBlank(baseString)) return false;
+         else {
+            for(s_ in 0...sarray.length) {
+                if(contains(baseString, sarray[s_])) return true;
+            }
+        }
+        return false;
     }
 
     public static function endsWithAny(baseString: String, sarray: Array<String>): Bool {
@@ -135,4 +146,21 @@ class StringHelper {
         return result;
     }
 
+    public static function toDate(baseString: String): Date {
+        var date: Date = null;
+        if(isNotBlank(baseString)){
+            try {
+                date = Date.fromString(baseString);
+            } catch (err: Dynamic) { }
+            if(!date.isValid() && baseString.indexOf("/") > -1) {
+                try {
+                    var split: Array<String> = baseString.split("/");
+                    var temp: String = split[2] + "-" + split[0] + "-" + split[1];
+                    date = Date.fromString(temp);
+                } catch (err: Dynamic) { }
+            } 
+        }
+        if(!date.isValid()) date == null;
+        return date;
+    }
 }

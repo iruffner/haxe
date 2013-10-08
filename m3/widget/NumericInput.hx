@@ -1,5 +1,7 @@
 package m3.widget;
 
+import js.html.Element;
+
 import m3.api.FB;
 import m3.api.FBResponse;
 import m3.jq.JQ;
@@ -36,6 +38,14 @@ extern class NumericInput extends JQ {
 	@:overload(function(cmd : String, arg: Dynamic):Void{})
 	@:overload(function(cmd:String, opt:String, newVal:Dynamic):JQ{})
 	function numericInput(?opts: NumericInputOptions): NumericInput;
+
+	@:overload(function( selector: JQ ) : NumericInput{})
+	@:overload(function( selector: Element ) : NumericInput{})
+	override function appendTo( selector: String ): NumericInput;
+
+	@:overload(function(value:JQ):NumericInput{})
+	@:overload(function(value:Element):NumericInput{})
+	override function insertBefore( html : String ) : NumericInput;
 
 	private static function __init__(): Void {
 		

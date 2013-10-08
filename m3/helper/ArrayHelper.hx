@@ -8,6 +8,8 @@ typedef ArrayComparison = {
     var value:Dynamic;
 }
 
+// this is exposed for BI
+@:expose
 class ArrayHelper {
     public static function indexOf<T>(array:Array<T>, t:T):Int {
         if(array == null) return -1;

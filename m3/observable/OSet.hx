@@ -237,6 +237,7 @@ class MappedSet<T,U> extends AbstractSet<U> {
 		_mappedSet = new Map();
 		_source = source;
 		_source.listen(function(t, type) {
+			// m3.log.Logga.DEFAULT.debug("MappedSet (" + getVisualId() + ") source (" + source.getVisualId() + ") change | " + type.name() + " | " + source.identifier()(t));
 			var key = _source.identifier()(t);
 			var mappedValue;
 			if ( type.isAddOrUpdate() ) {
@@ -279,16 +280,15 @@ class FilteredSet<T> extends AbstractSet<T> {
 	var _filteredSet: Map<String,T>;
 	var _source: OSet<T>;
 	var _filter: T -> Bool;
-	var _identifier: T->String;
 
 	public function new(source: OSet<T>, filter: T -> Bool) {
 		super();		
 		_filteredSet = new Map();
 		_source = source;
 		_filter = filter;
-		_identifier = source.identifier();
 
-		_source.listen(function(t, type) {
+		_source.listen(function(t: T, type: EventType) {
+			// m3.log.Logga.DEFAULT.debug("FilteredSet (" + getVisualId() + ") source (" + source.getVisualId() + ") change | " + type.name() + " | " + identifier()(t));
 			if ( type.isAddOrUpdate() ) {
 				apply(t);
 			} else if ( type.isDelete() ) {
@@ -307,9 +307,9 @@ class FilteredSet<T> extends AbstractSet<T> {
 	}
 	
 	function apply(t: T) {
-		var key = _source.identifier()(t);
-		var f = _filter(t);
-		var exists = _filteredSet.exists(key);
+		var key: String = _source.identifier()(t);
+		var f: Bool = _filter(t);
+		var exists: Bool = _filteredSet.exists(key);
 		if ( f != exists ) {
 			if ( f ) {
 				_filteredSet.set(key, t);
@@ -327,8 +327,8 @@ class FilteredSet<T> extends AbstractSet<T> {
 		_source.iter(M.fn1(apply(it)));
 	}
 
-	public override function identifier() {
-		return _identifier;
+	public override function identifier(): T->String {
+		return _source.identifier();
 	}
 
 	public override function iterator(): Iterator<T> {
@@ -349,7 +349,7 @@ class GroupedSet<T> extends AbstractSet<OSet<T>> {
 		_groupingFn = groupingFn;
 		_groupedSets = new Map();
 		_identityToGrouping = new Map();
-		source.listen(function(t, type) {
+		source.listen(function(t: T, type: EventType) {
 			var groupingKey = groupingFn(t);
 			var previousGroupingKey = _identityToGrouping.get(groupingKey);
 			if ( type.isAddOrUpdate() ) {
@@ -465,7 +465,7 @@ class SortedSet<T> extends AbstractSet<T> {
 
 		};
 
-		source.listen(function(t, type) {
+		source.listen(function(t: T, type: EventType) {
 			if ( type.isDelete() ) {
 				delete(t);
 			} else if ( type.isUpdate() ) {

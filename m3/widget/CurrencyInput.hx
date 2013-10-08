@@ -1,5 +1,7 @@
 package m3.widget;
 
+import js.html.Element;
+
 import m3.api.FB;
 import m3.api.FBResponse;
 import m3.jq.JQ;
@@ -37,6 +39,14 @@ extern class CurrencyInput extends JQ {
 	@:overload(function(cmd:String, opt:String, newVal:Dynamic):JQ{})
 	function currencyInput(?opts: CurrencyInputOptions): CurrencyInput;
 
+	@:overload(function( selector: JQ ) : CurrencyInput{})
+	@:overload(function( selector: Element ) : CurrencyInput{})
+	override function appendTo( selector: String ): CurrencyInput;
+
+	@:overload(function(value:JQ):CurrencyInput{})
+	@:overload(function(value:Element):CurrencyInput{})
+	override function insertBefore( html : String ) : CurrencyInput;
+
 	private static function __init__(): Void {
 		
 		var defineWidget: Void->CurrencyInputWidgetDef = function(): CurrencyInputWidgetDef {
@@ -71,7 +81,7 @@ extern class CurrencyInput extends JQ {
 								case 78:  // N (Opera 9.63+ maps the "." from the number key section to the "N" key too!) (See: http://unixpapa.com/js/key.html search for ". Del")
 								case 110:  // . number block (Opera 9.63+ maps the "." from the number block to the "N" key (78) !!!)
 								case 190:  // .
-								default: selfElement.val(selfElement.val().stripNonDigits(self.options.allowCents).toCurrency(false));
+								default: selfElement.val(selfElement.val().stripNonDigits(self.options.allowCents).toCurrency(true, false));
 							}
 						}
 					});

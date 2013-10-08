@@ -28,6 +28,8 @@ typedef JQDroppableOpts = {
 
 @:native("$")
 extern class JQDroppable extends JQ {
+	@:overload(function<T>(cmd : String):T{})
+	@:overload(function<T>(cmd:String, opt:String):T{})
 	function droppable(opts: JQDroppableOpts): JQDroppable;
 
 	// private static function __init__() : Void untyped {

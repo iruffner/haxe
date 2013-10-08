@@ -1,6 +1,7 @@
 package m3.jq;
 
 import m3.jq.JQ;
+import m3.jq.JQTooltip;
 import m3.util.M;
 import js.html.Element;
 
@@ -37,7 +38,7 @@ extern class ComboBox extends JQ {
 					var self: ComboBoxWidgetDef = Widgets.getSelf();
 					var selfElement: JQ = Widgets.getSelfElement();
 
-					var input: JQ = null,
+					var input: JQTooltip = null,
 	                    select: JQ = selfElement.hide(),
 	                    selected = select.children( ":selected" ),
 	                    value = selected.val() != null ? selected.text() : "",
@@ -58,10 +59,12 @@ extern class ComboBox extends JQ {
 	                    });
 	                    if ( !valid ) {
 	                        // remove invalid value, as it didn't match anything
-	                        new JQ( element )
-	                            .val( "" )
-	                            .attr( "title", value + " didn't match any item" )
-	                            .tooltip( "open" );
+	                        cast(
+	                        	new JQ( element )
+		                            .val( "" )
+		                            .attr( "title", value + " didn't match any item" ),
+	                            JQTooltip)
+		                            .tooltip( "open" );
 	                        select.val( "" );
 	                        haxe.Timer.delay(function() {
 	                            input.tooltip( "close" ).attr( "title", "" );
@@ -72,8 +75,8 @@ extern class ComboBox extends JQ {
 	                    return null;
 	                }
 	 
-	                input = new JQ( "<input>" )
-	                    .appendTo( wrapper )
+	                input = new JQTooltip( "<input>" );
+                    input.appendTo( wrapper )
 	                    .val( value )
 	                    .attr( {"title": "" , "style": self.options.customCssOnInput} )
 	                    // .addClass( "ui-state-default ui-combobox-input" )
@@ -132,13 +135,13 @@ extern class ComboBox extends JQ {
 	                        .appendTo( ul );
 	                };
 	 
-	                new JQ( "<a>" )
-	                    .attr( {
+	                var a: JQTooltip = new JQTooltip( "<a>" );
+                    a.attr( {
 	                    		"tabIndex": -1,
 	                    		"title": "Show All Items" 
-	                    		})
-	                    .tooltip()
-	                    .appendTo( wrapper )
+	                    		});
+                    a.tooltip();
+                    a.appendTo( wrapper )
 	                    .button({
 	                        icons: {
 	                            primary: "ui-icon-triangle-1-s"

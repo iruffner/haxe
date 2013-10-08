@@ -51,6 +51,11 @@ class Logga {
             log("Could not get stackTrace", LogLevel.ERROR);
         }
 
+        if(statement.isBlank()) {
+            this.console.error("empty log statement");
+            this.console.trace();
+        }
+
         if(statementPrefix.isNotBlank()) {
             statement = statementPrefix + " || " + statement;
         }

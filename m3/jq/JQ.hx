@@ -86,14 +86,19 @@ extern class KeyCode {
 }
 
 @:native("$")
-extern class JQ extends js.JQuery {
+extern class JQ implements ArrayAccess<Element> {
 
-	static var ui: {keyCode: KeyCode, dialog: Dynamic, contains: Dynamic, autocomplete: Dynamic};
-	static var fn: Dynamic;
-	static var browser: Dynamic;
-	static var noop: Void->Void;
+	var context(default,null) : Element;
+	var length(default, null) : Int;
 
-	@:overload(function(j:js.JQuery):Void{})
+	static var ui(default, null): {keyCode: KeyCode, dialog: Dynamic, contains: Dynamic, autocomplete: Dynamic, menu: Dynamic};
+	static var fn(default, null): Dynamic;
+	static var noop(default, null): Void->Void;
+	static var fx(default, null) : { off : Bool, interval : Int };
+	static var browser(default, null) : { webkit : Bool, opera : Bool, msie : Bool, mozilla : Bool, version : String };
+
+
+	@:overload(function(j:JQ):Void{})
 	@:overload(function(j:Document):Void{})
 	@:overload(function(j:DOMWindow):Void{})
 	@:overload(function(j:Element):Void{})
@@ -102,178 +107,299 @@ extern class JQ extends js.JQuery {
 
 	// attributes
 	@:overload(function(clazz: String,?duration: Int):JQ{})
-	override function addClass( clazz: String ): JQ;
+	function addClass( clazz: String ): JQ;
 	@:overload(function(?clazz: String,?duration: Int):JQ{})
-	override function removeClass( ?className : String ) : JQ;
+	function removeClass( ?className : String ) : JQ;
+	function hasClass( className : String ) : Bool;
+	function toggleClass( className : String, ?addRemove : Bool ) : JQ;
 
 	@:overload(function(name:String,value:String):JQ{})
 	@:overload(function(map:{}):JQ{})
-	override function attr( name: String ): String;
+	function attr( name: String ): String;
+	function removeAttr( attr : String ) : JQ;
+
+	@:overload(function(name:String,value:Dynamic):JQ{})
+	function prop( name : String ) : Dynamic;
 
 	@:overload(function(prop:String,value:Int):JQ{})
 	@:overload(function(prop:String,value:String):JQ{})
 	@:overload(function(map:{}):JQ{})
-	override function css( prop : String ) : String;
+	function css( prop : String ) : String;
+
+	@:overload(function(html:String):JQ{})
+	@:overload(function(html:JQ):JQ{})
+	function html() : String;
 	
 	@:overload(function(value:String):JQ{})
 	@:overload(function(values: Array<String>):JQ{})
-	override function val() : String;
+	function val() : String;
 
+	@:overload(function(text:String):JQ{})
+	function text() : String;
 
 	// Size & Position
 	@:overload(function(value:String):JQ{})
 	@:overload(function(value:Int):JQ{})
-	override function width() : Int;
+	function width() : Int;
 	
 	@:overload(function(value:String):JQ{})
 	@:overload(function(value:Int):JQ{})
-	override function height() : Int;
+	function height() : Int;
+
+	@:overload(function(value:Int):JQ{})
+	function innerWidth() : Int;
+	@:overload(function(value:Int):JQ{})
+	function innerHeight() : Int;
+
+	function outerWidth( ?includeMargin : Bool ) : Int;
+	function outerHeight( ?includeMargin : Bool ) : Int;
+
+	@:overload(function(value:Int):JQ{})
+	function scrollLeft() : Int;
+
+	@:overload(function(value:Int):JQ{})
+	function scrollTop() : Int;
+
+	@:overload(function(value: { left : Int, top : Int }):JQ{})
+	function offset() : { left : Int, top : Int };
+
+	function offsetParent() : JQ;
 
 	@:overload(function(args: Dynamic): Void{})
-	@:overload(function(value: { left : Int, top : Int }):js.JQuery{})
-	override function position() : { left : Int, top : Int };
+	@:overload(function(value: { left : Int, top : Int }):JQ{})
+	function position() : { left : Int, top : Int };
 
 
 	// current group manipulation
-	@:overload(function(value:js.JQuery):JQ{})
+	@:overload(function(value:JQ):JQ{})
 	@:overload(function(value:Element):JQ{})
 	@:overload(function(value:Array<Element>):JQ{})
-	override function add( selector : String, ?context : js.JQuery ) : JQ;
+	function add( selector : String, ?context : JQ ) : JQ;
+	function andSelf() : JQ;
 	
-	@:overload(function(j:js.JQuery):JQ{})
+	@:overload(function(j:JQ):JQ{})
 	@:overload(function(j:DOMWindow):JQ{})
 	@:overload(function(j:Element):JQ{})
-	override function children( ?selector : String ) : JQ;
-	override function clone( ?withDataAndEvents : Bool ) : JQ;
+	function children( ?selector : String ) : JQ;
+	function clone( ?withDataAndEvents : Bool ) : JQ;
+
+	function closest( selector : String, ?context : JQ ) : JQ;
+	function contents() : JQ;
 
 	@:overload(function( f : Int -> Element -> Void ):JQ{})
-	override function each( f : Void -> Void ) : JQ;
+	function each( f : Void -> Void ) : JQ;
+	function end() : JQ;
+	function eq( index : Int ) : JQ;
 
 	@:overload(function(fcn : Void->Bool):JQ{})
-	override function filter( selector : String ) : JQ;
+	function filter( selector : String ) : JQ;
 
-	@:overload(function(j:js.JQuery):JQ{})
+	@:overload(function(j:JQ):JQ{})
 	@:overload(function(j:DOMWindow):JQ{})
 	@:overload(function(j:Element):JQ{})
-	override function find( selector : String ) : JQ;
+	function find( selector : String ) : JQ;
+	function first() : JQ;
 
-	@:overload(function(selector:js.JQuery):Int{})
+	@:overload(function(selector:JQ):Int{})
 	@:overload(function(selector:DOMWindow):Int{})
 	@:overload(function(selector:Element):Int{})
-	override function index( ?selector : String ) : Int;
-	override function next( ?selector : String ) : JQ;
+	function index( ?selector : String ) : Int;
+	function last( ?selector : String ) : JQ;
+	function has( selector : String ) : JQ;
+	function next( ?selector : String ) : JQ;
+	function nextAll( ?selector : String ) : JQ;
+	function nextUntil( ?selector : String ) : JQ;
 
-	@:overload(function(j:js.JQuery):JQ{})
+	@:overload(function(j:JQ):JQ{})
 	@:overload(function(j:DOMWindow):JQ{})
 	@:overload(function(j:Element):JQ{})
-	override function parent( ?selector : String ) : JQ;
+	function parent( ?selector : String ) : JQ;
+	function parents( ?selector : String ) : JQ;
+	function parentsUntil( ?selector : String ) : JQ;
+	@:overload(function(value:Element):JQ{})
+	function not( selector : String ) : JQ;
 
-	@:overload(function(j:js.JQuery):JQ{})
+	@:overload(function(j:JQ):JQ{})
 	@:overload(function(j:DOMWindow):JQ{})
 	@:overload(function(j:Element):JQ{})
-	override function prev( ?selector : String ) : JQ;
+	function prev( ?selector : String ) : JQ;
+	function prevAll( ?selector : String ) : JQ;
+	function prevUntil( ?selector : String ) : JQ;
+	function pushStack( elements : Array<Element> ) : JQ;
 
-	@:overload(function(j:js.JQuery):JQ{})
+	@:overload(function(j:JQ):JQ{})
 	@:overload(function(j:DOMWindow):JQ{})
 	@:overload(function(j:Element):JQ{})
-	override function siblings( ?selector : String ) : JQ;
+	function siblings( ?selector : String ) : JQ;
 
+	function size() : Int;
+	function slice( start : Int, ?end : Int ) : JQ;
+	function toArray() : Array<Element>;
 
 	// DOM changes
-	@:overload(function(value: js.JQuery):JQ{})
+	@:overload(function(value: JQ):JQ{})
 	@:overload(function(value: Element):JQ{})
-	override function before( html : String ) : JQ;
+	function before( html : String ) : JQ;
 
-	@:overload(function(value: js.JQuery):JQ{})
+	@:overload(function(value: JQ):JQ{})
 	@:overload(function(value: Element):JQ{})
-	override function after( html : String ) : JQ;
+	function after( html : String ) : JQ;
 
-	@:overload(function(value:js.JQuery):JQ{})
+	@:overload(function(value:JQ):JQ{})
 	@:overload(function(value:Element):JQ{})
-	override function append( html : String ) : JQ;
+	function append( html : String ) : JQ;
 
-	@:overload(function( selector: js.JQuery ) : JQ{})
+	@:overload(function( selector: JQ ) : JQ{})
 	@:overload(function( selector: Element ) : JQ{})
-	override function appendTo( selector: String ): JQ;
-	override function empty() : JQ;
+	function appendTo( selector: String ): JQ;
+	function detach( ?selector : String ) : JQ;
+	function empty() : JQ;
 
-	@:overload(function(value:js.JQuery):JQ{})
+	@:overload(function(value:JQ):JQ{})
 	@:overload(function(value:Element):JQ{})
-	override function insertBefore( html : String ) : JQ;
+	function insertBefore( html : String ) : JQ;
 
-	@:overload(function(value:js.JQuery):JQ{})
+	@:overload(function(value:JQ):JQ{})
 	@:overload(function(value:Element):JQ{})
-	override function insertAfter( html : String ) : JQ;
+	function insertAfter( html : String ) : JQ;
 
-	@:overload(function(value:js.JQuery):JQ{})
+	@:overload(function(value:JQ):JQ{})
 	@:overload(function(value:Element):JQ{})
-	override function prepend( html : String ) : JQ;
+	function prepend( html : String ) : JQ;
 
-	@:overload(function(value:js.JQuery):JQ{})
+	@:overload(function(value:JQ):JQ{})
 	@:overload(function(value:Element):JQ{})
-	override function prependTo( html : String ) : JQ;
+	function prependTo( html : String ) : JQ;
 
+	function remove( ?selector : String ) : JQ;
+	function replaceAll( selector : String ) : JQ;
+
+	@:overload(function(value:JQ):JQ{})
+	@:overload(function(value:Element):JQ{})
+	function replaceWith( html : String ) : JQ;
+
+	function unwrap() : JQ;
+
+	@:overload(function(value:JQ):JQ{})
+	@:overload(function(value:Element):JQ{})
+	function wrap( html : String ) : JQ;
+
+	@:overload(function(value:JQ):JQ{})
+	@:overload(function(value:Element):JQ{})
+	function wrapAll( html : String ) : JQ;
+
+	@:overload(function(value:JQ):JQ{})
+	@:overload(function(value:Element):JQ{})
+	function wrapInner( html : String ) : JQ;
 
 	// animation
-	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : JQ{})
-	override function hide( ?duration : Int, ?call : Void -> Void ) : JQ;
+	@:overload(function(properties:{},?duration:Int,?easing:String,?call:Void->Void) : JQ{})
+	function animate( properties : { }, ?duration : Int, ?callb : Void -> Void ) : JQ;
+
+	function delay( duration : Int, ?queueName : String ) : JQ;
 
 	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : JQ{})
-	override function show( ?duration : Int, ?call : Void -> Void ) : JQ;
+	function hide( ?duration : Int, ?call : Void -> Void ) : JQ;
+
+	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : JQ{})
+	function fadeIn( ?duration : Int, ?call : Void -> Void ) : JQ;
+
+	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : JQ{})
+	function fadeOut( ?duration : Int, ?call : Void -> Void ) : JQ;
+
+	@:overload(function(duration:Int,opacity:Float,?easing:String,?call:Void->Void) : JQ{})
+	function fadeTo( duration : Int, opacity : Float, ?call : Void -> Void ) : JQ;
+
+	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : JQ{})
+	function fadeToggle( ?duration : Int, ?call : Void -> Void ) : JQ;
+
+	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : JQ{})
+	function show( ?duration : Int, ?call : Void -> Void ) : JQ;
+
+	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : JQ{})
+	function slideDown( ?duration : Int, ?call : Void -> Void ) : JQ;
 
 	@:overload(function(?duration:String, ?call:Void->Void) : JQ{})
 	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : JQ{})
-	override function slideToggle( ?duration : Int, ?call : Void -> Void ) : JQ;
+	function slideToggle( ?duration : Int, ?call : Void -> Void ) : JQ;
+
+	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : JQ{})
+	function slideUp( ?duration : Int, ?call : Void -> Void ) : JQ;
+
+	function stop( ?clearQueue : Bool, ?jumpToEnd : Bool ) : JQ;
 
 	@:overload(function(effect: String,?duration:Int,?easing:String,?call:Void->Void) : JQ{})
 	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : JQ{})
-	override function toggle( ?duration : Int, ?call : Void -> Void ) : JQ;
+	function toggle( ?duration : Int, ?call : Void -> Void ) : JQ;
 	
 
 	// Events
-	override function blur( ?callb : JQEvent -> Void ) : JQ;
-	override function change( ?callb : JQEvent -> Void ) : JQ;
+	function blur( ?callb : JQEvent -> Void ) : JQ;
+	function change( ?callb : JQEvent -> Void ) : JQ;
 
 	@:overload(function(callb: Void->Void):JQ { } )
 	@:overload(function(callb: JQEvent->Void):JQ{})
 	@:overload(function(callb: Void->Bool):JQ{})
-	override function click( ?callb : JQEvent -> Void ) : JQ;
-	override function dblclick( ?callb : JQEvent -> Void ) : JQ;
-	override function error( ?callb : JQEvent -> Void ) : JQ;
-	override function focus( ?callb : JQEvent -> Void ) : JQ;
-	override function focusin( ?callb : JQEvent -> Void ) : JQ;
-	override function focusout( ?callb : JQEvent -> Void ) : JQ;
+	function click( ?callb : JQEvent -> Void ) : JQ;
+	function dblclick( ?callb : JQEvent -> Void ) : JQ;
+	function error( ?callb : JQEvent -> Void ) : JQ;
+	function focus( ?callb : JQEvent -> Void ) : JQ;
+	function focusin( ?callb : JQEvent -> Void ) : JQ;
+	function focusout( ?callb : JQEvent -> Void ) : JQ;
 
 	@:overload(function( onOver : Void -> Void, ?onOut : Void -> Void ) : JQ{})
 	@:overload(function( onInOut:JQEvent->Void ) : JQ{})
-	override function hover( onIn : JQEvent -> Void, ?onOut : JQEvent -> Void ) : JQ;
+	function hover( onIn : JQEvent -> Void, ?onOut : JQEvent -> Void ) : JQ;
 
 	@:overload(function( callb : JQEvent -> Bool ) : JQ {})
-	override function keydown( ?callb : JQEvent -> Void ) : JQ;
+	function keydown( ?callb : JQEvent -> Void ) : JQ;
 
 	@:overload(function( callb : JQEvent -> Bool ) : JQ {})
-	override function keypress( ?callb : JQEvent -> Void ) : JQ;
+	function keypress( ?callb : JQEvent -> Void ) : JQ;
 
 	@:overload(function( callb : JQEvent -> Bool ) : JQ {})
-	override function keyup( ?callb : JQEvent -> Void ) : JQ;
+	function keyup( ?callb : JQEvent -> Void ) : JQ;
 
-	override function mousedown( ?callb : JQEvent -> Void ) : JQ;
+	function mousedown( ?callb : JQEvent -> Void ) : JQ;
+	function mouseenter( ?callb : JQEvent -> Void ) : JQ;
+	function mouseleave( ?callb : JQEvent -> Void ) : JQ;
 	@:overload(function( ?callb : Void -> Void ) : JQ{})
-	override function mouseout( ?callb : JQEvent -> Void ) : JQ;
+	function mouseout( ?callb : JQEvent -> Void ) : JQ;
 	@:overload(function( ?callb : Void -> Void ) : JQ{})
-	override function mouseover( ?callb : JQEvent -> Void ) : JQ;
+	function mouseover( ?callb : JQEvent -> Void ) : JQ;
 	@:overload(function( ?callb : Void -> Void ) : JQ{})
-	override function mousemove( ?callb : JQEvent -> Void ) : JQ;
+	function mousemove( ?callb : JQEvent -> Void ) : JQ;
+	function mouseup( ?callb : JQEvent -> Void ) : JQ;
+
+	// AJAX overloads
+	@:overload(function( url:String, ?data : {}, ?callb : String -> String -> Void ) : JQ {})
+	@:overload(function( url:String, ?data : {}, ?callb : String -> Void ) : JQ {})
+	@:overload(function( url:String, ?data : {}, ?callb : Void -> Void ) : JQ {})
+	function load( ?callb : JQEvent -> Void ) : JQ;
+	function ready( callb : JQEvent -> Void ) : JQ;
+	function resize( ?callb : JQEvent -> Void ) : JQ;
+	function scroll( ?callb : JQEvent -> Void ) : JQ;
+	function select( ?callb : JQEvent -> Void ) : JQ;
+	function submit( ?callb : JQEvent -> Void ) : JQ;
+	function unload( ?callb : JQEvent -> Void ) : JQ;
 	
 	@:overload(function(events : String, callb : JQEvent -> Bool):JQ { } )
 	@:overload(function(events : String, callb : Void -> Bool):JQ { } )
-	override function bind( events : String, callb : JQEvent -> Void ) : JQ;
+	function bind( events : String, callb : JQEvent -> Void ) : JQ;
 
-	override function one( events : String, callb : JQEvent -> Void ) : JQ;
+	function delegate( selector : String, events : String, callb : JQEvent -> Void ) : JQ;
+	function die( ?events : String, ?callb : JQEvent -> Void ) : JQ;
+	function one( events : String, callb : JQEvent -> Void ) : JQ;
+	function live( events : String, callb : JQEvent -> Void ) : JQ;
+	function trigger( events : String ) : JQ;
+	function triggerHandler( events : String ) : JQ;
+	function unbind( ?events : String, ?callb : JQEvent -> Void ) : JQ;
+	function undelegate( ?selector : String, ?events : String, ?callb : JQEvent -> Void ) : JQ;
 
+	// JQ 1.7+
 	@:overload(function( events: String, ?callb: JQEvent->Dynamic -> Void ) : Void{})
 	@:overload(function( events: String, ?selector: String, ?callb: JQEvent->Dynamic -> Void) : Void{})
-	override function on( events : String, callb : JQEvent -> Void ) : JQ;
+	function on( events : String, callb : JQEvent -> Void ) : JQ;
 
 
 	// Other
@@ -281,8 +407,26 @@ extern class JQ extends js.JQuery {
 	function fnDestroy():Void;
 	function map(fcn: JQ->Int->Dynamic): Void;
 	
+	// other tools
+	@:overload(function(index:Int):Element{})
+	function get() : Array<Element>;
+
+	@:overload(function(j:JQ):Bool{})
+	function is( selector : String ) : Bool;
+
+	@:overload(function() : Dynamic {})
+	@:overload(function( key : String ) : Dynamic {})
+	function data( key : String, value : Dynamic ) : JQ;
+	function removeData( ?key : String ) : JQ;
+	function serialize() : String;
+	function serializeArray() : Array<{ name : String, value : String }>;
+
+	// haXe addition
+	@:runtime inline function iterator() : Iterator<JQ> {
+		return untyped __define_feature__('m3.jq.JQ.iterator', this["iterator"])();
+	}
 	
-	//my custom jQuery functions
+	//my custom JQ functions
 	function exists(): Bool;
 	function isVisible():Bool;
 	function hasAttr(attrName: String):Bool;
@@ -291,13 +435,13 @@ extern class JQ extends js.JQuery {
 	function buttonsetv(i:Int, ?cmd: String):JQ;
 	function helpToolTips(): JQ;
 	
-	//jQueryUI
+	//JQUI
 	function accordion(options:Dynamic):JQ;
 
 	@:overload(function(arg1:String, arg2:String):JQ{})
 	function autocomplete(opts:Dynamic):JQ;
 	function button(?opts:Dynamic):JQ;
-	function menu(opts: Dynamic): JQ;
+	// function menu(opts: Dynamic): JQ;
 	function slider(options: Dynamic): JQ;
 
 	// @:overload(function(cmd : String): Bool{})
@@ -309,7 +453,7 @@ extern class JQ extends js.JQuery {
 	@:overload(function(cmd : String, arg1 :Dynamic):Void{})
 	@:overload(function(cmd:String, opt:String, newVal:Dynamic):JQ{})
 	function tabs(?opts:Dynamic):JQ;
-	function tooltip(?opts:Dynamic):JQ;
+	// function tooltip(?opts:Dynamic):JQ;
 
 	@:overload(function(): Int{})
 	function zIndex(zIndex: Int): JQ;
@@ -324,18 +468,18 @@ extern class JQ extends js.JQuery {
 	public static function getJSON(url:String, ?data:Dynamic, ?success:Dynamic->Dynamic->Dynamic->Void): JQXHR;
 	public static function getScript(url:String, ?success:Dynamic->String->JQXHR->Void): JQXHR;
 
-	@:overload(function(parent: js.JQuery, child: js.JQuery): Bool{})
-	@:overload(function(parent: Element, child: js.JQuery): Bool{})
+	@:overload(function(parent: JQ, child: JQ): Bool{})
+	@:overload(function(parent: Element, child: JQ): Bool{})
 	public static function contains( parent : Element, child : Element ) : Bool;
 
 	@:overload(function(qualifiedName: String, parent: Dynamic, definition: Dynamic):Void{})
 	public static function widget(qualifiedName: String, definition: Dynamic): Void;
 
-	@:overload(function<T>(deep: Bool, target: T, object1: T, ?object2: T, ?object3: T, ?object4: T):T{})
+	@:overload(function<T>(deep: Bool, target: T, object1: T, ?object2: T, ?object3: T, ?object4: T): T{})
 	public static function extend<T>(target: T, object1: T, ?object2: T, ?object3: T, ?object4: T): T;
 
 	/**
-		Return the current JQuery element (in a callback), similar to $(this) in JS.
+		Return the current JQ element (in a callback), similar to $(this) in JS.
 	**/
 	static var cur(get, null) : JQ;
 	static var curNoWrap(get, null) : Dynamic;
@@ -343,7 +487,7 @@ extern class JQ extends js.JQuery {
 	private static inline function get_cur() : JQ {
 		return untyped __js__("$(this)");
 	}
-	private static inline function get_curNoWrap<T>() : T {
+	private static inline function get_curNoWrap() : Element {
 		return untyped __js__("this");
 	}
 
@@ -357,5 +501,8 @@ extern class JQ extends js.JQuery {
 		JQ.fn.hasAttr = function(name) {  
 		   return JQ.cur.attr(name) != undefined;
 		};
+		__feature__('m3.jq.JQ.iterator',
+			q.fn.iterator = function() return { pos : 0, j : __this__, hasNext : function() return __this__.pos < __this__.j.length, next : function() return $(__this__.j[__this__.pos++]) }
+		);
 	}
 }

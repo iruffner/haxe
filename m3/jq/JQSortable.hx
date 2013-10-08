@@ -31,8 +31,8 @@ typedef JQSortableOpts = {
 extern class JQSortable extends JQ {
 	function disableSelection():Void;
 
-	@:overload(function(cmd: String):Bool{})
-	@:overload(function(cmd: String, opt:String):Dynamic{})
+	@:overload(function<T>(cmd : String):T{})
+	@:overload(function<T>(cmd:String, opt:String):T{})
 	@:overload(function(cmd: String, opt:String, newVal:Dynamic):JQSortable{})
 	function sortable(?opts: JQSortableOpts): JQSortable;
 }

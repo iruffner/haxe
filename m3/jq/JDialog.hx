@@ -32,8 +32,8 @@ typedef JDialogWidgetDef = {
 @:native("$")
 extern class JDialog extends JQ {
 	
-	@:overload(function(cmd : String):Bool{})
-	@:overload(function(cmd:String, opt:String, newVal:Dynamic):JQ{})
+	@:overload(function<T>(cmd : String):T{})
+	@:overload(function<T>(cmd:String, opt:String):T{})
 	function jdialog(opts: JDialogOptions): JDialog;
 
 	static var cur(get, null): JDialog;

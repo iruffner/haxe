@@ -29,9 +29,7 @@ typedef JQTooltipOps = {
 
 @:native("$")
 extern class JQTooltip extends JQ {
-	function draggable(opts: JQTooltipOps): JQTooltip;
-
-	// private static function __init__() : Void untyped {
-	// 	JQTooltip = window.jQuery;
-	// }	
+	@:overload(function<T>(cmd : String):T{})
+	@:overload(function<T>(cmd:String, opt:String):T{})
+	function tooltip(?opts: JQTooltipOps): JQTooltip;
 }

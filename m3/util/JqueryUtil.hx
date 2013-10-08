@@ -7,7 +7,7 @@ import m3.jq.M3Dialog;
 using m3.helper.StringHelper;
 
 class JqueryUtil {
-	public static function isAttached(elem: js.JQuery): Bool {
+	public static function isAttached(elem: JQ): Bool {
 		return elem.parents("body").length > 0;
 		// return JQ.contains(js.Lib.document.body, (Reflect.hasField(elem, "jquery") ? elem[0] : cast elem) );
 	}

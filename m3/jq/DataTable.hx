@@ -49,7 +49,8 @@ extern class DataTable extends JQ{
 	            sGroupingClass:String, 
 	            bExpandableGrouping: Bool, 
 	            sGroupLabelPrefix: String, 
-	            sEmptyGroupLabel: String
+	            sEmptyGroupLabel: String,
+	            fnGroupLabelFormat: Dynamic->String
 	        }):Void;
 
 	public function columnFilter(opts:DataTableColumnFilterDef):Void;

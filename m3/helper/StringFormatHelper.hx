@@ -43,12 +43,13 @@ class StringFormatHelper {
 		return toFormattedNumber(val, opts);	
 	}
 
-	public static function toCurrency(num: Dynamic, ?decimals: Bool=true) :String {
+	public static function toCurrency(num: Dynamic, ?decimals: Bool=true, ?forceNumberOfDecimals: Bool=true) :String {
 	    return formatNumber(num, {
 	            numberOfDecimals: decimals ? 2:0,
 	            decimalSeparator: '.',
 	            thousandSeparator: ',',
-	            symbol: '$'
+	            symbol: '$',
+	            forceNumberOfDecimals: forceNumberOfDecimals
 	    });
 	}
 	
@@ -64,13 +65,21 @@ class StringFormatHelper {
 	public static function stripNonDigits(num: String, allowDecimal: Bool): String {
 		var r: String;
 		if(num.isBlank()) r = num;
-		else if(allowDecimal) { 
-			r = ~/[^0-9\.]/g.replace(num,"");
-		} else {
-			r = ~/[^0-9]/g.replace(num,"");
+		else{ 
+			r = ~/[^\d|\.]/g.replace(num,"");
+			if(!allowDecimal) { 
+				//todo strip non-decimal chars
+			// 	// r = ~/[^0-9\.]/g.replace(num,"");
+			// 	r = ~/[^\d|\.]/g.replace(num,"");
+			// } else {
+				// r = ~/[^0-9]/g.replace(num,"");
+				// r = ~/[^\d]/g.replace(num,"");
+			}
 		}
 		return r;
 	}
+
+	// ^\$?\-?([1-9]{1}[0-9]{0,2}(\,\d{3})*(\.\d{0,2})?|[1-9]{1}\d{0,}(\.\d{0,2})?|0(\.\d{0,2})?|(\.\d{1,2}))$|^\-?\$?([1-9]{1}\d{0,2}(\,\d{3})*(\.\d{0,2})?|[1-9]{1}\d{0,}(\.\d{0,2})?|0(\.\d{0,2})?|(\.\d{1,2}))$|^\(\$?([1-9]{1}\d{0,2}(\,\d{3})*(\.\d{0,2})?|[1-9]{1}\d{0,}(\.\d{0,2})?|0(\.\d{0,2})?|(\.\d{1,2}))\)$
 
 	public static function formatNumber(numero: Dynamic, params: FormattingOptions): String { 
 		if (Std.string(numero).isBlank()) {
@@ -82,7 +91,8 @@ class StringFormatHelper {
 	        decimalSeparator: '.',
 	        thousandSeparator: ',',
 	        symbol: '',
-	        percentage: false
+	        percentage: false,
+	        forceNumberOfDecimals: true
 	    };
 
 	    JQ.extend(options, params);//jQuery.extend(sDefaults, params);
@@ -115,14 +125,16 @@ class StringFormatHelper {
 
 	    var fractional = Std.string(number).substring (integer.length + sign.length);
 	    dec_point = dec_point != null ? dec_point : ".";
-	    fractional = decimals != null && decimals > 0 || fractional.length > 1 ? (dec_point + fractional.substring (1)) : "";
-	    if (decimals != null && decimals > 0) {
-	    	var z:Int = decimals;
-	        for (i in (fractional.length - 1)...z) {
-	        	z = decimals;
-	            fractional += "0";
-	        }
-	    }
+	    if(options.forceNumberOfDecimals || numberstr.indexOf(".") > -1) {
+		    fractional = decimals != null && decimals > 0 || fractional.length > 1 ? (dec_point + fractional.substring (1)) : "";
+		    if (decimals != null && decimals > 0 && options.forceNumberOfDecimals) {
+		    	var z:Int = decimals;
+		        for (i in (fractional.length - 1)...z) {
+		        	z = decimals;
+		            fractional += "0";
+		        }
+		    }
+		}
 
 	    thousands_sep = (thousands_sep != dec_point || fractional.length == 0) ? 
 	    thousands_sep : null;
@@ -209,6 +221,10 @@ class StringFormatHelper {
 	// 	return App.MONTHS_SHORT[month-1];
 	// }
 
+	public static function dateYYYY_MM_DD(d: Date): String {
+		return d.getFullYear() + "-" +  Std.string((d.getMonth() + 1)).padLeft(2, "0") + "-" + d.getDate();
+	}
+
 	public static function datePretty(d: Date): String {
 		return MONTHS[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
 	}
@@ -224,4 +240,5 @@ private typedef FormattingOptions = {
 	@:optional var thousandSeparator:String;
 	@:optional var symbol:String;
 	@:optional var percentage:Bool;
+	@:optional var forceNumberOfDecimals:Bool;
 }
