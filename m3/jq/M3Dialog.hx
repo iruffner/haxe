@@ -2,6 +2,7 @@ package m3.jq;
 
 import m3.jq.JQ;
 import m3.widget.Widgets;
+import m3.log.Logga;
 
 typedef M3DialogOptions = {
 	@:optional var autoOpen:Bool;
@@ -71,8 +72,7 @@ extern class M3Dialog extends JQ {
 					var hovers: JQ = new JQ("blah");
 					if(self.options.showHelp && false) {
 						if(!Reflect.isFunction(self.options.buildHelp)) {
-							//TODO provide gerneic log access
-							// App.LOGGER.error("Supposed to show help but buildHelp is not a function");
+							Logga.DEFAULT.error("Supposed to show help but buildHelp is not a function");
 						} else {
 							var helpIconWrapper: JQ = new JQ("<a href='#' class='ui-dialog-titlebar-close ui-corner-all' style='margin-right: 18px;' role='button'>");
 							var helpIcon: JQ = new JQ("<span class='ui-icon ui-icon-help'>help</span>");

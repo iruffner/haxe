@@ -11,8 +11,7 @@ import m3.util.M;
 class TestRunnerBase {
 
 	function getUnitTestClasses() {
-	    var tests: Array<Dynamic> = [
-		];
+	    var tests: Array<Dynamic> = [];
 		return tests;
 	}
 
@@ -21,6 +20,15 @@ class TestRunnerBase {
 
 	function new() {
 		_unitTestClasses = [];
+		getM3TestClasses().iter(function(clazz) {
+			try {
+				_unitTestClasses.push(new TestClass(clazz));
+				} catch ( e: Dynamic ) {
+					Logger.console.error("error creating TestClass for " + clazz.classname());
+					Logger.console.error(e);
+				}
+		});
+
 		getUnitTestClasses().iter(function(clazz) {
 			try {
 				_unitTestClasses.push(new TestClass(clazz));
@@ -30,6 +38,19 @@ class TestRunnerBase {
 				}
 		});
 		logger = {};
+	}
+
+	// All m3 units tests classes should go here
+	private function getM3TestClasses() {
+		var tests: Array<Dynamic> = [
+			m3.test.DeepCompareTest,
+			m3.test.MTest,
+			m3.test.OSetTest,
+			m3.test.SerializationTest,
+			m3.test.StringHelperTest,
+			m3.test.UidGenTest
+		];
+		return tests;
 	}
 
     private function appendCell(html:Dynamic, row:JQ, ?attrs:Map<String, String>) {

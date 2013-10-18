@@ -1,7 +1,6 @@
 package m3.jq;
 
 import m3.jq.JQ;
-// import embi.mdjq.JQ.UIPosition;
 
 typedef UISortable = {
 	helper: JQ, 

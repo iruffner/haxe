@@ -1,7 +1,7 @@
-package embi.mdjq;
+package m3.jq;
 
-import embi.mdjq.JQ;
-import embi.mdjq.JQ.UIPosition;
+import m3.jq.JQ;
+import m3.jq.UIPosition;
 
 typedef UIResizable = {
 	element: JQ, 

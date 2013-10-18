@@ -6,6 +6,7 @@ import m3.jq.M3Dialog;
 
 using m3.helper.StringHelper;
 
+@:expose
 class JqueryUtil {
 	public static function isAttached(elem: JQ): Bool {
 		return elem.parents("body").length > 0;

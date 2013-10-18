@@ -52,6 +52,11 @@ class StringHelper {
 	    return str.substr(0,1).toUpperCase() + str.substr(1,str.length);
 	}
 
+    public static function camelCase(str:String) {
+        if(isBlank(str)) return str;
+        return str.substr(0,1).toLowerCase() + str.substr(1,str.length);
+    }
+
 	public static function isBlank(str: String): Bool {
 		return str == null || JQ.trim(str) == "";
 	}

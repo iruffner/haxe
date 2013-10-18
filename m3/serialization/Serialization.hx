@@ -10,6 +10,7 @@ import haxe.rtti.CType;
 import haxe.CallStack;
 
 using m3.serialization.TypeTools;
+using m3.helper.ArrayHelper;
 using Lambda;
 
 /*
@@ -143,7 +144,14 @@ class ArrayHandler implements TypeHandler {
 			instance = [];
 		}
 		if ( fromJson != null ) {
-			var arr: Array<Dynamic> = cast fromJson;
+			var arr: Array<Dynamic>;
+
+			if (Std.is(fromJson, Array)) {
+				arr = cast fromJson;
+			} else {
+				arr = [fromJson];
+			}
+
 			var i = 0;
 			// return arr.map(function(e) { return _elementHandler.read(e, reader); });
 			for ( e in arr ) {
@@ -479,7 +487,7 @@ class ClassHandler<T> implements TypeHandler {
 			instance = createInstance();
 		}
 
-		var jsonFieldNames = Reflect.fields(fromJson);
+		var jsonFieldNames: Array<String> = Reflect.fields(fromJson);
 		// check that all the fields in the json have field in the class
 		for ( jsonFieldName in jsonFieldNames ) {
 			if ( !_fieldsByName.exists(jsonFieldName) ) {
@@ -491,12 +499,14 @@ class ClassHandler<T> implements TypeHandler {
 		for ( f in _fields ) {
 			if ( f.required ) {
 				var found = false;
-				for ( jsonFieldName in jsonFieldNames ) {
-					if ( f.name == jsonFieldName ) {
-						found = true;
-						break;
-					}
-				}
+				if(jsonFieldNames.contains(f.name)) 
+					found = true;
+				// for ( jsonFieldName in jsonFieldNames ) {
+				// 	if ( f.name == jsonFieldName ) {
+				// 		found = true;
+				// 		break;
+				// 	}
+				// }
 				if ( !found ) {
 					reader.error("instance of " + _typename + " has required field named " + f.name + " json does not does not "  + Json.stringify(fromJson) );
 				}
