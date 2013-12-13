@@ -80,6 +80,8 @@ extern class DataTable extends JQ{
 
 	public function fnUpdate(data: Dynamic, row: Dynamic, ?col: Int, ?redraw: Bool = true, ?runPreDraw: Bool = true): Int;
 
+	public function fnSetColumnVis(col: Int, visible: Bool, ?redraw: Bool = true): Void;  
+
 	/**
 		Return the current JQuery element (in a callback), similar to $(this) in JS.
 	**/

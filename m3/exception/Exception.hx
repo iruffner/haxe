@@ -13,7 +13,11 @@ class Exception {
 	public function new(?message: String, ?cause: Exception) {
 		this.message = message;
 		this.cause = cause;
-		this.callStack = CallStack.callStack();
+		try {
+			this.callStack = CallStack.callStack();
+		} catch (err: Dynamic) {
+			//TODO
+		}
 	}
 
 	public function rootCause(): Exception {

@@ -81,7 +81,8 @@ class Serializer {
 	function createWriter() { return new JsonWriter(this); }
 
 	public function getHandlerViaClass<T>(clazz: Class<T>) {
-		return new ClassHandler(clazz, clazz.classname(), this);
+		var typename: String = clazz.classname();
+		return getHandler(CClass(typename, new List()));
 	}
 
 	public function getHandler(type: CType) {

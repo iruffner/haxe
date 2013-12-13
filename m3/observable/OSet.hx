@@ -7,6 +7,7 @@ import m3.util.M;
 import m3.util.SizedMap;
 
 using Lambda;
+using m3.helper.OSetHelper;
 /*
 
 Features
@@ -83,7 +84,7 @@ class EventType {
 	}
 
 	public function isUpdate() {
-		return _add;
+		return _update;
 	}
 
 	public function isAddOrUpdate() {
@@ -231,23 +232,33 @@ class MappedSet<T,U> extends AbstractSet<U> {
 	var _source: OSet<T>;
 	var _mapper: T->U;
 	var _mappedSet: Map<String,U>;
+	var _remapOnUpdate: Bool;
+	var _mapListeners: Array<T->U->EventType->Void>;
 
-	public function new(source: OSet<T>, mapper: T->U) {
+	public function new(source: OSet<T>, mapper: T->U, ?remapOnUpdate: Bool = false) {
 		super();
 		_mappedSet = new Map();
+		_mapListeners = new Array<T->U->EventType->Void>();
 		_source = source;
-		_source.listen(function(t, type) {
+		_source.listen(function(t: T, type) {
 			// m3.log.Logga.DEFAULT.debug("MappedSet (" + getVisualId() + ") source (" + source.getVisualId() + ") change | " + type.name() + " | " + source.identifier()(t));
 			var key = _source.identifier()(t);
 			var mappedValue;
-			if ( type.isAddOrUpdate() ) {
+			if ( type.isAdd() || (remapOnUpdate && type.isUpdate()) ) {
 				mappedValue = mapper(t);
 				_mappedSet.set(key, mappedValue);
+			} else if ( type.isUpdate() ) {
+				mappedValue = _mappedSet.get(key);
 			} else {
 				mappedValue = _mappedSet.get(key);
 				_mappedSet.remove(key);
 			}
 			fire(mappedValue, type);
+			_mapListeners.iter(
+				M.fn1(
+					it(t, mappedValue, type)
+				)
+			);
 		});
 	}
 
@@ -255,7 +266,7 @@ class MappedSet<T,U> extends AbstractSet<U> {
 		return identify;
 	}
 
-	public override function delegate() {
+	public override function delegate(): Map<String,U> {
 		return _mappedSet;
 	}
 
@@ -272,6 +283,17 @@ class MappedSet<T,U> extends AbstractSet<U> {
 
 	public override function iterator(): Iterator<U> {
 		return _mappedSet.iterator();
+	}
+
+	public function mapListen(f: T->U->EventType->Void) {
+		var iter: Iterator<String> = _mappedSet.keys();
+		while(iter.hasNext()) {
+			var key: String = iter.next();
+			var t: T = _source.getElement(key);
+			var u: U = _mappedSet.get(key);
+			f(t,u,EventType.Add);
+		}
+		_mapListeners.push(f);
 	}
 }
 
@@ -334,6 +356,16 @@ class FilteredSet<T> extends AbstractSet<T> {
 	public override function iterator(): Iterator<T> {
 		return _filteredSet.iterator();
 	}
+
+	public function asArray(): Array<T> {
+		var a: Array<T> = new Array<T>();
+		var iter: Iterator<T> = iterator();
+		while( iter.hasNext() ) {
+			a.push(iter.next());
+		}
+		return a;
+	}
+
 }
 
 class GroupedSet<T> extends AbstractSet<OSet<T>> {
@@ -363,7 +395,7 @@ class GroupedSet<T> extends AbstractSet<OSet<T>> {
 		});
 	}
 
-
+	//TODO ASK GLEN IF THIS SUPPOSED TO BE PRIVATE
 	function delete(t: T) {
 		var id = _source.identifier()(t);
 		var key = _identityToGrouping.get(id);
@@ -386,6 +418,7 @@ class GroupedSet<T> extends AbstractSet<OSet<T>> {
 			// doesn't exist in this GroupedSet
 		}
 	}
+
 	function add(t: T) {
 		var id = _source.identifier()(t);
 		var key = _identityToGrouping.get(id);
@@ -478,7 +511,7 @@ class SortedSet<T> extends AbstractSet<T> {
 
 	}
 
-	function sorted(): Array<T> {
+	public function sorted(): Array<T> {
 		if ( _dirty ) {
 			_sorted.sort(_comparisonFn);
 			_dirty = false;

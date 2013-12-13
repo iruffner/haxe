@@ -168,4 +168,14 @@ class StringHelper {
         if(!date.isValid()) date == null;
         return date;
     }
+
+    public static function boolAsYesNo(bool: Bool): String {
+        if(bool) return "Yes";
+        else return "No";
+    }
+
+    public static function toBool(str: String): Bool {
+        if(str == null) return false;
+        return str.toLowerCase() == "true";
+    }
 }

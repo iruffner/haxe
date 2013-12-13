@@ -15,12 +15,14 @@ typedef JQXHR = {
 	@:optional var name: String;
 	@:optional var stack: String;
 	@:optional var fail: JQXHR->String->Dynamic->JQXHR;
+	@:optional var setRequestHeader: String->String->Void;
 }
 
 typedef AjaxOptions = {
 	@:optional var url:String;
 	@:optional var async:Bool;
 	@:optional var type:String; //"GET", "POST", etc..
+	@:optional var beforeSend: JQXHR->Dynamic->Void;
 	/**
 		function(data:Dynamic, textStatus:String, jqXHR:JQXHR)
 	**/
@@ -42,7 +44,7 @@ typedef AjaxOptions = {
 	@:optional var jsonp:Dynamic;
 	@:optional var processData:Bool;
 	@:optional var timeout:Dynamic;
-
+	@:optional var headers: Dynamic;
 }
 
 // typedef PositionOpts = {
@@ -430,6 +432,7 @@ extern class JQ implements ArrayAccess<Element> {
 	function exists(): Bool;
 	function isVisible():Bool;
 	function hasAttr(attrName: String):Bool;
+	function intersects(el: JQ): Bool;
 
 	//my custom widgets
 	function buttonsetv(i:Int, ?cmd: String):JQ;
@@ -500,6 +503,22 @@ extern class JQ implements ArrayAccess<Element> {
 		};
 		JQ.fn.hasAttr = function(name) {  
 		   return JQ.cur.attr(name) != undefined;
+		};
+		JQ.fn.intersects = function(el: JQ): Bool {
+			var tAxis = JQ.cur.offset();
+		    var t_x = [tAxis.left, tAxis.left + JQ.cur.outerWidth()];
+		    var t_y = [tAxis.top, tAxis.top + JQ.cur.outerHeight()];
+
+		    var thisPos = el.offset();
+	        var i_x = [thisPos.left, thisPos.left + el.outerWidth()];
+	        var i_y = [thisPos.top, thisPos.top + el.outerHeight()];
+
+	        var intersects: Bool = false;
+	        if ( (t_x[0] < i_x[1] && t_x[1] > i_x[0] &&
+	               t_y[0] < i_y[1] && t_y[1] > i_y[0]) ) {
+	            intersects = true;
+	        }
+	        return intersects;
 		};
 		__feature__('m3.jq.JQ.iterator',
 			q.fn.iterator = function() return { pos : 0, j : __this__, hasNext : function() return __this__.pos < __this__.j.length, next : function() return $(__this__.j[__this__.pos++]) }

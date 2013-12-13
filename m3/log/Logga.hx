@@ -10,23 +10,70 @@ using m3.helper.StringHelper;
 class Logga {
     
     var loggerLevel: LogLevel;
-    var console: Dynamic;
+    var console: js.html.Console;
+    // { 
+    //     trace: Void->Void,
+    //     debug: String->Void,
+    //     info: String->Void,
+    //     warn: String->Void,
+    //     error: String->Void,
+    //     log: String->Void
+    // };
     var statementPrefix: String;
     @:isVar public static var DEFAULT(get,null): Logga;
     private var initialized: Bool = false;
+
+    private var preservedConsoleError: Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Void;
+    private var preservedConsoleLog: Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Void;
+    private var preservedConsoleTrace: Dynamic->Dynamic->Dynamic->Dynamic->Dynamic->Void;
 
     public function new(logLevel: LogLevel) {
         this.loggerLevel = logLevel;
     }
 
     private function _getLogger(): Void {
-        console = CrossMojo.windowConsole();
+        console = js.Browser.window.console;
+        
         initialized = true;
+    }
+
+    public function overrideConsoleError() {
+        if(!initialized) _getLogger();
+        if(this.console != null) {
+            preservedConsoleError = this.console.error;
+            untyped this.console.error = function() {
+                // preservedConsoleError.apply(console, arguments);
+                untyped this.error(__js__("arguments")[0]);
+            }
+        }
+    }
+
+    public function overrideConsoleTrace() {
+        if(!initialized) _getLogger();
+        if(this.console != null) {
+            preservedConsoleTrace = this.console.trace;
+            untyped this.console.trace = function() {
+                // preservedConsoleError.apply(console, arguments);
+                preservedConsoleTrace.apply(console);
+                // untyped this.error(__js__("arguments")[0]);
+            }
+        }
+    }
+
+    public function overrideConsoleLog() {
+        if(!initialized) _getLogger();
+        if(this.console != null) {
+            this.console.log("prime console.log");
+            preservedConsoleLog = this.console.log;
+            untyped this.console.log = function() {
+                untyped this.warn(__js__("arguments")[0]);
+            }
+        }
     }
 
     private static function get_DEFAULT(): Logga {
         if(DEFAULT == null) {
-            DEFAULT = new Logga(LogLevel.DEBUG);
+            DEFAULT = new RemoteLogga(LogLevel.DEBUG, LogLevel.WARN);
         }
         return DEFAULT;
     }
@@ -52,7 +99,7 @@ class Logga {
         }
 
         if(statement.isBlank()) {
-            this.console.error("empty log statement");
+            this.console.error("empty log statement");  
             this.console.trace();
         }
 
@@ -61,7 +108,7 @@ class Logga {
         }
 
         // var console = CrossMojo.windowConsole();
-        if(logsAtLevel(level) && console != null) {
+        if( logsAtLevel(level) && console != null ) {
             try {
                 if( (Type.enumEq(level, LogLevel.TRACE) || Type.enumEq(level, LogLevel.DEBUG)) && console.debug != null) {
                     this.console.debug(statement);
@@ -69,14 +116,15 @@ class Logga {
                     this.console.info(statement);
                 } else if (Type.enumEq(level, LogLevel.WARN) && console.warn != null) {
                     this.console.warn(statement);
-                } else if (Type.enumEq(level, LogLevel.ERROR) && console.error != null) {
-                    this.console.error(statement);
+                } else if (Type.enumEq(level, LogLevel.ERROR) && this.preservedConsoleError != null) {
+                    untyped this.preservedConsoleError.apply(this.console, [statement]);
                     this.console.trace();
                 } else {
-                    this.console.log(statement);
+                    untyped this.preservedConsoleLog.apply(this.console, [statement]);
+                    // this.console.log(statement);
                 }
             } catch (err : Dynamic) {
-                if(Reflect.hasField(M.getX(this.console, {}), "error")) {
+                if(this.console != null && Reflect.hasField(this.console, "error")) {
                     this.console.error(err);
                 }
             }

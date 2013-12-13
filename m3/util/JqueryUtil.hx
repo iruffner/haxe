@@ -2,6 +2,7 @@ package m3.util;
 
 import m3.CrossMojo;
 import m3.jq.JQ;
+import m3.jq.JQDialog;
 import m3.jq.M3Dialog;
 
 using m3.helper.StringHelper;
@@ -48,6 +49,95 @@ class JqueryUtil {
 	        dialog.m3dialog(dlgOptions);
 	    }
 	    return dialog;
+	}
+
+	public static function deleteEffects(dragstopEvt: JQEvent, width:String = "70px", duration:Int=800, src:String="media/cloud.gif") {
+    	var img: JQ = new JQ("<img/>");
+		img.appendTo("body");
+		img.css("width", width);
+		img.position({
+				my: "center",
+				at: "center",
+				of: dragstopEvt,
+				collision: "fit"
+		});
+		img.attr("src", src);
+
+		haxe.Timer.delay(
+			function() {
+				img.remove();
+			}, 
+			duration 
+		);
+	}
+
+	/**
+	 * Displays a confimration dialog box
+	 * @param title:String The title of the dialog box
+	 * @param question:String The question to ask
+	 * @param action:Function The function to call if the user pressed YES.
+	 */
+	public static function confirm(title:String, question:String, action: Void->Void): Void {
+		var dlg = new JQDialog('<div id="confirm-dialog"></div>');
+		var content = new JQ('<div>' + question + '</div>');
+		dlg.append(content);
+		dlg.appendTo('body');
+
+		var dlgOptions: JQDialogOptions = {
+	       		modal: true, 
+	       		title: title, 
+	       		zIndex: 10000, 
+	       		autoOpen: true,
+	            width: 'auto',
+	            resizable: false,
+                    buttons: {
+                        Yes: function () {
+                            action();
+                            JQDialog.cur.dialog("close");
+                        },
+                        No: function () {
+                            JQDialog.cur.dialog("close");
+                        }
+                    },
+                    close: function (event, ui) {
+                        JQDialog.cur.remove();
+                    }
+	    };
+		dlg.dialog(dlgOptions);
+	}
+
+	/**
+	 * Displays an alert dialog box
+	 * @param statement:String The statement to display
+	 * @param title:String The title of the dialog box
+	 * @param action:Function The function to call after the user closes the dialog
+	 */
+	public static function alert(statement:String, title:String="Alert", ?action:Void->Void): Void {
+		var dlg = new JQDialog('<div id="alert-dialog"></div>');
+		var content = new JQ('<div>' + statement + '</div>');
+		dlg.append(content);
+		dlg.appendTo('body');
+
+		var dlgOptions: JQDialogOptions = {
+	       		modal: true, 
+	       		title: title, 
+	       		zIndex: 10000, 
+	       		autoOpen: true,
+	            width: 'auto',
+	            resizable: false,
+                    buttons: {
+                        OK: function () {
+                            JQDialog.cur.dialog("close");
+                        }
+                    },
+                    close: function (event, ui) {
+                    	if (action != null) {
+                    		action();
+                    	}
+                        JQDialog.cur.remove();
+                    }
+	    };
+		dlg.dialog(dlgOptions);
 	}
 
 	public static function getWindowWidth(): Int {

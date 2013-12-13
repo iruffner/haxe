@@ -43,10 +43,8 @@ extern class JQMobile extends JQ {
 	// @:overload(function(cmd:String, opt:String, newVal:Dynamic):JQMobile{})
 	// function slider(  ) : JQMobile;
 
-	public static function changePage(page: String): Void {
-		untyped __js__("jQuery.mobile.changePage(page)");
-	}
-
+	public static function changePage(page: String): Void;
+	
 	public static inline function hideLoader(): Void {
 		untyped __js__("$.mobile.loading( 'hide' )");
 	}
