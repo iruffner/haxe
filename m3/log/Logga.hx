@@ -11,15 +11,7 @@ class Logga {
     
     var loggerLevel: LogLevel;
     var console: js.html.Console;
-    // { 
-    //     trace: Void->Void,
-    //     debug: String->Void,
-    //     info: String->Void,
-    //     warn: String->Void,
-    //     error: String->Void,
-    //     log: String->Void
-    // };
-    var statementPrefix: String;
+       var statementPrefix: String;
     @:isVar public static var DEFAULT(get,null): Logga;
     private var initialized: Bool = false;
 
@@ -73,7 +65,7 @@ class Logga {
 
     private static function get_DEFAULT(): Logga {
         if(DEFAULT == null) {
-            DEFAULT = new RemoteLogga(LogLevel.DEBUG, LogLevel.WARN);
+            DEFAULT = new RemoteLogga(LogLevel.DEBUG, LogLevel.DEBUG);
         }
         return DEFAULT;
     }
@@ -119,9 +111,13 @@ class Logga {
                 } else if (Type.enumEq(level, LogLevel.ERROR) && this.preservedConsoleError != null) {
                     untyped this.preservedConsoleError.apply(this.console, [statement]);
                     this.console.trace();
-                } else {
+                } else if (Type.enumEq(level, LogLevel.ERROR) && console.error != null) {
+                    this.console.error(statement);
+                    this.console.trace();
+                } else if (this.preservedConsoleLog != null) {
                     untyped this.preservedConsoleLog.apply(this.console, [statement]);
-                    // this.console.log(statement);
+                } else {
+                    this.console.log(statement);
                 }
             } catch (err : Dynamic) {
                 if(this.console != null && Reflect.hasField(this.console, "error")) {

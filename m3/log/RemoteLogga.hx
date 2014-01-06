@@ -82,7 +82,7 @@ private class RemoteLoggingTimer extends Timer {
 	override public function run() {
 		var logs = this.getLogs();
 		if(logs.hasValues()) {
-			this.remoteLogFcn(this.getLogs());
+			this.remoteLogFcn(logs);
 		} else {
 			Logga.DEFAULT.debug("no remote logs to send");
 		}
