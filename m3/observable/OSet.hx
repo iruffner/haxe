@@ -5,6 +5,7 @@ import m3.helper.StringHelper;
 import m3.exception.Exception;
 import m3.util.M;
 import m3.util.SizedMap;
+import m3.log.Logga;
 
 using Lambda;
 using m3.helper.OSetHelper;
@@ -27,6 +28,7 @@ Upon listening do you get a bunch of adds?
 interface OSet<T> {
 	function identifier(): T->String;
 	function listen(l: T->EventType->Void): Void;
+	function removeListener(l: T->EventType->Void): Void;
 	function iterator(): Iterator<T>;
 	function delegate(): Map<String,T>;
 	function getVisualId(): String;
@@ -50,12 +52,22 @@ class EventManager<T> {
 		);	
 		_listeners.push(l);		
 	}
+	public function remove(l: T->EventType->Void) {
+		_listeners.remove(l);
+	}
 	public function fire(t: T, type: EventType) {
 		_listeners.iter(
-			M.fn1(
-				it(t,type)
-			)
+			function(l: T->EventType->Void): Void {
+				try {
+					l(t, type);
+				} catch (err: Dynamic) {
+					Logga.DEFAULT.error("Error processing listener on " + _set.getVisualId(),  Logga.getExceptionInst(err));
+				}
+			}
 		);
+	}
+	public function listenerCount():Int {
+		return _listeners.length;
 	}
 }
 
@@ -99,7 +111,7 @@ class EventType {
 @:rtti
 class AbstractSet<T> implements OSet<T> {
 
-	var _eventManager: EventManager<T>;
+	public var _eventManager: EventManager<T>;
 	public var visualId: String;
 
 	private function new() {
@@ -108,6 +120,10 @@ class AbstractSet<T> implements OSet<T> {
 
 	public function listen(l: T->EventType->Void): Void {
 		_eventManager.add(l);
+	}
+
+	public function removeListener(l: T->EventType->Void): Void {
+		_eventManager.remove(l);
 	}
 
 	public function filter(f: T->Bool): OSet<T> {
@@ -240,26 +256,30 @@ class MappedSet<T,U> extends AbstractSet<U> {
 		_mappedSet = new Map();
 		_mapListeners = new Array<T->U->EventType->Void>();
 		_source = source;
-		_source.listen(function(t: T, type) {
-			// m3.log.Logga.DEFAULT.debug("MappedSet (" + getVisualId() + ") source (" + source.getVisualId() + ") change | " + type.name() + " | " + source.identifier()(t));
-			var key = _source.identifier()(t);
-			var mappedValue;
-			if ( type.isAdd() || (remapOnUpdate && type.isUpdate()) ) {
-				mappedValue = mapper(t);
-				_mappedSet.set(key, mappedValue);
-			} else if ( type.isUpdate() ) {
-				mappedValue = _mappedSet.get(key);
-			} else {
-				mappedValue = _mappedSet.get(key);
-				_mappedSet.remove(key);
-			}
-			fire(mappedValue, type);
-			_mapListeners.iter(
-				M.fn1(
-					it(t, mappedValue, type)
-				)
-			);
-		});
+		_remapOnUpdate = remapOnUpdate;
+		_mapper = mapper;
+		_source.listen(_sourceListener);
+	}
+
+	private function _sourceListener(t: T, type:EventType) {
+		// m3.log.Logga.DEFAULT.debug("MappedSet (" + getVisualId() + ") source (" + source.getVisualId() + ") change | " + type.name() + " | " + source.identifier()(t));
+		var key = _source.identifier()(t);
+		var mappedValue;
+		if ( type.isAdd() || (_remapOnUpdate && type.isUpdate()) ) {
+			mappedValue = _mapper(t);
+			_mappedSet.set(key, mappedValue);
+		} else if ( type.isUpdate() ) {
+			mappedValue = _mappedSet.get(key);
+		} else {
+			mappedValue = _mappedSet.get(key);
+			_mappedSet.remove(key);
+		}
+		fire(mappedValue, type);
+		_mapListeners.iter(
+			M.fn1(
+				it(t, mappedValue, type)
+			)
+		);
 	}
 
 	public override function identifier(): U->String {
@@ -272,7 +292,7 @@ class MappedSet<T,U> extends AbstractSet<U> {
 
 	function identify(u: U): String {
 		var keys = _mappedSet.keys();
-		while ( keys.hasNext() ) {
+		while (keys.hasNext()) {
 			var key = keys.next();
 			if ( _mappedSet.get(key) == u ) {
 				return key;
@@ -294,6 +314,11 @@ class MappedSet<T,U> extends AbstractSet<U> {
 			f(t,u,EventType.Add);
 		}
 		_mapListeners.push(f);
+	}
+
+	public function removeListeners(mapListener: T->U->EventType->Void) {
+		_mapListeners.remove(mapListener);
+		_source.removeListener(_sourceListener);
 	}
 }
 
@@ -384,9 +409,9 @@ class GroupedSet<T> extends AbstractSet<OSet<T>> {
 		source.listen(function(t: T, type: EventType) {
 			var groupingKey = groupingFn(t);
 			var previousGroupingKey = _identityToGrouping.get(groupingKey);
-			if ( type.isAddOrUpdate() ) {
-				if ( previousGroupingKey != groupingKey ) {
-					delete(t);
+			if (type.isAddOrUpdate()) {
+				if (previousGroupingKey != groupingKey) {
+					delete(t, false);
 					add(t);
 				}
 			} else {
@@ -395,17 +420,16 @@ class GroupedSet<T> extends AbstractSet<OSet<T>> {
 		});
 	}
 
-	//TODO ASK GLEN IF THIS SUPPOSED TO BE PRIVATE
-	function delete(t: T) {
+	function delete(t: T, deleteEmptySet:Bool=true):Void {
 		var id = _source.identifier()(t);
 		var key = _identityToGrouping.get(id);
-		if ( key != null ) {
+		if (key != null) {
 			_identityToGrouping.remove(id);
 			var groupedSet = _groupedSets.get(key);
-			if ( groupedSet != null ) {
+			if (groupedSet != null) {
 				groupedSet.delete(t);
 				// if the grouped set is empty delete it
-				if ( groupedSet.isEmpty() ){
+				if (groupedSet.isEmpty() && deleteEmptySet){
 					_groupedSets.remove(key);
 					fire(groupedSet, EventType.Delete);
 				} else {
@@ -422,22 +446,29 @@ class GroupedSet<T> extends AbstractSet<OSet<T>> {
 	function add(t: T) {
 		var id = _source.identifier()(t);
 		var key = _identityToGrouping.get(id);
-		if ( key != null ) {
+		if (key != null) {
 			throw new Exception("cannot add it is already in the list" + id + " -- " + key);
 		}
 		key = _groupingFn(t);
 		_identityToGrouping.set(id, key);
 		var groupedSet = _groupedSets.get(key);
 		if ( groupedSet == null ) {
-			groupedSet = new ObservableSet<T>(_source.identifier());
-			groupedSet.visualId = key;
-			_groupedSets.set(key, groupedSet);
+			groupedSet = addEmptyGroup(key);
 			groupedSet.addOrUpdate(t);
 			fire(groupedSet, EventType.Add);
 		} else {
 			groupedSet.addOrUpdate(t);
 			fire(groupedSet, EventType.Update);
 		}
+	}
+
+	public function addEmptyGroup(key:String): ObservableSet<T> {
+		if (_groupedSets.get(key) == null) {
+			var groupedSet = new ObservableSet<T>(_source.identifier());
+			groupedSet.visualId = key;
+			_groupedSets.set(key, groupedSet);		
+		}
+		return _groupedSets.get(key);
 	}
 
 	public override function identifier(): OSet<T>->String {
