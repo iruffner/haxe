@@ -14,6 +14,8 @@ typedef JQXHR = {
 	@:optional var message: String;
 	@:optional var name: String;
 	@:optional var stack: String;
+	@:optional var responseText: String;
+	@:optional var responseXML: String;
 	@:optional var fail: JQXHR->String->Dynamic->JQXHR;
 	@:optional var setRequestHeader: String->String->Void;
 }
@@ -64,6 +66,13 @@ typedef UIPosition = {
 typedef UISize = {
 	height: Int,
 	width: Int
+}
+
+typedef Deferred = {
+	var resolve: Void->Void;
+	var reject: Void->Void;
+	var done: (Void->Void)->Void;
+	var fail: (Void->Void)->Void;
 }
 
 @:native("$.ui.keyCode")
@@ -402,6 +411,7 @@ extern class JQ implements ArrayAccess<Element> {
 	@:overload(function( events: String, ?callb: JQEvent->Dynamic -> Void ) : Void{})
 	@:overload(function( events: String, ?selector: String, ?callb: JQEvent->Dynamic -> Void) : Void{})
 	function on( events : String, callb : JQEvent -> Void ) : JQ;
+	function off( events : String, ?callb : JQEvent -> Void ) : JQ;
 
 
 	// Other
@@ -480,6 +490,11 @@ extern class JQ implements ArrayAccess<Element> {
 
 	@:overload(function<T>(deep: Bool, target: T, object1: T, ?object2: T, ?object3: T, ?object4: T): T{})
 	public static function extend<T>(target: T, object1: T, ?object2: T, ?object3: T, ?object4: T): T;
+
+	public static function Deferred(?beforeStart: Deferred->Void): Deferred;
+
+	@:overload(function(d1: Deferred, d2: Deferred, ?d3: Deferred, ?d4: Deferred, ?d5: Deferred): Deferred{})
+	public static function when(d1: Deferred): Deferred;
 
 	/**
 		Return the current JQ element (in a callback), similar to $(this) in JS.
