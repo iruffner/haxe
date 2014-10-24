@@ -10,6 +10,7 @@ using m3.jq.JQMenu;
 typedef MenuOption = {
 	var label: String;
 	@:optional var icon: String;
+	@:optional var iconJq: JQ;
 	var action: JQEvent->M3Menu->Void;
 }
 
@@ -18,13 +19,16 @@ typedef M3MenuOptions = {
 	@:optional var width: Int;
 	@:optional var close: Void->Void;
 	@:optional var classes: String;
+	@:optional var wrapLabelInAtag: Bool;
 }
 
 typedef M3MenuWidgetDef = {
 	var options: M3MenuOptions;
 	var _create: Void->Void;
 	var destroy: Void->Void;
-	var _closeOnDocumentClick: JQEvent->Bool;
+	// var _closeOnDocumentClick: JQEvent->Bool;
+
+	@:optional var _super: Dynamic;
 }
 
 @:native("$")
@@ -69,22 +73,24 @@ extern class M3Menu extends JQMenu {
 							if(menuOption.icon.isNotBlank()) "<span class='ui-icon " + menuOption.icon + "'></span>"; 
 							else "";
 						};
-						new JQ("<li><a href='#'>" + icon + menuOption.label + "</a></li>")
+						var label: String = {
+							if(self.options.wrapLabelInAtag) "<a>" + menuOption.label + "</a";
+							else menuOption.label;
+						}
+						var li = new JQ("<li>" + icon + label + "</li>")
 							.appendTo(selfElement)
 							.click(function(evt: JQEvent): Void {
+									if(self.options.wrapLabelInAtag) {evt.stopPropagation();}
 									menuOption.action(evt, selfElement);
 								});
+						if(menuOption.iconJq != null) {
+							li.prepend(menuOption.iconJq);
+						}
 					}
 
 					selfElement.on("contextmenu", function(evt: JQEvent): Bool { return false; });
 
-		        	cast (JQ.curNoWrap)._super('create');
-
-		        	// selfElement.hide();
-		        },
-
-		        _closeOnDocumentClick: function(evt: JQEvent): Bool {
-		        	return true;
+		        	self._super();
 		        },
 
 		        destroy: function() {

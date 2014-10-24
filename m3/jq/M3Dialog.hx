@@ -13,9 +13,13 @@ typedef M3DialogOptions = {
 	@:optional var buttons: Dynamic;
 	@:optional var close: Void->Void;
 	@:optional var position: Array<Float>;
+	@:optional var showMaximizer: Bool;
 	@:optional var showHelp: Bool;
 	@:optional var buildHelp: Void->Void;
 	@:optional var onMaxToggle: Void->Void;
+	@:optional var zIndex:Int;
+	@:optional var resizable: Bool;
+	@:optional var allowInteraction: JQEvent->Bool;
 }
 
 typedef M3DialogWidgetDef = {
@@ -27,6 +31,23 @@ typedef M3DialogWidgetDef = {
 	var restore: Void->Void;
 	var maximize: Void->Void;
 	var destroy: Void->Void;
+	var _allowInteraction: JQEvent->Bool;
+
+	@:optional var _super: Dynamic;
+}
+
+class M3DialogHelper {
+	public static function close(dlg: M3Dialog): Void {
+		dlg.m3dialog("close");
+	}
+
+	public static function open(dlg: M3Dialog): Void {
+		dlg.m3dialog("open");
+	}
+
+	public static function isOpen(dlg: M3Dialog): Bool {
+		return dlg.m3dialog("isOpen");
+	}
 }
 
 @:native("$")
@@ -85,14 +106,16 @@ extern class M3Dialog extends JQ {
 						}
 
 					}
-					self.maxIconWrapper = new JQ("<a href='#' class='ui-dialog-titlebar-close ui-corner-all' style='margin-right: 18px;' role='button'>");
-					var maxIcon: JQ = new JQ("<span class='ui-icon ui-icon-extlink'>maximize</span>");
-					hovers = hovers.add(self.maxIconWrapper);
-					self.maxIconWrapper.append(maxIcon);
-					closeBtn.before(self.maxIconWrapper);
-					self.maxIconWrapper.click(function(evt: JQEvent) {
-							self.maximize();
-					});
+					if(self.options.showMaximizer) {
+						self.maxIconWrapper = new JQ("<a href='#' class='ui-dialog-titlebar-close ui-corner-all' style='margin-right: 18px;' role='button'>");
+						var maxIcon: JQ = new JQ("<span class='ui-icon ui-icon-extlink'>maximize</span>");
+						hovers = hovers.add(self.maxIconWrapper);
+						self.maxIconWrapper.append(maxIcon);
+						closeBtn.before(self.maxIconWrapper);
+						self.maxIconWrapper.click(function(evt: JQEvent) {
+								self.maximize();
+						});
+					}
 
 					self.restoreIconWrapper = new JQ("<a href='#' class='ui-dialog-titlebar-close ui-corner-all' style='margin-right: 18px; display: none;' role='button'>");
 					var restoreIcon: JQ = new JQ("<span class='ui-icon ui-icon-newwin'>restore</span>");
@@ -111,6 +134,16 @@ extern class M3Dialog extends JQ {
 					);
 
 		        },
+
+		        _allowInteraction: function( event ): Bool {
+		        	var self: M3DialogWidgetDef = Widgets.getSelf();
+		        	var r: Bool = false;
+		        	if(self.options.allowInteraction != null) {
+		        		r =  !!self.options.allowInteraction(event);
+		        	}
+		        	return r || self._super( event );
+					
+				},
 
 		        restore: function() {
 		        	var self: M3DialogWidgetDef = Widgets.getSelf();

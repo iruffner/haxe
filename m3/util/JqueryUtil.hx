@@ -2,13 +2,14 @@ package m3.util;
 
 import m3.CrossMojo;
 import m3.jq.JQ;
-import m3.jq.JQDialog;
-import m3.jq.M3Dialog;
+// import m3.jq.JQDialog;
 
+using m3.jq.M3Dialog;
 using m3.helper.StringHelper;
 
 @:expose
 class JqueryUtil {
+
 	public static function isAttached(elem: JQ): Bool {
 		return elem.parents("body").length > 0;
 		// return JQ.contains(js.Lib.document.body, (Reflect.hasField(elem, "jquery") ? elem[0] : cast elem) );
@@ -48,6 +49,9 @@ class JqueryUtil {
 	    } else if(!dialog.is(':data(dialog)') ) {
 	        dialog.m3dialog(dlgOptions);
 	    }
+	    if(dialog.exists()) {
+	    	dialog.parents(".ui-dialog").addClass("dialog");
+	    }
 	    return dialog;
 	}
 
@@ -77,33 +81,35 @@ class JqueryUtil {
 	 * @param question:String The question to ask
 	 * @param action:Function The function to call if the user pressed YES.
 	 */
-	public static function confirm(title:String, question:String, action: Void->Void): Void {
-		var dlg = new JQDialog('<div id="confirm-dialog"></div>');
-		var content = new JQ('<div>' + question + '</div>');
-		dlg.append(content);
-		dlg.appendTo('body');
-
-		var dlgOptions: JQDialogOptions = {
+	public static function confirm(title:String, question:String, action: Void->Void, ?width: Dynamic = "auto", ?height: Int = 150): Void {
+		var dlgOptions: M3DialogOptions = {
 	       		modal: true, 
 	       		title: title, 
 	       		zIndex: 10000, 
 	       		autoOpen: true,
-	            width: 'auto',
+	            // width: 'auto',
 	            resizable: false,
-                    buttons: {
-                        Yes: function () {
-                            action();
-                            JQDialog.cur.dialog("close");
-                        },
-                        No: function () {
-                            JQDialog.cur.dialog("close");
-                        }
+	            width: width,
+	            height: height,
+                buttons: {
+                    Yes: function () {
+                        action();
+                        M3Dialog.cur.close();
                     },
-                    close: function (event, ui) {
-                        JQDialog.cur.remove();
+                    No: function () {
+                        M3Dialog.cur.close();
                     }
+                },
+                close: function () {
+                    M3Dialog.cur.remove();
+                }
 	    };
-		dlg.dialog(dlgOptions);
+		var dlg: M3Dialog = getOrCreateDialog("#confirm-dialog", dlgOptions);
+		var content = new JQ('<div style="text-align:left;">' + question + '</div>');
+		dlg.append(content);
+		if(!dlg.isOpen()) {
+            dlg.open();
+        }
 	}
 
 	/**
@@ -112,32 +118,34 @@ class JqueryUtil {
 	 * @param title:String The title of the dialog box
 	 * @param action:Function The function to call after the user closes the dialog
 	 */
-	public static function alert(statement:String, title:String="Alert", ?action:Void->Void): Void {
-		var dlg = new JQDialog('<div id="alert-dialog"></div>');
-		var content = new JQ('<div>' + statement + '</div>');
-		dlg.append(content);
-		dlg.appendTo('body');
-
-		var dlgOptions: JQDialogOptions = {
+	public static function alert(statement:String, title:String="Alert", ?action:Void->Void, ?width: Dynamic = "auto", ?height: Int = 175): Void {
+		var dlgOptions: M3DialogOptions = {
 	       		modal: true, 
 	       		title: title, 
 	       		zIndex: 10000, 
 	       		autoOpen: true,
-	            width: 'auto',
+	            // width: 'auto',
 	            resizable: false,
-                    buttons: {
-                        OK: function () {
-                            JQDialog.cur.dialog("close");
-                        }
-                    },
-                    close: function (event, ui) {
-                    	if (action != null) {
-                    		action();
-                    	}
-                        JQDialog.cur.remove();
+                width: width,
+	            height: height,
+	            buttons: {
+                    OK: function () {
+                        M3Dialog.cur.close();
                     }
+                },
+                close: function () {
+                	if (action != null) {
+                		action();
+                	}
+                    M3Dialog.cur.remove();
+                }
 	    };
-		dlg.dialog(dlgOptions);
+		var dlg: M3Dialog = getOrCreateDialog("#alert-dialog", dlgOptions);
+		var content = new JQ('<div style="text-align:left;">' + statement + '</div>');
+		dlg.append(content);
+		if(!dlg.isOpen()) {
+            dlg.open();
+        }
 	}
 
 	public static function getWindowWidth(): Int {
@@ -174,3 +182,4 @@ class JqueryUtil {
 
 
 }
+

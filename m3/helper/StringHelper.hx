@@ -65,7 +65,7 @@ class StringHelper {
 		return !isBlank(str);
 	}
 
-    public static function indentLeft( baseString: String, chars: Int, padChar: String ): String {
+public static function indentLeft( baseString: String, chars: Int, padChar: String ): String {
         if(baseString == null) baseString = "";
         var padding: String = "";
         for(i_ in 0...chars) {
@@ -128,6 +128,16 @@ class StringHelper {
          else {
             for(s_ in 0...sarray.length) {
                 if(contains(baseString, sarray[s_])) return true;
+            }
+        }
+        return false;
+    }
+
+    public static function startsWithAny(baseString: String, sarray: Array<String>): Bool {
+        if(isBlank(baseString)) return false;
+        else {
+            for(s_ in 0...sarray.length) {
+                if(baseString.substr(0, sarray[s_].length) == sarray[s_]) return true;
             }
         }
         return false;

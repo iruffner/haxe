@@ -69,7 +69,7 @@ extern class ComboBox extends JQ {
 	                        haxe.Timer.delay(function() {
 	                            input.tooltip( "close" ).attr( "title", "" );
 	                        }, 2500 );
-	                        input.data( "autocomplete" ).term = "";
+	                        input.data( "ui-autocomplete" ).term = "";
 	                        return false;
 	                    }
 	                    return null;
@@ -128,7 +128,7 @@ extern class ComboBox extends JQ {
 	                    input.val(label); 
 	                });
 	 
-	                input.data( "autocomplete" )._renderItem = function( ul, item ) {
+	                input.data( "ui-autocomplete" )._renderItem = function( ul, item ) {
 	                    return new JQ( "<li>" )
 	                        .data( "item.autocomplete", item )
 	                        .append( "<a>" + item.label + "</a>" )

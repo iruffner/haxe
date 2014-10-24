@@ -210,9 +210,21 @@ using Lambda;
 		var newA = sortedItems.delegate().get("a");
 
 		DeepCompare.assert(d, newA);
-
 	}
 
+	@test
+	function testAddAndRemoveListeners() {
+		var menuItems = new ObservableSet<MenuItem>(M.fn1(it.uid));
+
+		var listener = function(m:MenuItem, event_type:EventType):Void {
+		};
+
+		menuItems.listen(listener);
+		Assert.areEqual(menuItems._eventManager.listenerCount(), 1);
+
+		menuItems.removeListener(listener);
+		Assert.areEqual(menuItems._eventManager.listenerCount(), 0);
+	}
 }
 
 typedef MenuItem = {

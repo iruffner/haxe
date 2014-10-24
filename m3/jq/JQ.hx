@@ -16,8 +16,16 @@ typedef JQXHR = {
 	@:optional var stack: String;
 	@:optional var responseText: String;
 	@:optional var responseXML: String;
+
+	@:overload(function(fcn:Dynamic->Void):JQXHR{})
+	@:optional var done: (Dynamic->String->JQXHR->Void)->JQXHR;
+	
+	@:overload(function(fcn:Dynamic->Void):JQXHR{})
 	@:optional var fail: JQXHR->String->Dynamic->JQXHR;
+	
+	@:optional var error: (Dynamic->Void)->JQXHR;//deprecated
 	@:optional var setRequestHeader: String->String->Void;
+	@:optional var getResponseHeader: String->String;
 }
 
 typedef AjaxOptions = {
@@ -47,6 +55,10 @@ typedef AjaxOptions = {
 	@:optional var processData:Bool;
 	@:optional var timeout:Dynamic;
 	@:optional var headers: Dynamic;
+}
+
+extern class Selector<T: (JQ,String,Element)> {
+
 }
 
 // typedef PositionOpts = {
@@ -114,14 +126,17 @@ extern class JQ implements ArrayAccess<Element> {
 	@:overload(function(j:DOMWindow):Void{})
 	@:overload(function(j:Element):Void{})
 	@:overload(function(selector:String, content:JQ):Void{})
+	@:overload(function(selector:String, content:Element):Void{})
 	function new( html : String ) : Void;
 
 	// attributes
-	@:overload(function(clazz: String,?duration: Int):JQ{})
-	function addClass( clazz: String ): JQ;
-	@:overload(function(?clazz: String,?duration: Int):JQ{})
+	@:overload(function(className: String,?duration: Int):JQ{})
+	function addClass( className: String ): JQ;
+	@:overload(function(?className: String,?duration: Int):JQ{})
 	function removeClass( ?className : String ) : JQ;
 	function hasClass( className : String ) : Bool;
+	@:overload(function(className: String,?duration: Int):JQ{})
+	@:overload(function(className: String,?duration: Int,?easing: String):JQ{})
 	function toggleClass( className : String, ?addRemove : Bool ) : JQ;
 
 	@:overload(function(name:String,value:String):JQ{})
@@ -309,6 +324,8 @@ extern class JQ implements ArrayAccess<Element> {
 
 	function delay( duration : Int, ?queueName : String ) : JQ;
 
+	@:overload(function(effect:String, ?duration:Int,?easing:String,?call:Void->Void) : JQ{})
+	@:overload(function(effect:String, ?opts:Dynamic, ?duration:Int,?call:Void->Void) : JQ{})
 	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : JQ{})
 	function hide( ?duration : Int, ?call : Void -> Void ) : JQ;
 
@@ -324,6 +341,7 @@ extern class JQ implements ArrayAccess<Element> {
 	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : JQ{})
 	function fadeToggle( ?duration : Int, ?call : Void -> Void ) : JQ;
 
+	@:overload(function(effect:String, ?duration:Int,?easing:String,?call:Void->Void) : JQ{})
 	@:overload(function(?duration:Int,?easing:String,?call:Void->Void) : JQ{})
 	function show( ?duration : Int, ?call : Void -> Void ) : JQ;
 
@@ -449,11 +467,15 @@ extern class JQ implements ArrayAccess<Element> {
 	function helpToolTips(): JQ;
 	
 	//JQUI
+	@:overload(function<T>(cmd : String):T{})
+	@:overload(function<T>(cmd : String, arg: Dynamic):T{})
+	@:overload(function(cmd:String, opt:String, newVal:Dynamic):JQ{})
 	function accordion(options:Dynamic):JQ;
 
 	@:overload(function(arg1:String, arg2:String):JQ{})
+	@:overload(function(arg1:String, arg2:String, arg3:String):JQ{})
 	function autocomplete(opts:Dynamic):JQ;
-	function button(?opts:Dynamic):JQ;
+	function button(?arg1:Dynamic, ?arg2:Dynamic, ?arg3:Dynamic):Dynamic;
 	// function menu(opts: Dynamic): JQ;
 	function slider(options: Dynamic): JQ;
 
@@ -471,15 +493,23 @@ extern class JQ implements ArrayAccess<Element> {
 	@:overload(function(): Int{})
 	function zIndex(zIndex: Int): JQ;
 
+	@:overload(function(clazzOut: String, clazzIn: String,?duration: Int):JQ{})
+	function switchClass( clazzOut: String, clazzIn: String ): JQ;
+
+	@:overload(function(effect: String, options: Dynamic, duration: Int):JQ{})
+	function effect( effect: String, duration: Int ): JQ;
 
 	//statically available functions
 	public static function isNumeric(val:Dynamic):Bool;
 	public static function isArray(val:Dynamic):Bool;
 	public static function trim(str:String):String;
 
-	public static function ajax(ajaxOptions:AjaxOptions): JQXHR;
+	@:overload(function(url : String): JQXHR{})
+	@:overload(function(url : String, ajaxOptions: AjaxOptions): JQXHR{})
+	public static function ajax(ajaxOptions: AjaxOptions): JQXHR;
 	public static function getJSON(url:String, ?data:Dynamic, ?success:Dynamic->Dynamic->Dynamic->Void): JQXHR;
 	public static function getScript(url:String, ?success:Dynamic->String->JQXHR->Void): JQXHR;
+	// public static function get(url:String, ?data: Dynamic, ?success:Dynamic->String->JQXHR->Void, ?dataType: String): JQXHR;
 
 	@:overload(function(parent: JQ, child: JQ): Bool{})
 	@:overload(function(parent: Element, child: JQ): Bool{})

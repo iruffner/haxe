@@ -27,7 +27,7 @@ Upon listening do you get a bunch of adds?
 @:rtti
 interface OSet<T> {
 	function identifier(): T->String;
-	function listen(l: T->EventType->Void): Void;
+	function listen(l: T->EventType->Void, ?autoFire: Bool): Void;
 	function removeListener(l: T->EventType->Void): Void;
 	function iterator(): Iterator<T>;
 	function delegate(): Map<String,T>;
@@ -44,12 +44,13 @@ class EventManager<T> {
 		_set = set;
 		_listeners = [];
 	}
-	public function add(l: T->EventType->Void) {
-		_set.iter(
-			M.fn1(
-				l(it, EventType.Add)
-			)
-		);	
+	public function add(l: T->EventType->Void, autoFire: Bool) {
+		if(autoFire)
+			_set.iter(
+				M.fn1(
+					l(it, EventType.Add)
+				)
+			);	
 		_listeners.push(l);		
 	}
 	public function remove(l: T->EventType->Void) {
@@ -73,18 +74,21 @@ class EventManager<T> {
 
 class EventType {
 
-	public static var Add = new EventType("Add", true, false);
-	public static var Update = new EventType("Update", false, true);
-	public static var Delete = new EventType("Delete", false, false);
+	public static var Add = new EventType("Add", true, false, false);
+	public static var Update = new EventType("Update", false, true, false);
+	public static var Delete = new EventType("Delete", false, false, false);
+	public static var Clear = new EventType("Clear", false, false, true);
 
 	var _name: String;
 	var _add: Bool;
 	var _update: Bool;
+	var _clear: Bool;
 
-	function new(name: String, add: Bool, update: Bool) {		
+	function new(name: String, add: Bool, update: Bool, clear: Bool) {		
 		_name = name;
 		_add = add;
 		_update = update;
+		_clear = clear;
 	}
 
 	public function name() {
@@ -104,7 +108,11 @@ class EventType {
 	}
 
 	public function isDelete() {
-		return !(_add || _update);
+		return !(_add || _update || _clear);
+	}
+
+	public function isClear() {
+		return _clear;
 	}
 }
 
@@ -118,8 +126,8 @@ class AbstractSet<T> implements OSet<T> {
 		_eventManager = new EventManager(this);		
 	}
 
-	public function listen(l: T->EventType->Void): Void {
-		_eventManager.add(l);
+	public function listen(l: T->EventType->Void, autoFire: Bool = true): Void {
+		_eventManager.add(l, autoFire);
 	}
 
 	public function removeListener(l: T->EventType->Void): Void {
@@ -223,10 +231,8 @@ class ObservableSet<T> extends AbstractSet<T> {
 	}
 
 	public function clear(): Void {
-		var iter: Iterator<T> = iterator();
-		while(iter.hasNext()) {
-			delete(iter.next());
-		}
+		_delegate = new SizedMap<T>();
+		fire(null, EventType.Clear);
 	}
 
 	public function size(): Int {
@@ -263,16 +269,21 @@ class MappedSet<T,U> extends AbstractSet<U> {
 
 	private function _sourceListener(t: T, type:EventType) {
 		// m3.log.Logga.DEFAULT.debug("MappedSet (" + getVisualId() + ") source (" + source.getVisualId() + ") change | " + type.name() + " | " + source.identifier()(t));
-		var key = _source.identifier()(t);
-		var mappedValue;
-		if ( type.isAdd() || (_remapOnUpdate && type.isUpdate()) ) {
-			mappedValue = _mapper(t);
-			_mappedSet.set(key, mappedValue);
-		} else if ( type.isUpdate() ) {
-			mappedValue = _mappedSet.get(key);
+		var mappedValue: U;
+		if(type.isClear()) {
+			_mappedSet = new Map();
+			mappedValue = null;
 		} else {
-			mappedValue = _mappedSet.get(key);
-			_mappedSet.remove(key);
+			var key = _source.identifier()(t);
+			if ( type.isAdd() || (_remapOnUpdate && type.isUpdate()) ) {
+				mappedValue = _mapper(t);
+				_mappedSet.set(key, mappedValue);
+			} else if ( type.isUpdate() ) {
+				mappedValue = _mappedSet.get(key);
+			} else {
+				mappedValue = _mappedSet.get(key);
+				_mappedSet.remove(key);
+			}
 		}
 		fire(mappedValue, type);
 		_mapListeners.iter(
@@ -344,6 +355,9 @@ class FilteredSet<T> extends AbstractSet<T> {
 					_filteredSet.remove(key);
 					fire(t, type);
 				}
+			} else if (type.isClear() ) {
+				_filteredSet = new Map();
+				fire(t, type);
 			}
 		});
 
@@ -399,12 +413,14 @@ class GroupedSet<T> extends AbstractSet<OSet<T>> {
 	var _groupingFn: T->String;
 	var _groupedSets: Map<String,ObservableSet<T>>;
 	var _identityToGrouping: Map<String,String>;
+	var _groupingKeys: ObservableSet<String>;
 
 	public function new(source: OSet<T>, groupingFn: T->String) {
 		super();
 		_source = source;
 		_groupingFn = groupingFn;
 		_groupedSets = new Map();
+		_groupingKeys = new ObservableSet<String>(function(s: String) { return s; });
 		_identityToGrouping = new Map();
 		source.listen(function(t: T, type: EventType) {
 			var groupingKey = groupingFn(t);
@@ -431,6 +447,7 @@ class GroupedSet<T> extends AbstractSet<OSet<T>> {
 				// if the grouped set is empty delete it
 				if (groupedSet.isEmpty() && deleteEmptySet){
 					_groupedSets.remove(key);
+					_groupingKeys.delete(key);
 					fire(groupedSet, EventType.Delete);
 				} else {
 					fire(groupedSet, EventType.Update);
@@ -466,7 +483,8 @@ class GroupedSet<T> extends AbstractSet<OSet<T>> {
 		if (_groupedSets.get(key) == null) {
 			var groupedSet = new ObservableSet<T>(_source.identifier());
 			groupedSet.visualId = key;
-			_groupedSets.set(key, groupedSet);		
+			_groupedSets.set(key, groupedSet);
+			_groupingKeys.add(key);		
 		}
 		return _groupedSets.get(key);
 	}
@@ -492,6 +510,18 @@ class GroupedSet<T> extends AbstractSet<OSet<T>> {
 	
 	public override function delegate(): Map<String,OSet<T>> {
 		return cast _groupedSets;
+	}
+
+	public function keys(): ObservableSet<String> {
+		return _groupingKeys;
+	}
+
+	public function keyListen(l: String->EventType->Void, autoFire: Bool = true): Void {
+		_groupingKeys.listen(l, autoFire);
+	}
+
+	public function removeKeyListen(l: String->EventType->Void, autoFire: Bool = true): Void {
+		_groupingKeys.removeListener(l);
 	}
 }
 
@@ -535,8 +565,11 @@ class SortedSet<T> extends AbstractSet<T> {
 			} else if ( type.isUpdate() ) {
 				delete(t);
 				add(t);
-			} else {
+			} else if (type.isAdd() ){
 				add(t);
+			} else if (type.isClear() ) {
+				_sorted = new Array<T>();
+				fire(t, type);
 			}
 		});
 

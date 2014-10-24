@@ -156,7 +156,7 @@ class StringFormatHelper {
 	    }
 	}
 
-	private static function toFormattedPhone(num:String){ 
+	public static function toFormattedPhone(num:String){ 
 	    var formatted:String;
 	    /*
 	   * 7181238748 to 1(718)123-8748
@@ -222,7 +222,7 @@ class StringFormatHelper {
 	// }
 
 	public static function dateYYYY_MM_DD(d: Date): String {
-		return d.getFullYear() + "-" +  Std.string((d.getMonth() + 1)).padLeft(2, "0") + "-" + d.getDate();
+		return d.getFullYear() + "-" +  Std.string((d.getMonth() + 1)).padLeft(2, "0") + "-" + StringHelper.padLeft(Std.string(d.getDate()), 2, "0");
 	}
 
 	public static function datePretty(d: Date): String {
@@ -231,6 +231,21 @@ class StringFormatHelper {
 
 	public static function dateLongPretty(d: Date): String {
 		return DAYS_SUNDAYFIRST[d.getDay()] + ", " + MONTHS[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
+	}
+
+	public static function dateTimeMM_DD(d: Date): String {
+		return Std.string((d.getMonth() + 1)).padLeft(2, "0") + "-" + StringHelper.padLeft(Std.string(d.getDate()), 2, "0") + " " + 
+			d.getHours() + ":" + StringHelper.padLeft(Std.string(d.getMinutes()), 2, "0") + ":" + StringHelper.padLeft(Std.string(d.getSeconds()),2,"0");
+	}
+
+	public static function dateTimeYYYY_MM_DD(d: Date): String {
+		return d.getFullYear() + "-" +  Std.string((d.getMonth() + 1)).padLeft(2, "0") + "-" + StringHelper.padLeft(Std.string(d.getDate()), 2, "0") + " " + 
+			d.getHours() + ":" + StringHelper.padLeft(Std.string(d.getMinutes()), 2, "0") + ":" + StringHelper.padLeft(Std.string(d.getSeconds()),2,"0");
+	}
+
+	public static function dateTimePretty(d: Date): String {
+		return MONTHS[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear() + " " +
+			d.getHours() + ":" + StringHelper.padLeft(Std.string(d.getMinutes()), 2, "0") + ":" + StringHelper.padLeft(Std.string(d.getSeconds()),2,"0");
 	}
 }
 

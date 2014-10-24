@@ -2,10 +2,7 @@ package m3.widget;
 
 import js.html.Element;
 
-import m3.api.FB;
-import m3.api.FBResponse;
 import m3.jq.JQ;
-import m3.jq.JQMobile;
 import m3.observable.OSet;
 import m3.widget.Widgets;
 

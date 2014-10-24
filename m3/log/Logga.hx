@@ -23,6 +23,16 @@ class Logga {
         this.loggerLevel = logLevel;
     }
 
+    public function doOverrides() {
+        overrideConsoleError();
+        overrideConsoleTrace();
+        overrideConsoleLog();
+        untyped window.onerror = function(message: String, url: String, lineNumber: Int): Void {
+            LOGGER.error("WindowError | " + url + " (" + lineNumber + ") | " + message);
+            return false;
+        }
+    }
+
     private function _getLogger(): Void {
         console = js.Browser.window.console;
         
@@ -32,10 +42,13 @@ class Logga {
     public function overrideConsoleError() {
         if(!initialized) _getLogger();
         if(this.console != null) {
-            preservedConsoleError = this.console.error;
-            untyped this.console.error = function() {
-                // preservedConsoleError.apply(console, arguments);
-                untyped this.error(__js__("arguments")[0]);
+            try {
+                preservedConsoleError = this.console.error;
+                untyped this.console.error = function() {
+                    untyped this.error(__js__("arguments")[0]);
+                }
+            } catch (err: Dynamic) {
+                warn("Could not override console.error");
             }
         }
     }
@@ -43,11 +56,13 @@ class Logga {
     public function overrideConsoleTrace() {
         if(!initialized) _getLogger();
         if(this.console != null) {
-            preservedConsoleTrace = this.console.trace;
-            untyped this.console.trace = function() {
-                // preservedConsoleError.apply(console, arguments);
-                preservedConsoleTrace.apply(console);
-                // untyped this.error(__js__("arguments")[0]);
+            try {
+                preservedConsoleTrace = this.console.trace;
+                untyped this.console.trace = function() {
+                    preservedConsoleTrace.apply(console);
+                }
+            } catch (err: Dynamic) {
+                warn("Could not override console.trace");
             }
         }
     }
@@ -55,10 +70,14 @@ class Logga {
     public function overrideConsoleLog() {
         if(!initialized) _getLogger();
         if(this.console != null) {
-            this.console.log("prime console.log");
-            preservedConsoleLog = this.console.log;
-            untyped this.console.log = function() {
-                untyped this.warn(__js__("arguments")[0]);
+            try {
+                this.console.log("prime console.log");
+                preservedConsoleLog = this.console.log;
+                untyped this.console.log = function() {
+                    untyped this.warn(__js__("arguments")[0]);
+                }
+            } catch (err: Dynamic) {
+                warn("Could not override console.log");
             }
         }
     }
@@ -93,6 +112,8 @@ class Logga {
         if(statement.isBlank()) {
             this.console.error("empty log statement");  
             this.console.trace();
+        // } else if (statement.contains("Endpoint saved")) {
+        //     this.console.trace();
         }
 
         if(statementPrefix.isNotBlank()) {

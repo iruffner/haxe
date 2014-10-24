@@ -30,13 +30,21 @@ using Lambda;
 */
 
 
-
-
 class Serializer {
-	
-	var _handlersMap: Map<String,TypeHandler>;
 
-	public function new() {
+	@:isVar public static var instance(get,null): Serializer;
+    private static function get_instance(): Serializer {
+        if (instance == null) {
+            instance = new Serializer();
+        }
+        return instance;
+    }
+
+	var _handlersMap: Map<String,TypeHandler>;
+	var _defaultToStrict: Bool;
+
+	private function new(defaultToStrict: Bool = true) {
+		_defaultToStrict = defaultToStrict;
 		_handlersMap = new Map();
 		addHandlerViaName("Array<Dynamic>", new DynamicArrayHandler());
 	}
@@ -50,19 +58,22 @@ class Serializer {
 		_handlersMap.set(typename, handler);
 	}
 
-	public function load<T>(fromJson: Dynamic, instance: T, strict: Bool = true): JsonReader<T> {		
+	public function load<T>(fromJson: Dynamic, instance: T, ?strict: Bool): JsonReader<T> {
+		if(strict == null) strict = _defaultToStrict;
 		var reader: JsonReader<T> = cast createReader(strict);
 		reader.read(fromJson, Type.getClass(instance), instance);
 		return reader;
 	}
 
-	public function fromJsonX<T>(fromJson: Dynamic, clazz: Class<T>, strict: Bool = true): T {		
+	public function fromJsonX<T>(fromJson: Dynamic, clazz: Class<T>, ?strict: Bool): T {
+		if(strict == null) strict = _defaultToStrict;
 		var reader: JsonReader<T> = cast createReader(strict);
 		reader.read(fromJson, clazz);
 		return reader.instance;
 	}
 
-	public function fromJson<T>(fromJson: Dynamic, clazz: Class<T>, strict: Bool = true): JsonReader<T> {		
+	public function fromJson<T>(fromJson: Dynamic, clazz: Class<T>, ?strict: Bool): JsonReader<T> {
+		if(strict == null) strict = _defaultToStrict;
 		var reader: JsonReader<T> = cast createReader(strict);
 		reader.read(fromJson, clazz);
 		return reader;
@@ -353,6 +364,8 @@ class DateHandler implements TypeHandler {
     }
 
     public function read(fromJson: Dynamic, reader: JsonReader<Dynamic>, ?instance: Dynamic): Dynamic {
+        // Lop off the milliseconds, if it exists
+        fromJson = fromJson.split(".")[0];
         return Date.fromString(fromJson);
     }
 

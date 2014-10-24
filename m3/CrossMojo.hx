@@ -18,9 +18,9 @@ class CrossMojo {
 		return untyped __js__('window.console');
 	}
 
-	public static inline function confirm():String->Bool {
-		return untyped __js__('confirm');
-	}
+	// public static inline function confirm():String->Bool {
+	// 	return untyped __js__('confirm');
+	// }
 
 	public static function pushState(data:Dynamic, title:String, url:String):Void {
 		untyped __js__("History.pushState(data, title, url)");

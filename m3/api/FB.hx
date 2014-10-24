@@ -1,5 +1,7 @@
 package m3.api;
 
+import m3.api.FBResponse;
+
 @:native("FB")
 extern class FB {
 	//CORE METHODS
@@ -7,13 +9,13 @@ extern class FB {
 	@:overload(function(path: String, method: String, params: Dynamic, cb: FBResponse->Void):Void{})
 	public static function api(path: String, cb: FBResponse->Void): Void;
 	public static function init(opts: FBInitOptions): Void;
-	public static function ui(params: Dynamic, cb: Void->Void): Void;
+	public static function ui(params: Dynamic, cb: Dynamic->Void): Void;
 
 	//AUTH METHODS
-	public static function getAuthResponse(): Void;
-	public static function getLoginStatus(cb: FBResponse->Void, force: Bool): Void;
-	public static function login(cb: FBResponse->Void, opts: {scope: String}): Void;
-	public static function logout(): Void;
+	public static function getAuthResponse(): AuthResponse; //Synchronous
+	public static function getLoginStatus(cb: FBLoginResponse->Void, force: Bool): Void;
+	public static function login(cb: FBLoginResponse->Void, opts: FBLoginOpts): Void;
+	public static function logout(cb: FBResponse->Void): Void;
 }
 
 @:native("FB.Event")
@@ -25,6 +27,12 @@ extern class FBEvent {
 @:native("FB.XFBML")
 extern class XFBML {
 	public static function parse(): Void;
+}
+
+typedef FBLoginOpts = {
+	@:optional var scope: String;
+	@:optional var auth_type: String;
+	@:optional var auth_nonce: String;
 }
 
 typedef FBInitOptions = {

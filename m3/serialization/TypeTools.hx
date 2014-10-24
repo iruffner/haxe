@@ -7,11 +7,19 @@ import m3.exception.Exception;
 using Lambda;
 
 class TypeTools {
-	public static function classname<T>(clazz: Class<T>) {
+	public static function classname<T>(clazz: Class<T>):String {
 		try {
 			return Type.getClassName(clazz);
 		} catch (err:Dynamic) {
-			// ui.AgentUi.LOGGER.error(err);
+			throw new Exception(Std.string(err));
+		}
+	}
+	public static function shortClassName<T>(clazz: Class<T>):String {
+		try {
+	        var className = Type.getClassName(clazz);
+	        var parts = className.split(".");
+	        return parts[parts.length-1];
+		} catch (err:Dynamic) {
 			throw new Exception(Std.string(err));
 		}
 	}

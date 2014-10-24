@@ -40,6 +40,22 @@ class OSetHelper {
         return result;
     }
 
+    public static function getElementComplex2<T>(oset: OSet<T>, criteriaFunc:T->Bool): T {
+        if(oset == null) return null;
+        if(criteriaFunc == null) { return null; }
+
+        var result: T = null;
+        var iter: Iterator<T> = oset.iterator();
+        while(iter.hasNext()) {
+            var comparisonT: T = iter.next();
+            if (criteriaFunc(comparisonT)) {
+                result = comparisonT;
+                break;
+            }
+        }
+        return result;
+    }
+
     // public static function getElementComplexInSubArray<T>(array:Array<T>, value:Dynamic, subArrayProp:String, ?startingIndex:Int=0):T {
     //     if(array == null) return null;
     //     var result:T = null;

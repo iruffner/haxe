@@ -63,4 +63,8 @@ class Exception {
 class AjaxException extends Exception {
 	public var statusCode: Int;
 
+	public function new(?message: String, ?cause: Exception, ?statusCode: Int) {
+		this.statusCode = statusCode;
+		super(message, cause);
+	}
 }

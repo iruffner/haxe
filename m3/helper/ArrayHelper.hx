@@ -11,6 +11,11 @@ typedef ArrayComparison = {
 // this is exposed for BI
 @:expose
 class ArrayHelper {
+
+    private static function __init__(): Void {
+        untyped __js__("if(!Array.indexOf){Array.prototype.indexOf = function(obj){for(var i=0; i<this.length; i++){if(this[i]==obj){return i;}}return -1;}}");
+    }
+
     public static function indexOf<T>(array:Array<T>, t:T):Int {
         if(array == null) return -1;
         var index = -1;

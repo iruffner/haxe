@@ -2,10 +2,17 @@ package m3.util;
 
 import haxe.Int64;
 
-class UidGenerator {
-	
-    private static var chars: String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabsdefghijklmnopqrstuvwxyz0123456789";
-	private static var nums: String = "0123456789";
+class UidGenerator {	
+    @:isVar private static var chars(get,null): String;
+    @:isVar private static var nums(get,null): String;
+
+    private static function get_chars():String {
+        return "ABCDEFGHIJKLMNOPQRSTUVWXYZabsdefghijklmnopqrstuvwxyz0123456789";
+    }
+
+    private static function get_nums():String {
+        return "0123456789";
+    }
 
 	public static function create(length: Int=20): String {
     	var str = new Array<String>();
