@@ -11,15 +11,15 @@ class LongPollingRequest extends BaseRequest {
 	private var running: Bool = true;
 	private var delayNextPoll: Bool = false;
 	private var channel:String;
-	private var baseUrl:String;
+	private var urlBase:String;
 
 	public var timeout:Int = 30000;
 
 	public function new(channel:String,
 		                successFcn: Dynamic->Void, ?errorFcn: AjaxException->Void, 
-		                ?ajaxOpts:AjaxOptions, ?baseUrl:String) {
+		                ?ajaxOpts:AjaxOptions, ?urlBase:String) {
 		this.channel = channel;
-		this.baseUrl = (baseUrl == null) ? "/api/channel/poll?channel=" + channel : baseUrl;
+		this.urlBase = (urlBase == null) ? "/api/channel/poll?channel=" + channel : urlBase;
 
 		baseOpts = {
 	        complete: function(jqXHR:JQXHR, textStatus:String): Void {
@@ -90,8 +90,8 @@ class LongPollingRequest extends BaseRequest {
 	}
 
 	private function getUrl():String {
-		var delimiter = this.baseUrl.indexOf("?") == -1 ? "?" : "&";
-		return  this.baseUrl + delimiter + "timeoutMillis=" + Std.string(this.timeout);
+		var delimiter = this.urlBase.indexOf("?") == -1 ? "?" : "&";
+		return this.urlBase + delimiter + "timeoutMillis=" + Std.string(this.timeout);
 	}
 
 	private function poll(): Void {

@@ -9,6 +9,9 @@ import m3.log.Logga;
 using m3.helper.StringHelper;
 
 class BaseRequest {
+
+	public static var baseUrl:String = "";
+
 	private var requestData:String;
 	private var onSuccess: Dynamic->Void;
 	private var onError: AjaxException->Void;
@@ -20,7 +23,7 @@ class BaseRequest {
 	public function new(requestData: String, url:String, ?successFcn: Dynamic->Void, ?errorFcn: AjaxException->Void,
 		                                     ?accessDeniedFcn: Void->Void) {
 		this.requestData = requestData;
-		this._url = url;
+		this._url        = BaseRequest.baseUrl + url;
 		this.onSuccess   = successFcn;
 		this.onError     = errorFcn;
 		this.onAccessDenied = accessDeniedFcn;
