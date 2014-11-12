@@ -5,11 +5,6 @@ import js.html.Element;
 import m3.exception.Exception;
 import m3.jq.JQ;
 import m3.widget.Widgets;
-import ui.event.EM;
-
-import ui.model.MModel;
-import ui.model.DeviceReport;
-import ui.widget.StatusComp;
 
 using m3.helper.StringFormatHelper;
 using m3.helper.StringHelper;

@@ -3,31 +3,37 @@ package m3.forms;
 import js.html.Element;
 
 import m3.exception.Exception;
+import m3.forms.FormPlugin.IdentityFP;
+import m3.forms.inputs.Select;
 import m3.jq.JQ;
 import m3.widget.Widgets;
 
-using m3.helper.StringFormatHelper;
 using m3.forms.inputs.FormInput;
 using m3.forms.inputs.TextInput;
 
-enum InputType {
-	SELECT;
-	TEXT;
-	COMBOBOX;
+class InputType {
+	public static var SELECT: String = "SELECT";
+	public static var TEXT: String = "TEXT";
+	public static var COMBOBOX: String = "COMBOBOX";
 }
 
 typedef FormItem = {
 	var name: String;
 	@:optional var label: String;
-	var type: InputType;
-	@:optional var value: Dynamic;
+	var type: String;
+	@:optional var value: Dynamic;// either a String or Array<String>
 	@:optional var required: Bool;
 	@:optional var validate: String->Bool;
+	@:optional var options: Dynamic;// Array<Array<String>> or a function returning Array<Array<String>>
 }
 
 typedef FormBuilderOptions = {
 	@:optional var title: String;
 	var formItems: Array<FormItem>;
+	@:optional var onSubmit: Void->Void;
+	@:optional var onError: Void->Void;
+	@:optional var onCancel: Void->Void;
+	var formPlugin: FormPlugin;
 }
 
 typedef FormBuilderWidgetDef = {
@@ -36,7 +42,6 @@ typedef FormBuilderWidgetDef = {
 	@:optional var _formInputs: Array<FormInput>;
 	var _create: Void->Void;
 	var destroy: Void->Void;
-
 }
 
 class FormBuilderHelper {
@@ -64,12 +69,16 @@ extern class FormBuilder extends JQ {
 
 				options: {
 					title: "",
-					formItems: null
+					formItems: null,
+					onSubmit: JQ.noop,
+					formPlugin: new IdentityFP()
 				},
 
 				_create: function(): Void {
 		        	var self: FormBuilderWidgetDef = Widgets.getSelf();
 					var selfElement: JQ = Widgets.getSelfElement();
+
+					self.options = self.options.formPlugin.preprocessForm(self.options);
 
 		        	if(!selfElement.is("div")) {
 		        		throw new Exception("Root of FormBuilder must be a div element");
@@ -87,6 +96,14 @@ extern class FormBuilder extends JQ {
 		        				var fi: TextInput = new TextInput("<div></div>")
 		        					.appendTo(form)
 		        					.textInput({formItem: formItem});
+		        			case InputType.SELECT: 
+		        				var fi: Select = new Select("<div></div>")
+		        					.appendTo(form)
+		        					.selectComp({formItem: formItem});
+		        			// case InputType.COMBOBOX: 
+		        			// 	var fi: Select = new Select("<div></div>")
+		        			// 		.appendTo(form)
+		        			// 		.selectComp({formItem: formItem});
 		        			case _:
 
 		        		}

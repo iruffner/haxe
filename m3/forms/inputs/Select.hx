@@ -1,24 +1,22 @@
-package ui.widgets.qtype;
+package m3.forms.inputs;
 
-import js.html.VideoElement;
-
+import js.html.Element;
 import m3.jq.JQ;
+import m3.util.UidGenerator;
 import m3.widget.Widgets;
 
 import m3.exception.Exception;
+import m3.exception.ValidationException;
 import m3.log.Logga;
 
-import ui.exception.ValidationException;
-
-import ui.model.BModel;
-import ui.pages.Pages;
-import ui.widgets.targets.QuestionComp.QuestionCompOptions;
 
 using m3.helper.StringHelper;
 using m3.helper.ArrayHelper;
+using m3.forms.inputs.FormInput;
+using m3.forms.FormBuilder;
 
 typedef SelectWidgetDef = {
-	@:optional var options: QuestionCompOptions;
+	@:optional var options: FormInputOptions;
 	var _create: Void->Void;
 	var result: Void->String;
 	var destroy: Void->Void;
@@ -34,10 +32,14 @@ class SelectHelper {
 
 @:native("$")
 extern class Select extends JQ {
-	@:overload(function(cmd : String):String{})
-	@:overload(function(cmd : String, arg: Dynamic):Dynamic{})
-	@:overload(function(cmd:String, opt:String, newVal:Dynamic):JQ{})
-	function selectComp(opts: QuestionCompOptions): Select;
+	@:overload(function<T>(cmd : String):T{})
+	@:overload(function<T>(cmd : String, arg: Dynamic):T{})
+	@:overload(function(cmd : String, opt: String, newVal: Dynamic):Select{})
+	function selectComp(opts: FormInputOptions): Select;
+
+	@:overload(function( selector: JQ ) : Select{})
+	@:overload(function( selector: Element ) : Select{})
+	override function appendTo( selector: String ): Select;
 
 	private static function __init__(): Void {
 		
@@ -53,31 +55,50 @@ extern class Select extends JQ {
 
 		        	selfElement.addClass("_selectComp center");
 
-		        	var question: Question = self.options.question;
+		        	var question: FormItem = self.options.formItem;
 
-	        		self.label = new JQ("<label for='quest" + question.uid + "'>" + question.text + "</label>").appendTo(selfElement);
+		        	var uid: String = UidGenerator.create(8);
+	        		self.label = new JQ("<label for='quest" + uid + "'>" + question.label + "</label>").appendTo(selfElement);
 	        		// var multi: String = self.options.multi ? " multiple ": "";
 	        		var multi: String = "";
-	        		self.input = new JQ("<select name='" + question.uid + "' id='quest" + question.uid + "'" + multi + "><option value=''>Please choose..</option></select>");
+	        		self.input = new JQ("<select name='" + uid + "' id='quest" + uid + "'" + multi + "><option value=''>Please choose..</option></select>");
 
-	        		var response: Answer = self.options.answers.hasValues() ? self.options.answers[0] : null;
-		        	for(ans_ in 0...question.options.length) {
-		        		var answer: Choice = question.options[ans_];
-		        		var option: JQ = new JQ("<option></option>")
-		        								.attr("value", answer.value)
+	        		var answers: Array<String> = {
+	        			if(self.options.formItem.value != null) {
+	        				if(Std.is(self.options.formItem.value, Array)) {
+	        					self.options.formItem.value;
+	        				} else if(Reflect.isFunction(self.options.formItem.value)) {
+	        					self.options.formItem.value();
+	        				} else {
+	        					[self.options.formItem.value];
+	        				}
+        				} else {
+						 	[];
+        				};
+        			}
+        			var choices: Array<Array<String>> = {
+        				if(Reflect.isFunction(question.options)) {
+        					question.options();
+        				} else {
+        					question.options;
+        				}
+        			}
+		        	for(option in choices) {
+		        		var opt: JQ = new JQ("<option></option>")
+		        								.attr("value", option[0])
 		        								.appendTo(self.input)
-		        								.append(answer.text);
-		        		if(response != null && answer.value == response.response) option.attr("selected", "selected");
+		        								.append(option[1]);
+		        		if(answers.contains(option[0])) opt.attr("selected", "selected");
 		        	}
-	        		selfElement.append(self.input);
+	        		selfElement.append("&nbsp;").append(self.input);
 		        },
 
 		        result: function(): String {
 		        	var self: SelectWidgetDef = Widgets.getSelf();
 					var selfElement: JQ = Widgets.getSelfElement();
 					var value: String = self.input.val();
-					if(value.isBlank() && self.options.question.required) {
-						throw new ValidationException(self.options.question.uid + " is required");
+					if(value.isBlank() && self.options.formItem.required) {
+						throw new ValidationException("\"" + self.options.formItem.name + "\"  is required");
 						self.label.css("color", "red");
 					} else if(value.isBlank()) {
 						return "";

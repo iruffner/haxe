@@ -6,9 +6,9 @@ import m3.jq.JQ;
 import m3.widget.Widgets;
 
 import m3.exception.Exception;
+import m3.exception.ValidationException;
 import m3.log.Logga;
 
-import m3.exception.ValidationException;
 
 using m3.helper.StringHelper;
 using m3.helper.ArrayHelper;
@@ -34,9 +34,9 @@ class TextInputHelper {
 
 @:native("$")
 extern class TextInput extends FormInput {
-	@:overload(function(cmd : String):String{})
-	@:overload(function(cmd : String, arg: Dynamic):Dynamic{})
-	@:overload(function(cmd:String, opt:String, newVal:Dynamic):JQ{})
+	@:overload(function<T>(cmd : String):T{})
+	@:overload(function<T>(cmd : String, arg: Dynamic):T{})
+	@:overload(function(cmd : String, opt: String, newVal: Dynamic):TextInput{})
 	function textInput(opts: FormInputOptions): TextInput;
 
 	@:overload(function( selector: JQ ) : TextInput{})
@@ -64,7 +64,7 @@ extern class TextInput extends FormInput {
 	        		self.input = new JQ("<input type='text' name='" + question.name + "' id='" + question.name + "'/>");
 	        		if(self.options.formItem.value != null) self.input.val(self.options.formItem.value);
 
-	        		selfElement.append(self.input);
+	        		selfElement.append("&nbsp;").append(self.input);
 		        },
 
 		        result: function(): String {

@@ -3,16 +3,22 @@ package m3.forms;
 import js.html.Element;
 
 import m3.exception.Exception;
+import m3.forms.FormPlugin.IdentityFP;
 import m3.jq.JQ;
 import m3.jq.M3Dialog;
+import m3.util.JqueryUtil;
 import m3.widget.Widgets;
 
 using m3.helper.StringFormatHelper;
 using m3.forms.FormBuilder;
+using m3.forms.FormBuilderDialog.FormBuilderDialogHelper;
 
 typedef FormBuilderDialogOptions = {
 	>M3DialogOptions,
 	var formItems: Array<FormItem>;
+	var onSubmit: Void->Void;
+	@:optional var onCancel: Void->Void;
+	var formPlugin: FormPlugin;
 }
 
 typedef FormBuilderDialogWidgetDef = {
@@ -38,6 +44,10 @@ class FormBuilderDialogHelper {
 	public static function isOpen(dlg: FormBuilderDialog): Bool {
 		return dlg.formBuilderDialog("isOpen");
 	}
+
+	public static function options(dlg: FormBuilderDialog): FormBuilderDialogOptions {
+		return dlg.formBuilderDialog("option");
+	}
 }
 
 @:native("$")
@@ -52,14 +62,48 @@ extern class FormBuilderDialog extends M3Dialog {
 	@:overload(function( selector: Element ) : FormBuilderDialog{})
 	override function appendTo( selector: String ): FormBuilderDialog;
 
+	static var cur(get, null): FormBuilderDialog;
+	private static inline function get_cur() : FormBuilderDialog {
+		return untyped __js__("$(this)");
+	}
+
+	public static var DEFAULT_FORM_PLUGIN: FormPlugin;
+
 	private static function __init__(): Void {
-		
+		// DEFAULT_FORM_PLUGIN = new IdentityFP();
+
 		var defineWidget: Void->FormBuilderDialogWidgetDef = function(): FormBuilderDialogWidgetDef {
 			return {
 
 				options: {
 					title: "",
-					formItems: null
+					buttons: [
+						{
+							text: "Submit",
+							click: function() {
+								var submitFcn = FormBuilderDialog.cur.options().onSubmit;
+								if(submitFcn != null) {
+									submitFcn();
+								} else {
+									JqueryUtil.alert("No onSubmit handler found for this form!");
+								}
+								FormBuilderDialog.cur.close();
+							}
+
+						},
+						{
+							text: "Cancel",
+							click: function() {
+								var cancelFcn = FormBuilderDialog.cur.options().onCancel;
+								if(cancelFcn != null) cancelFcn();
+								FormBuilderDialog.cur.close();
+							}
+
+						}
+					],
+					formItems: null,
+					onSubmit: JQ.noop,
+					formPlugin: DEFAULT_FORM_PLUGIN
 				},
 
 				_create: function(): Void {
@@ -76,7 +120,10 @@ extern class FormBuilderDialog extends M3Dialog {
 		        	
 		        	self.formBuilder = new FormBuilder("<div></div>")
 		        		.appendTo(selfElement)
-		        		.formBuilder({formItems: self.options.formItems});
+		        		.formBuilder({
+		        				formItems: self.options.formItems,
+		        				formPlugin: self.options.formPlugin
+		        			});
 		        },
 
 		        // update: function(dr: DeviceReport): Void {
