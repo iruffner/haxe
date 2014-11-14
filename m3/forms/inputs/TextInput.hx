@@ -61,7 +61,7 @@ extern class TextInput extends FormInput {
 
 		        	var question: FormItem = self.options.formItem;
 
-	        		self.input = new JQ("<input type='text' name='" + question.name + "' id='" + question.name + "'/>");
+	        		self.input = new JQ("<input class='ui-widget-content ui-corner-all helpFilter' type='text' name='" + question.name + "' id='" + question.name + "'/>");
 	        		if(self.options.formItem.value != null) self.input.val(self.options.formItem.value);
 
 	        		selfElement.append("&nbsp;").append(self.input);

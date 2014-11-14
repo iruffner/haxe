@@ -15,10 +15,12 @@ using m3.forms.FormBuilderDialog.FormBuilderDialogHelper;
 
 typedef FormBuilderDialogOptions = {
 	>M3DialogOptions,
+	var ignoreTitle: Bool;
 	var formItems: Array<FormItem>;
 	var onSubmit: Void->Void;
 	@:optional var onCancel: Void->Void;
 	var formPlugin: FormPlugin;
+	@:optional var subtitle: String;
 }
 
 typedef FormBuilderDialogWidgetDef = {
@@ -103,7 +105,9 @@ extern class FormBuilderDialog extends M3Dialog {
 					],
 					formItems: null,
 					onSubmit: JQ.noop,
-					formPlugin: DEFAULT_FORM_PLUGIN
+					formPlugin: DEFAULT_FORM_PLUGIN,
+					width: 800,
+					ignoreTitle: true
 				},
 
 				_create: function(): Void {
@@ -120,10 +124,7 @@ extern class FormBuilderDialog extends M3Dialog {
 		        	
 		        	self.formBuilder = new FormBuilder("<div></div>")
 		        		.appendTo(selfElement)
-		        		.formBuilder({
-		        				formItems: self.options.formItems,
-		        				formPlugin: self.options.formPlugin
-		        			});
+		        		.formBuilder(cast self.options);
 		        },
 
 		        // update: function(dr: DeviceReport): Void {

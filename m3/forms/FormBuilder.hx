@@ -10,6 +10,7 @@ import m3.widget.Widgets;
 
 using m3.forms.inputs.FormInput;
 using m3.forms.inputs.TextInput;
+using m3.helper.StringHelper;
 
 class InputType {
 	public static var SELECT: String = "SELECT";
@@ -29,11 +30,13 @@ typedef FormItem = {
 
 typedef FormBuilderOptions = {
 	@:optional var title: String;
+	@:optional var ignoreTitle: Bool;
 	var formItems: Array<FormItem>;
 	@:optional var onSubmit: Void->Void;
 	@:optional var onError: Void->Void;
 	@:optional var onCancel: Void->Void;
 	var formPlugin: FormPlugin;
+	@:optional var subtitle: String;
 }
 
 typedef FormBuilderWidgetDef = {
@@ -86,7 +89,12 @@ extern class FormBuilder extends JQ {
 
 		        	selfElement.addClass("_formBuilder");
 		        	
-		        	selfElement.append("<h2>" + self.options.title + "</h2>");
+		        	if(!self.options.ignoreTitle) {
+		        		selfElement.append("<h2 class='title'>" + self.options.title + "</h2>");
+		        	}
+		        	if(self.options.subtitle.isNotBlank()) {
+		        		selfElement.append("<div class='subtitle'>" + self.options.subtitle + "</div>");
+		        	}
 
 		        	var form: JQ = new JQ("<div class='formInputs'></div>").appendTo(selfElement);
 
@@ -100,10 +108,10 @@ extern class FormBuilder extends JQ {
 		        				var fi: Select = new Select("<div></div>")
 		        					.appendTo(form)
 		        					.selectComp({formItem: formItem});
-		        			// case InputType.COMBOBOX: 
-		        			// 	var fi: Select = new Select("<div></div>")
-		        			// 		.appendTo(form)
-		        			// 		.selectComp({formItem: formItem});
+		        			case InputType.COMBOBOX: 
+		        				var fi: Select = new Select("<div></div>")
+		        					.appendTo(form)
+		        					.selectComp({formItem: formItem});
 		        			case _:
 
 		        		}

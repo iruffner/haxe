@@ -61,7 +61,7 @@ extern class Select extends JQ {
 	        		self.label = new JQ("<label for='quest" + uid + "'>" + question.label + "</label>").appendTo(selfElement);
 	        		// var multi: String = self.options.multi ? " multiple ": "";
 	        		var multi: String = "";
-	        		self.input = new JQ("<select name='" + uid + "' id='quest" + uid + "'" + multi + "><option value=''>Please choose..</option></select>");
+	        		self.input = new JQ("<select class='ui-combobox-input ui-widget ui-widget-content' name='" + uid + "' id='quest" + uid + "'" + multi + "><option value=''>Please choose..</option></select>");
 
 	        		var answers: Array<String> = {
 	        			if(self.options.formItem.value != null) {
