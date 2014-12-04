@@ -12,7 +12,7 @@ import m3.log.Logga;
 
 using m3.helper.StringHelper;
 using m3.helper.ArrayHelper;
-using m3.forms.inputs.FormInput;
+using m3.forms.FormInput;
 using m3.forms.FormBuilder;
 
 typedef TextInputWidgetDef = {
@@ -21,6 +21,7 @@ typedef TextInputWidgetDef = {
 	var result: Void->String;
 	var destroy: Void->Void;
 	@:optional var input: JQ;
+	@:optional var iconDiv: JQ;
 
 	@:optional var _super: Dynamic;
 
@@ -33,7 +34,7 @@ class TextInputHelper {
 }
 
 @:native("$")
-extern class TextInput extends FormInput {
+extern class TextInput extends AbstractInput {
 	@:overload(function<T>(cmd : String):T{})
 	@:overload(function<T>(cmd : String, arg: Dynamic):T{})
 	@:overload(function(cmd : String, opt: String, newVal: Dynamic):TextInput{})
@@ -61,23 +62,22 @@ extern class TextInput extends FormInput {
 
 		        	var question: FormItem = self.options.formItem;
 
-	        		self.input = new JQ("<input class='ui-widget-content ui-corner-all helpFilter' type='text' name='" + question.name + "' id='" + question.name + "'/>");
-	        		if(self.options.formItem.value != null) self.input.val(self.options.formItem.value);
+		        	self.iconDiv = new JQ("<div class='iconDiv'></div>");
+	        		self.iconDiv.hide();
 
-	        		selfElement.append("&nbsp;").append(self.input);
+	        		self.input = new JQ("<input class='ui-widget-content ui-corner-all helpFilter' type='text' name='" + question.name + "' id='" + question.name + "'/>");
+	        		if(question.value != null) self.input.val(self.options.formItem.value);
+	        		if(question.disabled) {
+	        			self.input.attr("disabled", "true").addClass("ui-state-active");
+	        			self.iconDiv.show().addClass("locked");
+	        		}
+
+	        		selfElement.append("&nbsp;").append(self.input).append(self.iconDiv);
 		        },
 
 		        result: function(): String {
 		        	var self: TextInputWidgetDef = Widgets.getSelf();
-					var selfElement: JQ = Widgets.getSelfElement();
-					var value: String = self.input.val();
-					if(value.isBlank() && self.options.formItem.required) {
-						throw new ValidationException(self.options.formItem.name + " is required");
-					} else if(value.isBlank()) {
-						return "";
-					} else {
-						return value;
-					}
+					return self.input.val();
 	        	},
 
 		        destroy: function() {
@@ -85,6 +85,6 @@ extern class TextInput extends FormInput {
 		        }
 		    };
 		}
-		JQ.widget( "ui.textInput", (untyped $.ui.formInput), defineWidget());
+		JQ.widget( "ui.textInput", (untyped $.ui.abstractInput), defineWidget());
 	}
 }

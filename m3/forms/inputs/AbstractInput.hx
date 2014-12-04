@@ -14,7 +14,7 @@ typedef FormInputOptions = {
 	var formItem: FormItem;
 }
 
-typedef FormInputWidgetDef = {
+typedef AbstractInputWidgetDef = {
 	@:optional var options: FormInputOptions;
 
 	@:optional var label: JQ;
@@ -24,34 +24,28 @@ typedef FormInputWidgetDef = {
 	var destroy: Void->Void;
 }
 
-class FormInputHelper {
-	// public static function update(dc: FormInput, dr: DeviceReport): Void {
-	// 	dc.FormInput("update", dr);
-	// }
-}
-
 @:native("$")
-extern class FormInput extends JQ {
+extern class AbstractInput extends JQ {
 	
 	@:overload(function<T>(cmd : String):T{})
 	@:overload(function<T>(cmd : String, arg: Dynamic):T{})
 	@:overload(function(cmd : String, opt: String, newVal: Dynamic):JQ{})
-	function formInput(opts: FormInputOptions): FormInput;
+	function abstractInput(opts: FormInputOptions): AbstractInput;
 
 	private static function __init__(): Void {
 		
-		var defineWidget: Void->FormInputWidgetDef = function(): FormInputWidgetDef {
+		var defineWidget: Void->AbstractInputWidgetDef = function(): AbstractInputWidgetDef {
 			return {
 
 				_create: function(): Void {
-		        	var self: FormInputWidgetDef = Widgets.getSelf();
+		        	var self: AbstractInputWidgetDef = Widgets.getSelf();
 					var selfElement: JQ = Widgets.getSelfElement();
 
 		        	if(!selfElement.is("div")) {
-		        		throw new Exception("Root of FormInput must be a div element");
+		        		throw new Exception("Root of AbstractInput must be a div element");
 		        	}
 
-		        	selfElement.addClass("_formInput");
+		        	selfElement.addClass("_abstractInput");
 
 		        	var label: String = 
 		        		self.options.formItem.label.isNotBlank() ? self.options.formItem.label : self.options.formItem.name.capitalizeFirstLetter();
@@ -63,7 +57,7 @@ extern class FormInput extends JQ {
 
 		        // update: function(dr: DeviceReport): Void {
 		        // 	if(dr == null) return;
-		        // 	var self: FormInputWidgetDef = Widgets.getSelf();
+		        // 	var self: AbstractInputWidgetDef = Widgets.getSelf();
 
 		        // 	self._super(dr);
 
@@ -81,6 +75,6 @@ extern class FormInput extends JQ {
 		        }
 		    };
 		}
-		JQ.widget( "ui.formInput", defineWidget());
+		JQ.widget( "ui.abstractInput", defineWidget());
 	}
 }

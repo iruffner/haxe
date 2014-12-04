@@ -3,19 +3,33 @@ package m3.forms;
 import js.html.Element;
 
 import m3.exception.Exception;
+import m3.forms.FormInput;
+import m3.forms.FormLayoutPlugin.DefaultFormLayout;
 import m3.forms.FormPlugin.IdentityFP;
 import m3.forms.inputs.Select;
 import m3.jq.JQ;
 import m3.widget.Widgets;
+import m3.forms.FormValidations;
 
-using m3.forms.inputs.FormInput;
+using m3.forms.FormInput;
 using m3.forms.inputs.TextInput;
 using m3.helper.StringHelper;
+using m3.helper.ArrayHelper;
 
 class InputType {
 	public static var SELECT: String = "SELECT";
 	public static var TEXT: String = "TEXT";
 	public static var COMBOBOX: String = "COMBOBOX";
+}
+
+class FormError {
+	public var input: FormInput;
+	public var msg: String;
+
+	public function new(input: FormInput, msg: String) {
+		this.input = input;
+		this.msg = msg;
+	}
 }
 
 typedef FormItem = {
@@ -24,7 +38,8 @@ typedef FormItem = {
 	var type: String;
 	@:optional var value: Dynamic;// either a String or Array<String>
 	@:optional var required: Bool;
-	@:optional var validate: String->Bool;
+	@:optional var disabled: Bool;
+	var validators: Array<Array<String>->Dynamic>;
 	@:optional var options: Dynamic;// Array<Array<String>> or a function returning Array<Array<String>>
 }
 
@@ -32,11 +47,13 @@ typedef FormBuilderOptions = {
 	@:optional var title: String;
 	@:optional var ignoreTitle: Bool;
 	var formItems: Array<FormItem>;
-	@:optional var onSubmit: Void->Void;
+	@:optional var onSubmit: Array<Array<String>>->Void;
 	@:optional var onError: Void->Void;
 	@:optional var onCancel: Void->Void;
 	var formPlugin: FormPlugin;
+	var formLayoutPlugin: FormLayoutPlugin;
 	@:optional var subtitle: String;
+	var validate: Void->Dynamic;
 }
 
 typedef FormBuilderWidgetDef = {
@@ -45,12 +62,24 @@ typedef FormBuilderWidgetDef = {
 	@:optional var _formInputs: Array<FormInput>;
 	var _create: Void->Void;
 	var destroy: Void->Void;
+
+	var results: Void->Array<Array<String>>;
+	var validate: Void->Array<FormError>;
+	var formInputs: Void->Array<FormInput>;
 }
 
 class FormBuilderHelper {
-	// public static function update(dc: FormBuilder, dr: DeviceReport): Void {
-	// 	dc.FormBuilder("update", dr);
-	// }
+	public static function results(fb: FormBuilder): Array<Array<String>> {
+		return fb.formBuilder("results");
+	}
+
+	public static function validate(fb: FormBuilder): Array<FormError> {
+		return fb.formBuilder("validate");
+	}
+
+	public static function formInputs(fb: FormBuilder): Array<FormInput> {
+		return fb.formBuilder("formInputs");
+	}
 }
 
 @:native("$")
@@ -73,15 +102,17 @@ extern class FormBuilder extends JQ {
 				options: {
 					title: "",
 					formItems: null,
-					onSubmit: JQ.noop,
-					formPlugin: new IdentityFP()
+					onSubmit: function(arg) {},
+					formPlugin: new IdentityFP(),
+					formLayoutPlugin: new DefaultFormLayout(),
+					validate: function() { return null;}
 				},
 
 				_create: function(): Void {
 		        	var self: FormBuilderWidgetDef = Widgets.getSelf();
-					var selfElement: JQ = Widgets.getSelfElement();
+					var selfElement: FormBuilder = Widgets.getSelfElement();
 
-					self.options = self.options.formPlugin.preprocessForm(self.options);
+					self.options = self.options.formPlugin.preprocessForm(selfElement, self.options);
 
 		        	if(!selfElement.is("div")) {
 		        		throw new Exception("Root of FormBuilder must be a div element");
@@ -89,49 +120,44 @@ extern class FormBuilder extends JQ {
 
 		        	selfElement.addClass("_formBuilder");
 		        	
-		        	if(!self.options.ignoreTitle) {
-		        		selfElement.append("<h2 class='title'>" + self.options.title + "</h2>");
-		        	}
-		        	if(self.options.subtitle.isNotBlank()) {
-		        		selfElement.append("<div class='subtitle'>" + self.options.subtitle + "</div>");
-		        	}
+		        	self._formInputs = self.options.formLayoutPlugin.render(selfElement, self.options);
 
-		        	var form: JQ = new JQ("<div class='formInputs'></div>").appendTo(selfElement);
-
-		        	for(formItem in self.options.formItems) {
-		        		switch(formItem.type) {
-		        			case InputType.TEXT: 
-		        				var fi: TextInput = new TextInput("<div></div>")
-		        					.appendTo(form)
-		        					.textInput({formItem: formItem});
-		        			case InputType.SELECT: 
-		        				var fi: Select = new Select("<div></div>")
-		        					.appendTo(form)
-		        					.selectComp({formItem: formItem});
-		        			case InputType.COMBOBOX: 
-		        				var fi: Select = new Select("<div></div>")
-		        					.appendTo(form)
-		        					.selectComp({formItem: formItem});
-		        			case _:
-
-		        		}
-		        	}
+		        	self.options.formPlugin.postprocessForm(selfElement, self.options);
 		        },
 
-		        // update: function(dr: DeviceReport): Void {
-		        // 	if(dr == null) return;
-		        // 	var self: FormBuilderWidgetDef = Widgets.getSelf();
+		        formInputs: function(): Array<FormInput> {
+		        	var self: FormBuilderWidgetDef = Widgets.getSelf();
+		        	return self._formInputs;
+	        	},
 
-		        // 	self._super(dr);
+		        validate: function(): Array<FormError> {
+		        	var self: FormBuilderWidgetDef = Widgets.getSelf();
+					var selfElement: FormBuilder = Widgets.getSelfElement();
 
-		        // 	switch(dr.msgType) {
-		        // 		case MsgType.healthReport: 
-		        // 			AppContext.LAST_HEALTH_REPORTS.set(Device.identifier(self.options.device), dr);
-	        	// 		case MsgType.dataReport:
-		        // 			AppContext.LAST_DATA_REPORTS.set(Device.identifier(self.options.device), dr);
-		        // 	}
+	        		//validate each input
+	        		var errors: Array<FormError> = new Array();
+	        		for(fi in self._formInputs) {
+	        			errors.addAll(fi.validate());
+	        		}
+	        		if(!errors.hasValues()) {
+	        			errors.addAll(self.options.validate());
+	        		}
+	        		//validate the form
 
-	        	// },
+	        		//render the results
+        			self.options.formLayoutPlugin.renderValidation(selfElement, self.options, errors);
+
+	        		return errors;
+	        	},
+		        
+		        results: function(): Array<Array<String>> {
+		        	var self: FormBuilderWidgetDef = Widgets.getSelf();
+		        	var results: Array<Array<String>> = new Array();
+		        	for(formInput in self._formInputs) {
+		        		results.push(formInput.result());
+		        	}
+		        	return results;
+	        	},
 
 		        destroy: function() {
 		            untyped JQ.Widget.prototype.destroy.call( JQ.curNoWrap );

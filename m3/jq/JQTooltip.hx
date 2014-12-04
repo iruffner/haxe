@@ -27,9 +27,20 @@ typedef JQTooltipOps = {
 	@:optional var open: JQEvent->Dynamic->Void; //null
 }
 
+class JQTooltipHelper {
+	public static function updateContent(t: JQTooltip, newContent: String): Void {
+		t.tooltip("option", "content", newContent);
+	}
+
+	public static function getContent(t: JQTooltip): String {
+		return t.tooltip("option", "content");
+	}
+}
+
 @:native("$")
 extern class JQTooltip extends JQ {
 	@:overload(function<T>(cmd : String):T{})
 	@:overload(function<T>(cmd:String, opt:String):T{})
+	@:overload(function<T>(cmd:String, opt:String, arg:Dynamic):Void{})
 	function tooltip(?opts: JQTooltipOps): JQTooltip;
 }

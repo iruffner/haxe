@@ -226,4 +226,10 @@ class ArrayHelper {
         }
         return s;
     }
+
+    public static function addAll<T>(array:Array<T>, array2:Array<T>):Void {
+        if(array != null && hasValues(array2)) {
+            for(t in array2) array.push(t);
+        }
+    }
 }

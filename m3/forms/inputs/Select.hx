@@ -12,7 +12,7 @@ import m3.log.Logga;
 
 using m3.helper.StringHelper;
 using m3.helper.ArrayHelper;
-using m3.forms.inputs.FormInput;
+using m3.forms.FormInput;
 using m3.forms.FormBuilder;
 
 typedef SelectWidgetDef = {
@@ -22,6 +22,9 @@ typedef SelectWidgetDef = {
 	var destroy: Void->Void;
 	@:optional var label: JQ;
 	@:optional var input: JQ;
+	@:optional var iconDiv: JQ;
+	
+	@:optional var _super: Dynamic;
 }
 
 class SelectHelper {
@@ -31,7 +34,7 @@ class SelectHelper {
 }
 
 @:native("$")
-extern class Select extends JQ {
+extern class Select extends AbstractInput {
 	@:overload(function<T>(cmd : String):T{})
 	@:overload(function<T>(cmd : String, arg: Dynamic):T{})
 	@:overload(function(cmd : String, opt: String, newVal: Dynamic):Select{})
@@ -55,13 +58,23 @@ extern class Select extends JQ {
 
 		        	selfElement.addClass("_selectComp center");
 
+		        	self._super();
+
 		        	var question: FormItem = self.options.formItem;
 
-		        	var uid: String = UidGenerator.create(8);
-	        		self.label = new JQ("<label for='quest" + uid + "'>" + question.label + "</label>").appendTo(selfElement);
+	        		self.iconDiv = new JQ("<div class='iconDiv'></div>");
+	        		self.iconDiv.hide();
+
+		        	// var uid: String = UidGenerator.create(8);
+	        		// self.label = new JQ("<label for='quest" + uid + "'>" + question.label + "</label>").appendTo(selfElement);
 	        		// var multi: String = self.options.multi ? " multiple ": "";
 	        		var multi: String = "";
-	        		self.input = new JQ("<select class='ui-combobox-input ui-widget ui-widget-content' name='" + uid + "' id='quest" + uid + "'" + multi + "><option value=''>Please choose..</option></select>");
+	        		self.input = new JQ("<select class='ui-combobox-input ui-widget ui-widget-content' name='" + self.options.formItem.name + "' " + multi + "><option value=''>Please choose..</option></select>");
+	        		if(question.disabled) {
+	        			self.input.attr("disabled", "true");
+	        			self.iconDiv.show().addClass("locked");
+	        		}
+
 
 	        		var answers: Array<String> = {
 	        			if(self.options.formItem.value != null) {
@@ -90,21 +103,12 @@ extern class Select extends JQ {
 		        								.append(option[1]);
 		        		if(answers.contains(option[0])) opt.attr("selected", "selected");
 		        	}
-	        		selfElement.append("&nbsp;").append(self.input);
+	        		selfElement.append("&nbsp;").append(self.input).append(self.iconDiv);
 		        },
 
 		        result: function(): String {
 		        	var self: SelectWidgetDef = Widgets.getSelf();
-					var selfElement: JQ = Widgets.getSelfElement();
-					var value: String = self.input.val();
-					if(value.isBlank() && self.options.formItem.required) {
-						throw new ValidationException("\"" + self.options.formItem.name + "\"  is required");
-						self.label.css("color", "red");
-					} else if(value.isBlank()) {
-						return "";
-					} else {
-						return value;
-					}
+					return self.input.val();
 	        	},
 
 		        destroy: function() {
@@ -112,6 +116,6 @@ extern class Select extends JQ {
 		        }
 		    };
 		}
-		JQ.widget( "ui.selectComp", defineWidget());
+		JQ.widget( "ui.selectComp", (untyped $.ui.abstractInput), defineWidget());
 	}
 }

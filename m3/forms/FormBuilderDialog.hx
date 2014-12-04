@@ -3,6 +3,7 @@ package m3.forms;
 import js.html.Element;
 
 import m3.exception.Exception;
+import m3.forms.FormBuilder.FormError;
 import m3.forms.FormPlugin.IdentityFP;
 import m3.jq.JQ;
 import m3.jq.M3Dialog;
@@ -12,15 +13,19 @@ import m3.widget.Widgets;
 using m3.helper.StringFormatHelper;
 using m3.forms.FormBuilder;
 using m3.forms.FormBuilderDialog.FormBuilderDialogHelper;
+using m3.helper.ArrayHelper;
 
 typedef FormBuilderDialogOptions = {
 	>M3DialogOptions,
-	var ignoreTitle: Bool;
+	@:optional var ignoreTitle: Bool;
 	var formItems: Array<FormItem>;
-	var onSubmit: Void->Void;
+	@:optional var onSubmit: Array<Array<String>>->Void;
+	@:optional var onError: Void->Void;
 	@:optional var onCancel: Void->Void;
 	var formPlugin: FormPlugin;
+	var formLayoutPlugin: FormLayoutPlugin;
 	@:optional var subtitle: String;
+	var validate: Void->Dynamic;
 }
 
 typedef FormBuilderDialogWidgetDef = {
@@ -70,6 +75,7 @@ extern class FormBuilderDialog extends M3Dialog {
 	}
 
 	public static var DEFAULT_FORM_PLUGIN: FormPlugin;
+	public static var DEFAULT_FORM_LAYOUT: FormLayoutPlugin;
 
 	private static function __init__(): Void {
 		// DEFAULT_FORM_PLUGIN = new IdentityFP();
@@ -83,9 +89,26 @@ extern class FormBuilderDialog extends M3Dialog {
 						{
 							text: "Submit",
 							click: function() {
-								var submitFcn = FormBuilderDialog.cur.options().onSubmit;
+								var formBuilder: FormBuilder = new FormBuilder(FormBuilderDialog.cur.children("._formBuilder"));
+								
+								var formErrors: Array<FormError> = null;
+								formErrors = formBuilder.validate();
+
+								if(formErrors.hasValues()) {
+									//pass errors to the layout plugin
+									return;
+								}
+
+								// var validateFcn = formBuilder.formBuilder("option", "validate");
+								// if(validateFcn != null) {
+
+								// }
+
+
+
+								var submitFcn = formBuilder.formBuilder("option", "onSubmit");
 								if(submitFcn != null) {
-									submitFcn();
+									submitFcn(formBuilder.results());
 								} else {
 									JqueryUtil.alert("No onSubmit handler found for this form!");
 								}
@@ -104,10 +127,12 @@ extern class FormBuilderDialog extends M3Dialog {
 						}
 					],
 					formItems: null,
-					onSubmit: JQ.noop,
+					onSubmit: function(arg){},
 					formPlugin: DEFAULT_FORM_PLUGIN,
+					formLayoutPlugin: DEFAULT_FORM_LAYOUT,
 					width: 800,
-					ignoreTitle: true
+					ignoreTitle: true,
+					validate: function() {return null;}
 				},
 
 				_create: function(): Void {
@@ -124,23 +149,8 @@ extern class FormBuilderDialog extends M3Dialog {
 		        	
 		        	self.formBuilder = new FormBuilder("<div></div>")
 		        		.appendTo(selfElement)
-		        		.formBuilder(cast self.options);
+		        		.formBuilder(self.options);
 		        },
-
-		        // update: function(dr: DeviceReport): Void {
-		        // 	if(dr == null) return;
-		        // 	var self: FormBuilderDialogWidgetDef = Widgets.getSelf();
-
-		        // 	self._super(dr);
-
-		        // 	switch(dr.msgType) {
-		        // 		case MsgType.healthReport: 
-		        // 			AppContext.LAST_HEALTH_REPORTS.set(Device.identifier(self.options.device), dr);
-	        	// 		case MsgType.dataReport:
-		        // 			AppContext.LAST_DATA_REPORTS.set(Device.identifier(self.options.device), dr);
-		        // 	}
-
-	        	// },
 
 		        destroy: function() {
 		            untyped JQ.Widget.prototype.destroy.call( JQ.curNoWrap );
