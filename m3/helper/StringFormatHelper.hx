@@ -28,6 +28,15 @@ class StringFormatHelper {
 		}
 	}
 
+	public static function parameterize(val: String) {
+		var sanitized: String = val.toLowerCase();
+		var unallowed = ~/(^-|-$)/g;
+		var unknown   = ~/[^a-z0-9]/g;
+
+		sanitized = unknown.replace(sanitized, "-");
+		return unallowed.replace(sanitized, "");
+	}
+
 	public static function htmlEscape(val: Dynamic) {
 		return Std.string(val).htmlEscape();		
 	}
