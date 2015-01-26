@@ -199,7 +199,7 @@ extern class FormInput extends JQ {
 		        				} else if(Std.is(result, FormError)){ 
 		        					errors.push(result);
 			        			} else {
-			        				embi.App.LOGGER.warn("unexpected return type from validation function");
+			        				Logga.DEFAULT.warn("unexpected return type from validation function");
 			        			}
 		        			};
 		        			if(JQ.isArray(validationResult)) {
