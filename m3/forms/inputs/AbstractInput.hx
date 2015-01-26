@@ -22,6 +22,7 @@ typedef AbstractInputWidgetDef = {
 
 	var _create: Void->Void;
 	var destroy: Void->Void;
+	var getDefaultValue: Void->Dynamic;
 }
 
 @:native("$")
@@ -54,6 +55,16 @@ extern class AbstractInput extends JQ {
 		        	
 
 		        },
+
+				getDefaultValue: function(): Dynamic {
+					var self: AbstractInputWidgetDef = Widgets.getSelf();
+					if(Reflect.isFunction(self.options.formItem.value)) {
+						return self.options.formItem.value();
+					} else {
+						return self.options.formItem.value;
+					}
+					return null;
+				},
 
 		        // update: function(dr: DeviceReport): Void {
 		        // 	if(dr == null) return;

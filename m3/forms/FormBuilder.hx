@@ -20,6 +20,7 @@ class InputType {
 	public static var SELECT: String = "SELECT";
 	public static var TEXT: String = "TEXT";
 	public static var COMBOBOX: String = "COMBOBOX";
+	public static var DATE: String = "DATE";
 }
 
 class FormError {

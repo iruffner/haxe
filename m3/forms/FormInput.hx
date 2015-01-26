@@ -15,6 +15,7 @@ import m3.exception.ValidationException;
 
 using m3.forms.inputs.Select;
 using m3.forms.inputs.TextInput;
+using m3.forms.inputs.DateComp;
 using m3.helper.ArrayHelper;
 using m3.helper.StringHelper;
 using Lambda;
@@ -84,7 +85,14 @@ extern class FormInput extends JQ {
 		        	 		}
 	        		} else {
 			        	switch(formItem.type) {
-		        			case InputType.TEXT: 
+							case InputType.DATE:
+								var t: DateComp = new DateComp(selfElement)
+									.dateComp({formItem: formItem});
+								input = t;
+								self._getResultFcn = function(): Array<String> {
+									return [t.result()];
+								}
+		        			case InputType.TEXT:
 	        					var t: TextInput = new TextInput(selfElement)
 		        					.textInput({formItem: formItem});
 		        				input = t;

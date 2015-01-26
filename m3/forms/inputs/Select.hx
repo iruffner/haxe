@@ -25,6 +25,7 @@ typedef SelectWidgetDef = {
 	@:optional var iconDiv: JQ;
 	
 	@:optional var _super: Dynamic;
+	@:optional var getDefaultValue: Dynamic;
 }
 
 class SelectHelper {

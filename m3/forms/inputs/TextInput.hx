@@ -9,7 +9,6 @@ import m3.exception.Exception;
 import m3.exception.ValidationException;
 import m3.log.Logga;
 
-
 using m3.helper.StringHelper;
 using m3.helper.ArrayHelper;
 using m3.forms.FormInput;
@@ -24,6 +23,7 @@ typedef TextInputWidgetDef = {
 	@:optional var iconDiv: JQ;
 
 	@:optional var _super: Dynamic;
+	@:optional var getDefaultValue: Dynamic;
 
 }
 
@@ -66,7 +66,7 @@ extern class TextInput extends AbstractInput {
 	        		self.iconDiv.hide();
 
 	        		self.input = new JQ("<input class='ui-widget-content ui-corner-all helpFilter' type='text' name='" + question.name + "' id='" + question.name + "'/>");
-	        		if(question.value != null) self.input.val(self.options.formItem.value);
+	        		if(self.getDefaultValue() != null) self.input.val(self.options.formItem.value);
 	        		if(question.disabled) {
 	        			self.input.attr("disabled", "true").addClass("ui-state-active");
 	        			self.iconDiv.show().addClass("locked");

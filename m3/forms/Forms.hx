@@ -2,6 +2,7 @@ package m3.forms;
 
 import m3.exception.Exception;
 import m3.jq.JQ;
+import m3.jq.JQDatepicker;
 import m3.jq.ComboBox;
 import Reflect;
 
@@ -43,6 +44,15 @@ class TextFieldWidget extends AbstractWidget {
     	super();
     	_element = new JQ('<input type="text"/>');
     }
+
+}
+
+class DateCompWidget extends AbstractWidget {
+
+	public function new() {
+		super();
+		_element = new JQDatepicker('<input type="text" class="datepicker"/>');
+	}
 
 }
 

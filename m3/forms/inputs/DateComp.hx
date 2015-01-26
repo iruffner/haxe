@@ -1,30 +1,31 @@
-package ui.widgets.qtype;
+package m3.forms.inputs;
 
-import js.html.VideoElement;
+//import flash.globalization.DateTimeFormatter;
+import js.html.Element;
 
 import m3.jq.JQ;
+import m3.jq.JQDatepicker;
 import m3.widget.Widgets;
 
 import m3.exception.Exception;
+import m3.exception.ValidationException;
 import m3.log.Logga;
 
-import ui.exception.ValidationException;
-
-import ui.model.BModel;
-import ui.pages.Pages;
-import ui.widgets.targets.QuestionComp.QuestionCompOptions;
-
-using m3.helper.StringFormatHelper;
 using m3.helper.StringHelper;
 using m3.helper.ArrayHelper;
+using m3.forms.FormInput;
+using m3.forms.FormBuilder;
 
 typedef DateWidgetDef = {
-	@:optional var options: QuestionCompOptions;
+	@:optional var options: FormInputOptions;
 	var _create: Void->Void;
 	var result: Void->String;
 	var destroy: Void->Void;
 	@:optional var label: JQ;
 	@:optional var input: JQ;
+
+	@:optional var _super: Dynamic;
+
 }
 
 class DateCompHelper {
@@ -34,11 +35,11 @@ class DateCompHelper {
 }
 
 @:native("$")
-extern class DateComp extends JQ {
+extern class DateComp extends AbstractInput {
 	@:overload(function(cmd : String):String{})
 	@:overload(function(cmd : String, arg: Dynamic):Dynamic{})
-	@:overload(function(cmd:String, opt:String, newVal:Dynamic):JQ{})
-	function dateComp(opts: QuestionCompOptions): DateComp;
+	@:overload(function(cmd:String, opt:String, newVal:Dynamic):DateComp{})
+	function dateComp(opts: FormInputOptions): DateComp;
 
 	private static function __init__(): Void {
 		
@@ -47,20 +48,28 @@ extern class DateComp extends JQ {
 		        _create: function(): Void {
 		        	var self: DateWidgetDef = Widgets.getSelf();
 					var selfElement: JQ = Widgets.getSelfElement();
+					var cmd: String = "{ dateFormat: 'dd-mm-yy' }";
 
 		        	if(!selfElement.is("div")) {
-		        		throw new Exception("Root of DateCompComp must be a div element");
+		        		throw new Exception("Root of DateComp Comp must be a div element");
 		        	}
 
 		        	selfElement.addClass("_dateComp center");
 
-		        	var question: Question = self.options.question;
+					self._super();
 
-	        		self.label = new JQ("<label for='quest" + question.uid + "'>" + question.text + "</label>").appendTo(selfElement);
-	        		
-	        		self.input = new JQ("<input type='date' name='" + question.uid + "' id='quest" + question.uid + "'/>");
+					var question: FormItem = self.options.formItem;
+	        		self.input = new JQDatepicker("<input type='text' name='" + question.name + "' id='" + question.name + "'/>").datepicker().datepicker('option','dateFormat','yy-mm-dd');
+					if( question.value == null) question.value = DateTools.format(Date.now(), "%Y-%m-%d");
+					self.input.val(question.value);
+					if(question.disabled) {
+						self.input.attr("disabled", "true").addClass("ui-state-active");
+						//self.iconDiv.show().addClass("locked");
+					}
 
-        			try {
+					//selfElement.append("&nbsp;").append(self.input).append(self.iconDiv);
+
+        			/*try {
 	        			if(self.options.answers.hasValues()) {
 		        			var dateStr: String = self.options.answers[0].response;
 		        			var date: Date = null;
@@ -71,23 +80,15 @@ extern class DateComp extends JQ {
 		        			self.input.val(self.options.answers[0].response);
 
 	        			}
-        			} catch (exc: Dynamic) { }
+        			} catch (exc: Dynamic) { }*/
 		        	
 	        		selfElement.append(self.input);
 		        },
 
 		        result: function(): String {
-		        	var self: DateWidgetDef = Widgets.getSelf();
-					var selfElement: JQ = Widgets.getSelfElement();
-					var value: String = self.input.val();
-					if(value.isBlank() && self.options.question.required) {
-						throw new ValidationException(self.options.question.uid + " is required");
-						self.label.css("color", "red");
-					} else if(value.isBlank()) {
-						return "";
-					} else {
-						return value;
-					}
+					var self: DateWidgetDef = Widgets.getSelf();
+					return self.input.val();
+
 	        	},
 
 		        destroy: function() {
@@ -95,6 +96,6 @@ extern class DateComp extends JQ {
 		        }
 		    };
 		}
-		JQ.widget( "ui.dateComp", defineWidget());
+		JQ.widget( "ui.dateComp", (untyped $.ui.abstractInput), defineWidget());
 	}
 }
