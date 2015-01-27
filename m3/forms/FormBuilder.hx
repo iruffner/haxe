@@ -36,11 +36,11 @@ class FormError {
 typedef FormItem = {
 	var name: String;
 	@:optional var label: String;
-	var type: String;
+	@:optional var type: String;
 	@:optional var value: Dynamic;// either a String or Array<String>
 	@:optional var required: Bool;
 	@:optional var disabled: Bool;
-	var validators: Array<Array<String>->Dynamic>;
+	@:optional var validators: Array<Array<String>->Dynamic>;
 	@:optional var options: Dynamic;// Array<Array<String>> or a function returning Array<Array<String>>
 }
 
@@ -140,7 +140,7 @@ extern class FormBuilder extends JQ {
 	        		for(fi in self._formInputs) {
 	        			errors.addAll(fi.validate());
 	        		}
-	        		if(!errors.hasValues()) {
+	        		if(!errors.hasValues() && self.options.validate != null) {
 	        			errors.addAll(self.options.validate());
 	        		}
 	        		//validate the form

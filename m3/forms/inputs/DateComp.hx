@@ -59,7 +59,7 @@ extern class DateComp extends AbstractInput {
 					self._super();
 
 					var question: FormItem = self.options.formItem;
-	        		self.input = new JQDatepicker("<input type='text' name='" + question.name + "' id='" + question.name + "'/>").datepicker().datepicker('option','dateFormat','yy-mm-dd');
+	        		self.input = new JQDatepicker("<input type='text'/>").datepicker().datepicker('option','dateFormat','yy-mm-dd');
 					if( question.value == null) question.value = DateTools.format(Date.now(), "%Y-%m-%d");
 					self.input.val(question.value);
 					if(question.disabled) {
