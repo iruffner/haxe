@@ -88,7 +88,7 @@ class JqueryUtil {
 	       		zIndex: 10000, 
 	       		autoOpen: true,
 	            // width: 'auto',
-	            resizable: false,
+	            resizable: true,
 	            width: width,
 	            height: height,
                 buttons: {
@@ -125,7 +125,7 @@ class JqueryUtil {
 	       		zIndex: 10000, 
 	       		autoOpen: true,
 	            // width: 'auto',
-	            resizable: false,
+	            resizable: true,
                 width: width,
 	            height: height,
 	            buttons: {
