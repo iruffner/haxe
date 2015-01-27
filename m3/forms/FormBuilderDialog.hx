@@ -17,15 +17,16 @@ using m3.helper.ArrayHelper;
 
 typedef FormBuilderDialogOptions = {
 	>M3DialogOptions,
-	@:optional var ignoreTitle: Bool;
-	var formItems: Array<FormItem>;
-	@:optional var onSubmit: Array<Array<String>>->Void;
-	@:optional var onError: Void->Void;
-	@:optional var onCancel: Void->Void;
-	var formPlugin: FormPlugin;
-	var formLayoutPlugin: FormLayoutPlugin;
-	@:optional var subtitle: String;
-	var validate: Void->Dynamic;
+	var formOptions: FormBuilderOptions;
+	// @:optional var ignoreTitle: Bool;
+	// var formItems: Array<FormItem>;
+	// @:optional var onSubmit: Array<Array<String>>->Void;
+	// @:optional var onError: Void->Void;
+	// @:optional var onCancel: Void->Void;
+	// var formPlugin: FormPlugin;
+	// var formLayoutPlugin: FormLayoutPlugin;
+	// @:optional var subtitle: String;
+	// var validate: Void->Dynamic;
 }
 
 typedef FormBuilderDialogWidgetDef = {
@@ -84,6 +85,13 @@ extern class FormBuilderDialog extends M3Dialog {
 			return {
 
 				options: {
+					formOptions: {
+						formItems: null,
+						onSubmit: function(arg){},
+						formPlugin: DEFAULT_FORM_PLUGIN,
+						formLayoutPlugin: DEFAULT_FORM_LAYOUT,
+						validate: function() {return null;}
+					},
 					title: "",
 					buttons: [
 						{
@@ -119,20 +127,15 @@ extern class FormBuilderDialog extends M3Dialog {
 						{
 							text: "Cancel",
 							click: function() {
-								var cancelFcn = FormBuilderDialog.cur.options().onCancel;
+								var cancelFcn = FormBuilderDialog.cur.options().formOptions.onCancel;
 								if(cancelFcn != null) cancelFcn();
 								FormBuilderDialog.cur.close();
 							}
 
 						}
 					],
-					formItems: null,
-					onSubmit: function(arg){},
-					formPlugin: DEFAULT_FORM_PLUGIN,
-					formLayoutPlugin: DEFAULT_FORM_LAYOUT,
-					width: 800,
-					ignoreTitle: true,
-					validate: function() {return null;}
+					
+					width: 800
 				},
 
 				_create: function(): Void {
@@ -149,7 +152,7 @@ extern class FormBuilderDialog extends M3Dialog {
 		        	
 		        	self.formBuilder = new FormBuilder("<div></div>")
 		        		.appendTo(selfElement)
-		        		.formBuilder(self.options);
+		        		.formBuilder(self.options.formOptions);
 		        },
 
 		        destroy: function() {

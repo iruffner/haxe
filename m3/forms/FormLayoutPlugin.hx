@@ -17,7 +17,7 @@ class DefaultFormLayout implements FormLayoutPlugin {
 	public function new() {}
 
 	public function render(form: FormBuilder, opts: FormBuilderOptions): Array<FormInput> {
-		if(!opts.ignoreTitle) {
+		if(!opts.title.isNotBlank()) {
     		form.append("<h2 class='title'>" + opts.title + "</h2>");
     	}
     	if(opts.subtitle.isNotBlank()) {

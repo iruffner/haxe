@@ -46,15 +46,14 @@ typedef FormItem = {
 
 typedef FormBuilderOptions = {
 	@:optional var title: String;
-	@:optional var ignoreTitle: Bool;
+	@:optional var subtitle: String;
 	var formItems: Array<FormItem>;
 	@:optional var onSubmit: Array<Array<String>>->Void;
 	@:optional var onError: Void->Void;
 	@:optional var onCancel: Void->Void;
-	var formPlugin: FormPlugin;
-	var formLayoutPlugin: FormLayoutPlugin;
-	@:optional var subtitle: String;
-	var validate: Void->Dynamic;
+	@:optional var formPlugin: FormPlugin;
+	@:optional var formLayoutPlugin: FormLayoutPlugin;
+	@:optional var validate: Void->Dynamic;
 }
 
 typedef FormBuilderWidgetDef = {
