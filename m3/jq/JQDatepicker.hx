@@ -78,8 +78,8 @@ extern class JQDatepicker extends JQ {
 	@:overload(function<T>(cmd : String):T{})
 	@:overload(function<T>(cmd:String, opt:Dynamic):T{})
 	@:overload(function(cmd:String, opt:String, newVal:Dynamic):JQ{})
-	//function datepicker(opts: JQDatepickerOpts): JQDatepicker;
-	function datepicker(): JQDatepicker;
+	function datepicker(?opts: JQDatepickerOpts): JQDatepicker;
+	// function datepicker(): JQDatepicker;
 
 	@:overload(function( selector: JQ ) : JQDatepicker{})
 	@:overload(function( selector: Element ) : JQDatepicker{})
