@@ -3,7 +3,7 @@ package m3.helper;
 using DateTools;
 using m3.helper.StringHelper;
 
-
+@:expose
 class DateHelper {
     public static function inThePast(d: Date): Bool {
         return d.getTime() < Date.now().getTime();

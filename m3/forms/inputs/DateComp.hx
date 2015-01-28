@@ -21,8 +21,8 @@ typedef DateWidgetDef = {
 	var _create: Void->Void;
 	var result: Void->String;
 	var destroy: Void->Void;
-	@:optional var label: JQ;
-	@:optional var input: JQ;
+	@:optional var input: JQDatepicker;
+	@:optional var iconDiv: JQ;
 
 	@:optional var _super: Dynamic;
 
@@ -36,9 +36,9 @@ class DateCompHelper {
 
 @:native("$")
 extern class DateComp extends AbstractInput {
-	@:overload(function(cmd : String):String{})
-	@:overload(function(cmd : String, arg: Dynamic):Dynamic{})
-	@:overload(function(cmd:String, opt:String, newVal:Dynamic):DateComp{})
+	@:overload(function<T>(cmd : String):T{})
+	@:overload(function<T>(cmd : String, arg: Dynamic):T{})
+	@:overload(function(cmd : String, opt: String, newVal: Dynamic):DateComp{})
 	function dateComp(opts: FormInputOptions): DateComp;
 
 	private static function __init__(): Void {
@@ -48,7 +48,6 @@ extern class DateComp extends AbstractInput {
 		        _create: function(): Void {
 		        	var self: DateWidgetDef = Widgets.getSelf();
 					var selfElement: JQ = Widgets.getSelfElement();
-					var cmd: String = "{ dateFormat: 'dd-mm-yy' }";
 
 		        	if(!selfElement.is("div")) {
 		        		throw new Exception("Root of DateComp Comp must be a div element");
@@ -59,15 +58,21 @@ extern class DateComp extends AbstractInput {
 					self._super();
 
 					var question: FormItem = self.options.formItem;
-	        		self.input = new JQDatepicker("<input type='text'/>").datepicker().datepicker('option','dateFormat','yy-mm-dd');
+
+					self.iconDiv = new JQ("<div class='iconDiv'></div>");
+	        		self.iconDiv.hide();
+
+	        		self.input = new JQDatepicker("<input class='ui-widget-content ui-corner-all helpFilter' type='text'/>").datepicker({
+	        				"dateFormat": "yy-mm-dd"
+	        			});
 					if( question.value == null) question.value = DateTools.format(Date.now(), "%Y-%m-%d");
 					self.input.val(question.value);
 					if(question.disabled) {
 						self.input.attr("disabled", "true").addClass("ui-state-active");
-						//self.iconDiv.show().addClass("locked");
+						self.iconDiv.show().addClass("locked");
 					}
 
-					//selfElement.append("&nbsp;").append(self.input).append(self.iconDiv);
+					selfElement.append("&nbsp;").append(self.input).append(self.iconDiv);
 
         			/*try {
 	        			if(self.options.answers.hasValues()) {
@@ -82,7 +87,7 @@ extern class DateComp extends AbstractInput {
 	        			}
         			} catch (exc: Dynamic) { }*/
 		        	
-	        		selfElement.append(self.input);
+	        		// selfElement.append(self.input);
 		        },
 
 		        result: function(): String {

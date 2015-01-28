@@ -6,6 +6,11 @@ import m3.jq.JQ;
 
 typedef JQDatepickerOpts = {
 	/**
+	 * The format for parsed and displayed dates. For a full list of the possible formats
+	 * see the formatDate function.
+	*/
+	@:optional var dateFormat: String; //"mm/dd/yy"
+	/**
 	 * An input element that is to be updated with the selected date from the 
 	 * datepicker. Use the altFormat option to change the format of the date within 
 	 * this field. Leave as blank for no alternate field.
