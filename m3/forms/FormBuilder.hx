@@ -13,6 +13,7 @@ import m3.forms.FormValidations;
 
 using m3.forms.FormInput;
 using m3.forms.inputs.TextInput;
+using m3.forms.inputs.CodeEditorInput;
 using m3.helper.StringHelper;
 using m3.helper.ArrayHelper;
 
@@ -21,6 +22,10 @@ class InputType {
 	public static var TEXT: String = "TEXT";
 	public static var COMBOBOX: String = "COMBOBOX";
 	public static var DATE: String = "DATE";
+	public static var JAVASCRIPT: String = "JAVASCRIPT";
+	public static var SQL: String = "SQL";
+	public static var JSON: String = "JSON";
+	public static var HTML: String = "HTML";
 }
 
 class FormError {

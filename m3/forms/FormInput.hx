@@ -16,6 +16,8 @@ import m3.exception.ValidationException;
 using m3.forms.inputs.Select;
 using m3.forms.inputs.TextInput;
 using m3.forms.inputs.DateComp;
+using m3.forms.inputs.CodeEditorInput;
+using m3.forms.inputs.CodeInput;
 using m3.helper.ArrayHelper;
 using m3.helper.StringHelper;
 using Lambda;
@@ -25,6 +27,8 @@ typedef FormInputOptions = {
 }
 
 typedef FormInputWidgetDef = {
+	@:optional var editorDiv: JQ;	
+	@:optional var editor: Dynamic;	
 	@:optional var options: FormInputOptions;
 	var _create: Void->Void;
 	var result: Void->Array<String>;
@@ -91,7 +95,14 @@ extern class FormInput extends JQ {
 								input = t;
 								self._getResultFcn = function(): Array<String> {
 									return [t.result()];
-								}
+								}			
+							case InputType.JAVASCRIPT, InputType.JSON, InputType.HTML, InputType.SQL:
+	        					var t: CodeInput = new CodeInput(selfElement)
+		        					.codeInput({formItem: formItem});
+		        				input = t;
+		        				self._getResultFcn = function(): Array<String> {
+			        	 			return [t.result()];
+			        	 		}
 		        			case InputType.TEXT:
 	        					var t: TextInput = new TextInput(selfElement)
 		        					.textInput({formItem: formItem});

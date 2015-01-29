@@ -42,6 +42,7 @@ extern class CodeEditor extends JQ {
 	public static var JSON: String;
 	public static var HAXE: String;
 	public static var SQL: String;
+	public static var HTML: String;
 
 	private static var modes: Array<String>;
 
@@ -56,7 +57,8 @@ extern class CodeEditor extends JQ {
 		JSON = "json";
 		HAXE = "haxe";
 		SQL = "sql";
-		modes = [JAVASCRIPT, JSON, HAXE, SQL];
+		HTML = "html";
+		modes = [JAVASCRIPT, JSON, HAXE, SQL, HTML];
 		supported = function(mode: String) {
 			return modes.contains(mode);
 		}

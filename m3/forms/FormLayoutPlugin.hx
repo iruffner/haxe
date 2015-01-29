@@ -27,13 +27,15 @@ class DefaultFormLayout implements FormLayoutPlugin {
     	var f: JQ = new JQ("<div class='formInputs'></div>").appendTo(form);
 
     	var formInputs = new Array<FormInput>();
-    	for(formItem in opts.formItems) {
-			formInputs.push(
-				new FormInput("<div></div>")
-					.appendTo(f)
-					.formInput({formItem: formItem})
-			);
-    	}
+    	if(opts.formItems != null){
+	    	for(formItem in opts.formItems) {
+				formInputs.push(
+					new FormInput("<div></div>")
+						.appendTo(f)
+						.formInput({formItem: formItem})
+				);
+	    	}
+	    }
     	return formInputs;
 	}
 	
