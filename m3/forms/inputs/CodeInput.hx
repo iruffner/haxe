@@ -121,7 +121,7 @@ extern class CodeInput extends AbstractInput {
 
 		        result: function(): String {
 		        	var self: CodeInputWidgetDef = Widgets.getSelf();
-					return self.editor.val();
+					return self.editor.getValue();
 	        	},
 
 		        destroy: function() {

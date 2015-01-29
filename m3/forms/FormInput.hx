@@ -16,7 +16,6 @@ import m3.exception.ValidationException;
 using m3.forms.inputs.Select;
 using m3.forms.inputs.TextInput;
 using m3.forms.inputs.DateComp;
-using m3.forms.inputs.CodeEditorInput;
 using m3.forms.inputs.CodeInput;
 using m3.helper.ArrayHelper;
 using m3.helper.StringHelper;

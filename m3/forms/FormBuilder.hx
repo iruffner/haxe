@@ -13,7 +13,7 @@ import m3.forms.FormValidations;
 
 using m3.forms.FormInput;
 using m3.forms.inputs.TextInput;
-using m3.forms.inputs.CodeEditorInput;
+using m3.forms.inputs.CodeInput;
 using m3.helper.StringHelper;
 using m3.helper.ArrayHelper;
 
