@@ -70,7 +70,7 @@ extern class Select extends AbstractInput {
 	        		// self.label = new JQ("<label for='quest" + uid + "'>" + question.label + "</label>").appendTo(selfElement);
 	        		// var multi: String = self.options.multi ? " multiple ": "";
 	        		var multi: String = "";
-	        		var defaultValue : String = "No choices available...";
+	        		var defaultValue : String = "No data available...";
         			var choices: Array<Array<String>> = {
         				if(Reflect.isFunction(question.options)) {
         					question.options();
