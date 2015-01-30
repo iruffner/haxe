@@ -84,6 +84,7 @@ extern class CodeEditor extends JQ {
 		                    }
 		                }
 		            },
+		            mode:  "ace/mode/"+JAVASCRIPT.toLowerCase(),
 		        },
 
 		        _create: function() {
@@ -131,7 +132,7 @@ extern class CodeEditor extends JQ {
 		        	var self: CodeEditorWidgetDef = Widgets.getSelf();
 	    			untyped self.editor = ace.edit(self.editorDiv[0]);
 	    			self.editor.setTheme("ace/theme/chrome");
-    				self.editor.getSession().setMode("ace/mode/javascript");
+    				self.editor.getSession().setMode(self.options.mode);
     				self.editor.setValue(self.options.text);
     				self.editorInitialized = true;
 	        	},

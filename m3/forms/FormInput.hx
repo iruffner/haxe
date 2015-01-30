@@ -97,7 +97,10 @@ extern class FormInput extends JQ {
 								}			
 							case InputType.JAVASCRIPT, InputType.JSON, InputType.HTML, InputType.SQL:
 	        					var t: CodeInput = new CodeInput(selfElement)
-		        					.codeInput({formItem: formItem});
+		        					.codeInput({
+		        							formItem: formItem,
+		        							mode: formItem.type
+		        						});
 		        				input = t;
 		        				self._getResultFcn = function(): Array<String> {
 			        	 			return [t.result()];

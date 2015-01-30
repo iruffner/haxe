@@ -20,7 +20,7 @@ using m3.widget.CodeEditor;
 typedef CodeInputWidgetDef = {
 	@:optional var editorDiv: JQ;
 	@:optional var editor: Dynamic;	
- 	@:optional var options: FormInputOptions;
+ 	@:optional var options: CodeInputOptions;
 	var _create: Void->Void;
 	var result: Void->String;
 	var destroy: Void->Void;
@@ -30,6 +30,11 @@ typedef CodeInputWidgetDef = {
 	@:optional var _super: Dynamic;
 	@:optional var getDefaultValue: Dynamic;
 
+}
+
+typedef CodeInputOptions = {
+	>FormInputOptions,
+	var mode: String;
 }
 
 class CodeInputHelper {
@@ -43,7 +48,7 @@ extern class CodeInput extends AbstractInput {
 	@:overload(function<T>(cmd : String):T{})
 	@:overload(function<T>(cmd : String, arg: Dynamic):T{})
 	@:overload(function(cmd : String, opt: String, newVal: Dynamic):CodeInput{})
-	function codeInput(opts: FormInputOptions): CodeInput;
+	function codeInput(opts: CodeInputOptions): CodeInput;
 
 	@:overload(function( selector: JQ ) : CodeInput{})
 	@:overload(function( selector: Element ) : CodeInput{})
@@ -71,6 +76,20 @@ extern class CodeInput extends AbstractInput {
 	        		self.iconDiv.hide();
 
 					self.editorDiv = new JQ("<div id='aceEditorDiv'></div><");
+    				untyped self.editor = ace.edit(self.editorDiv[0]);
+    				self.editor.setTheme("ace/theme/chrome");
+    				var mode :String = "ace/mode/"+self.options.mode.toLowerCase();
+    				trace(mode);
+    				self.editor.getSession().setMode(mode);
+
+					self.input = self.editorDiv;
+	        		if(self.getDefaultValue() != null) self.editor.setValue(self.options.formItem.value);
+
+    				//set style after we know the dim after content
+    				var dialogoffset = 200;
+    				var lineheight = 10 * 17.5;
+    				var lines = self.editor.session.doc.getAllLines();
+    				if(lines.length >= 10) lineheight = lines.length * 17.5;
 					self.editorDiv.css({
 						position: "relative",
 						top: 0,
@@ -81,16 +100,12 @@ extern class CodeInput extends AbstractInput {
 						"display": "inline-block",
 						"max-width": "90%",
 						"min-width": "89.5%",
-						"height": "200px",
+						"height": lineheight,
 						"border" : "1px solid",
 						"vertical-align" : "top"
 						});
-					self.input = self.editorDiv;
-    				untyped self.editor = ace.edit(self.editorDiv[0]);
-    				self.editor.setTheme("ace/theme/chrome");
-    				self.editor.getSession().setMode("ace/mode/javascript");
 
-	        		if(self.getDefaultValue() != null) self.editor.setValue(self.options.formItem.value);
+					//set icon
 	        		if(question.disabled) {
 	        			self.input.attr("disabled", "true").addClass("ui-state-active");
 	        			self.iconDiv.show().addClass("locked");
@@ -99,12 +114,16 @@ extern class CodeInput extends AbstractInput {
 	        				function(){
 	        					var opts : CodeEditorOptions = {
 	        						text: self.options.formItem.value,
-	        						dialogOptions: {width: "60%"},
+	        						dialogOptions: {
+	        							width: "60%", 
+	        							"height": lineheight + dialogoffset
+	        							},
 	        						cancel: function(){
 	        							},
 	        						submit: function(value){
 	        								self.editor.setValue(value);
-	        							}
+	        							},
+	        						//mode: mode
 	        					}
 								var t: CodeEditor = new CodeEditor("<div></div>")
 									.codeEditor(opts);
