@@ -113,7 +113,7 @@ extern class CodeInput extends AbstractInput {
 	        			new JQ(self.iconDiv.show().addClass("fi-arrow-right")).click(
 	        				function(){
 	        					var opts : CodeEditorOptions = {
-	        						text: self.options.formItem.value,
+	        						text: self.editor.getValue(),
 	        						dialogOptions: {
 	        							width: "60%", 
 	        							"height": lineheight + dialogoffset
