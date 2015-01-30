@@ -109,6 +109,7 @@ extern class CodeEditor extends JQ {
 		            	self._initializeEditor();
 		            } else {
 		            	self.editor.setValue(self.options.text);
+		            	self.editor.setFocus();
 		            }
 		        },
 		        

@@ -88,7 +88,7 @@ extern class CodeInput extends AbstractInput {
     				var dialogoffset = 200;
     				var lineheight = 10 * 17.5;
     				var lines = self.editor.session.doc.getAllLines();
-    				if(lines.length >= 10) lineheight = lines.length * 17.5;
+    				if(lines.length >= 10 && lines.length <= 30) lineheight = lines.length * 17.5;
 					self.editorDiv.css({
 						position: "relative",
 						top: 0,
@@ -114,8 +114,8 @@ extern class CodeInput extends AbstractInput {
 	        					var opts : CodeEditorOptions = {
 	        						text: self.editor.getValue(),
 	        						dialogOptions: {
-	        							width: "60%", 
-	        							"height": lineheight + dialogoffset
+		        							width: "60%", 
+		        							"height": lineheight + dialogoffset
 	        							},
 	        						cancel: function(){
 	        							},

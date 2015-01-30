@@ -70,7 +70,20 @@ extern class Select extends AbstractInput {
 	        		// self.label = new JQ("<label for='quest" + uid + "'>" + question.label + "</label>").appendTo(selfElement);
 	        		// var multi: String = self.options.multi ? " multiple ": "";
 	        		var multi: String = "";
-	        		self.input = new JQ("<select class='ui-combobox-input ui-widget ui-widget-content' name='" + self.options.formItem.name + "' " + multi + "><option value=''>Please choose..</option></select>");
+	        		var defaultValue : String = "No choices available...";
+        			var choices: Array<Array<String>> = {
+        				if(Reflect.isFunction(question.options)) {
+        					question.options();
+        				} else {
+        					question.options;
+        				}
+        			}
+
+        			if(choices != null && choices.length > 0){
+        				defaultValue = "Please choose...";
+        			}
+
+	        		self.input = new JQ("<select class='ui-combobox-input ui-widget ui-widget-content' name='" + self.options.formItem.name + "' " + multi + "><option value=''>"+defaultValue+"</option></select>");
 	        		if(question.disabled) {
 	        			self.input.attr("disabled", "true");
 	        			self.iconDiv.show().addClass("locked");
@@ -90,20 +103,15 @@ extern class Select extends AbstractInput {
 						 	[];
         				};
         			}
-        			var choices: Array<Array<String>> = {
-        				if(Reflect.isFunction(question.options)) {
-        					question.options();
-        				} else {
-        					question.options;
-        				}
-        			}
-		        	for(option in choices) {
-		        		var opt: JQ = new JQ("<option></option>")
-		        								.attr("value", option[0])
-		        								.appendTo(self.input)
-		        								.append(option[1]);
-		        		if(answers.contains(option[0])) opt.attr("selected", "selected");
-		        	}
+        			if(choices != null && choices.length != 0){
+			        	for(option in choices) {
+			        		var opt: JQ = new JQ("<option></option>")
+			        								.attr("value", option[0])
+			        								.appendTo(self.input)
+			        								.append(option[1]);
+			        		if(answers.contains(option[0])) opt.attr("selected", "selected");
+			        	}
+			        }
 	        		selfElement.append("&nbsp;").append(self.input).append(self.iconDiv);
 		        },
 
