@@ -15,6 +15,7 @@ using m3.forms.FormInput;
 using m3.forms.FormBuilder;
 using m3.forms.FormBuilderDialog.FormBuilderDialogOptions;
 using embi.plugins.BiFormBuilderPlugin.BiFormBuilderOptions;
+using m3.widget.CodeEditor;
 
 typedef CodeInputWidgetDef = {
 	@:optional var editorDiv: JQ;
@@ -88,7 +89,6 @@ extern class CodeInput extends AbstractInput {
     				untyped self.editor = ace.edit(self.editorDiv[0]);
     				self.editor.setTheme("ace/theme/chrome");
     				self.editor.getSession().setMode("ace/mode/javascript");
-    				self.editor.setValue();
 
 	        		if(self.getDefaultValue() != null) self.editor.setValue(self.options.formItem.value);
 	        		if(question.disabled) {
@@ -97,22 +97,18 @@ extern class CodeInput extends AbstractInput {
 	        		}else{
 	        			new JQ(self.iconDiv.show().addClass("fi-arrow-right")).click(
 	        				function(){
-	        					trace(self);
-	                            var editForm = new FormBuilderDialog("<div></div>").appendTo(js.Browser.document.body);
-	                            var formOpts: BiFormBuilderOptions = {
-	                                subtitle: "Edit a row from the view",
-	                                //view: self.options,
-	                                data: self.options.formItem.value,
-	                                formItems: [self.options.formItem],
-	                                formPlugin: FormBuilderDialog.DEFAULT_FORM_PLUGIN,
-	                                formLayoutPlugin: FormBuilderDialog.DEFAULT_FORM_LAYOUT
-	                            }
-	                            var dialogOpts : FormBuilderDialogOptions = {
-	                                title: "Edit code",
-	                                height: 400,
-	                                formOptions: formOpts
-	                            };
-	                            editForm.formBuilderDialog(dialogOpts);
+	        					var opts : CodeEditorOptions = {
+	        						text: self.options.formItem.value,
+	        						dialogOptions: {width: "60%"},
+	        						cancel: function(){
+	        							},
+	        						submit: function(value){
+	        								self.editor.setValue(value);
+	        							}
+	        					}
+								var t: CodeEditor = new CodeEditor("<div></div>")
+									.codeEditor(opts);
+								t.codeEditor("showEditor");
 	        				}).css({"padding-top" : "1.5%"});
 	        		}
 
