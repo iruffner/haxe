@@ -79,7 +79,6 @@ extern class CodeInput extends AbstractInput {
     				untyped self.editor = ace.edit(self.editorDiv[0]);
     				self.editor.setTheme("ace/theme/chrome");
     				var mode :String = "ace/mode/"+self.options.mode.toLowerCase();
-    				trace(mode);
     				self.editor.getSession().setMode(mode);
 
 					self.input = self.editorDiv;
@@ -109,7 +108,7 @@ extern class CodeInput extends AbstractInput {
 	        		if(question.disabled) {
 	        			self.input.attr("disabled", "true").addClass("ui-state-active");
 	        			self.iconDiv.show().addClass("locked");
-	        		}else{
+	        		}else{//if editor and not locked then popup icon and construct codeeditor for click
 	        			new JQ(self.iconDiv.show().addClass("fi-arrow-right")).click(
 	        				function(){
 	        					var opts : CodeEditorOptions = {
@@ -123,7 +122,7 @@ extern class CodeInput extends AbstractInput {
 	        						submit: function(value){
 	        								self.editor.setValue(value);
 	        							},
-	        						//mode: mode
+	        						mode: mode
 	        					}
 								var t: CodeEditor = new CodeEditor("<div></div>")
 									.codeEditor(opts);
