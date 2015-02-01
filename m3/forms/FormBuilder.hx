@@ -41,7 +41,7 @@ class FormError {
 typedef FormItem = {
 	var name: String;
 	@:optional var label: String;
-	@:optional var type: String;
+	@:optional var type: String; // this is one of the InputType.xxxx values
 	@:optional var value: Dynamic;// either a String or Array<String>
 	@:optional var required: Bool;
 	@:optional var disabled: Bool;
