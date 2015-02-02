@@ -49,6 +49,14 @@ class Serializer {
 		addHandlerViaName("Array<Dynamic>", new DynamicArrayHandler());
 	}
 
+	public function defaultToString(): Void {
+		_defaultToStrict = true;
+	}
+
+	public function defaultToLoose(): Void {
+		_defaultToStrict = false;
+	}
+
 	public function addHandler<T>(clazz: Class<T>, handler: TypeHandler) {
 		var typename = Type.getClassName(clazz);
 		_handlersMap.set(typename, handler);
