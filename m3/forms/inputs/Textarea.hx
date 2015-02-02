@@ -1,4 +1,5 @@
-package ui.widgets.qtype;
+//package ui.widgets.qtype;
+package m3.forms.inputs;
 
 import js.html.VideoElement;
 
@@ -6,24 +7,25 @@ import m3.jq.JQ;
 import m3.widget.Widgets;
 
 import m3.exception.Exception;
+import m3.exception.ValidationException;
 import m3.log.Logga;
-
-import ui.exception.ValidationException;
-
-import ui.model.BModel;
-import ui.pages.Pages;
-import ui.widgets.targets.QuestionComp.QuestionCompOptions;
 
 using m3.helper.StringHelper;
 using m3.helper.ArrayHelper;
+using m3.forms.FormInput;
+using m3.forms.FormBuilder;
 
 typedef TextareaWidgetDef = {
-	@:optional var options: QuestionCompOptions;
+	@:optional var options: FormInputOptions;
 	var _create: Void->Void;
 	var result: Void->String;
 	var destroy: Void->Void;
 	@:optional var label: JQ;
 	@:optional var input: JQ;
+	@:optional var iconDiv: JQ;
+
+	@:optional var _super: Dynamic;
+	@:optional var getDefaultValue: Dynamic;	
 }
 
 class TextareaHelper {
@@ -33,11 +35,11 @@ class TextareaHelper {
 }
 
 @:native("$")
-extern class Textarea extends JQ {
+extern class Textarea extends AbstractInput {
 	@:overload(function(cmd : String):String{})
 	@:overload(function(cmd : String, arg: Dynamic):Dynamic{})
 	@:overload(function(cmd:String, opt:String, newVal:Dynamic):JQ{})
-	function textarea(opts: QuestionCompOptions): Textarea;
+	function textarea(opts: FormInputOptions): Textarea;
 
 	private static function __init__(): Void {
 		
@@ -48,18 +50,19 @@ extern class Textarea extends JQ {
 					var selfElement: JQ = Widgets.getSelfElement();
 
 		        	if(!selfElement.is("div")) {
-		        		throw new Exception("Root of TextareaComp must be a div element");
+		        		throw new Exception("Root of TextArea must be a div element");
 		        	}
 
 		        	selfElement.addClass("_textarea center");
 
-		        	var question: Question = self.options.question;
+		        	var question: FormItem = self.options.formItem;
 
-	        		self.label = new JQ("<label for='quest" + question.uid + "'>" + question.text + "</label>").appendTo(selfElement);
+	        		self.label = new JQ("<label for='quest" + question.name + "'>" + question.name + "</label>").appendTo(selfElement);
 	        		// var multi: String = self.options.multi ? " multiple ": "";
 	        		var multi: String = "";
-	        		self.input = new JQ("<textarea name='" + question.uid + "' id='quest" + question.uid + "'></textarea>");
-	        		if(self.options.answers.hasValues()) self.input.val(self.options.answers[0].response);
+	        		self.input = new JQ("<textarea name='" + question.name + "' id='quest" + question.name + "'></textarea>");
+
+	        		if(question.value != null) self.input.val(question.value);
 		        	
 	        		selfElement.append(self.input);
 		        },
@@ -68,8 +71,8 @@ extern class Textarea extends JQ {
 		        	var self: TextareaWidgetDef = Widgets.getSelf();
 					var selfElement: JQ = Widgets.getSelfElement();
 					var value: String = self.input.val();
-					if(value.isBlank() && self.options.question.required) {
-						throw new ValidationException(self.options.question.uid + " is required");
+					if(value.isBlank() && self.options.formItem.required) {
+						throw new ValidationException(self.options.formItem.name + " is required");
 						self.label.css("color", "red");
 					} else if(value.isBlank()) {
 						return "";

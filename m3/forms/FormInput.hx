@@ -15,6 +15,7 @@ import m3.exception.ValidationException;
 
 using m3.forms.inputs.Select;
 using m3.forms.inputs.TextInput;
+using m3.forms.inputs.Textarea;
 using m3.forms.inputs.DateComp;
 using m3.forms.inputs.CodeInput;
 using m3.helper.ArrayHelper;
@@ -108,6 +109,13 @@ extern class FormInput extends JQ {
 		        			case InputType.TEXT:
 	        					var t: TextInput = new TextInput(selfElement)
 		        					.textInput({formItem: formItem});
+		        				input = t;
+		        				self._getResultFcn = function(): Array<String> {
+			        	 			return [t.result()];
+			        	 		}
+		        			case InputType.TEXTAREA:
+	        					var t: Textarea = new Textarea(selfElement)
+		        					.textarea({formItem: formItem});
 		        				input = t;
 		        				self._getResultFcn = function(): Array<String> {
 			        	 			return [t.result()];
