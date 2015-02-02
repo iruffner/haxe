@@ -57,10 +57,25 @@ extern class Textarea extends AbstractInput {
 
 		        	var question: FormItem = self.options.formItem;
 
-	        		self.label = new JQ("<label for='quest" + question.name + "'>" + question.name + "</label>").appendTo(selfElement);
+	        		self.label = new JQ("<label for='quest" + question.name + "'>" + question.name + "</label>").appendTo(selfElement)
+	        		.css({
+	        			"padding-top":"2%",	
+        			});
 	        		// var multi: String = self.options.multi ? " multiple ": "";
 	        		var multi: String = "";
-	        		self.input = new JQ("<textarea name='" + question.name + "' id='quest" + question.name + "'></textarea>");
+	        		self.input = new JQ("<textarea name='" + question.name + "' id='quest" + question.name + "'></textarea>")
+	        		.css({
+						position: "relative",
+						top: -15,
+						right: 0,
+						bottom: 0,
+						left: 0,
+						"border": "1px solid black",
+						"min-height": "150px",
+						"margin-left": "0.8%",
+						"vertical-align" : "top",
+						"min-width": "89.9%"
+					});
 
 	        		if(question.value != null) self.input.val(question.value);
 		        	
