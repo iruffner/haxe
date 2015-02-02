@@ -47,6 +47,7 @@ class DefaultFormLayout implements FormLayoutPlugin {
 		if(errors.hasValues()) {
 			for(err_ in errors) {
 				err_.input.children(".iconDiv, label, input").addClass("error");
+				err_.input.children("select").addClass("error");
 				// err_.input.children("label").addClass("error");
 				// err_.input.children("input").addClass("error");
 			}
