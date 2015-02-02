@@ -46,7 +46,7 @@ typedef FormItem = {
 	@:optional var value: Dynamic;// either a String or Array<String>
 	@:optional var required: Bool;
 	@:optional var disabled: Bool;
-	@:optional var validators: Array<Array<String>->Dynamic>;
+	@:optional var validators: Array<Dynamic->Dynamic>;
 	@:optional var options: Dynamic;// Array<Array<String>> or a function returning Array<Array<String>>
 }
 

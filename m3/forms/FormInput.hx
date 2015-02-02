@@ -78,15 +78,11 @@ extern class FormInput extends JQ {
 
 		        	var formItem: FormItem = self.options.formItem;
 
-		        	var requiredFunc: Dynamic = function(val: String) : Dynamic {
-	                						return m3.forms.FormValidations.notBlank(val);
-	                					};
-
 		        	if(self.options.formItem.required){
 		        		if(self.options.formItem.validators == null){
 		        			self.options.formItem.validators = new Array();
 		        		}
-						self.options.formItem.validators.push(requiredFunc);
+						self.options.formItem.validators.push(m3.forms.FormValidations.notBlank);
 		        	}
 
 		        	var input: AbstractInput = null;
