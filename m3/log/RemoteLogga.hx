@@ -1,5 +1,6 @@
 package m3.log;
 
+import haxe.PosInfos;
 import haxe.Timer;
 import m3.util.UidGenerator;
 import m3.exception.Exception;
@@ -29,7 +30,7 @@ class RemoteLogga extends Logga {
 		log("SessionUid: " + this.sessionUid);
 	}
 
-	override public function log(statement: String, ?level: LogLevel, ?exception: Exception) {
+	override public function log(statement: String, ?level: LogLevel, ?exception: Exception, ?posInfo: PosInfos) {
 		if(level == null) {
             level = LogLevel.INFO;
         }

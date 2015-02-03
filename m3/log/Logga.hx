@@ -93,7 +93,7 @@ class Logga {
         this.statementPrefix = prefix;
     }
 
-    public function log(statement: String, ?level: LogLevel, ?exception: Exception) {
+    public function log(statement: String, ?level: LogLevel, ?exception: Exception, ?posInfo: haxe.PosInfos) {
         if(!initialized) {
             this._getLogger();
         }
@@ -124,21 +124,21 @@ class Logga {
         if( logsAtLevel(level) && console != null ) {
             try {
                 if( (Type.enumEq(level, LogLevel.TRACE) || Type.enumEq(level, LogLevel.DEBUG)) && console.debug != null) {
-                    this.console.debug(statement);
+                    this.console.debug(statement, "-->", posInfo);
                 } else if (Type.enumEq(level, LogLevel.INFO) && console.info != null) {
-                    this.console.info(statement);
+                    this.console.info(statement, "-->", posInfo);
                 } else if (Type.enumEq(level, LogLevel.WARN) && console.warn != null) {
-                    this.console.warn(statement);
+                    this.console.warn(statement, "-->", posInfo);
                 } else if (Type.enumEq(level, LogLevel.ERROR) && this.preservedConsoleError != null) {
                     untyped this.preservedConsoleError.apply(this.console, [statement]);
                     this.console.trace();
                 } else if (Type.enumEq(level, LogLevel.ERROR) && console.error != null) {
-                    this.console.error(statement);
+                    this.console.error(statement, posInfo);
                     this.console.trace();
                 } else if (this.preservedConsoleLog != null) {
                     untyped this.preservedConsoleLog.apply(this.console, [statement]);
                 } else {
-                    this.console.log(statement);
+                    this.console.log(statement, "-->", posInfo);
                 }
             } catch (err : Dynamic) {
                 if(this.console != null && Reflect.hasField(this.console, "error")) {
@@ -153,20 +153,20 @@ class Logga {
     public function setLogLevel(logLevel:LogLevel) {
         this.loggerLevel = logLevel;
     }
-    public function trace(statement:String, ?exception:Exception) {
-        log(statement, LogLevel.TRACE, exception);
+    public function trace(statement:String, ?exception:Exception, ?posInfo: haxe.PosInfos) {
+        log(statement, LogLevel.TRACE, exception, posInfo);
     }
-    public function debug(statement:String, ?exception:Exception) {
-        log(statement, LogLevel.DEBUG, exception);
+    public function debug(statement:String, ?exception:Exception, ?posInfo: haxe.PosInfos) {
+        log(statement, LogLevel.DEBUG, exception, posInfo);
     }
-    public function info(statement:String, ?exception:Exception) {
-        log(statement, LogLevel.INFO, exception);
+    public function info(statement:String, ?exception:Exception, ?posInfo: haxe.PosInfos) {
+        log(statement, LogLevel.INFO, exception, posInfo);
     }
-    public function warn(statement:String, ?exception:Exception) {
-        log(statement, LogLevel.WARN, exception);
+    public function warn(statement:String, ?exception:Exception, ?posInfo: haxe.PosInfos) {
+        log(statement, LogLevel.WARN, exception, posInfo);
     }
-    public function error(statement:String, ?exception:Exception) {
-        log(statement, LogLevel.ERROR, exception);
+    public function error(statement:String, ?exception:Exception, ?posInfo: haxe.PosInfos) {
+        log(statement, LogLevel.ERROR, exception, posInfo);
     }
 
     public static function getExceptionInst(err: Dynamic) {

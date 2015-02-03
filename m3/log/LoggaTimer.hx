@@ -1,5 +1,6 @@
 package m3.log;
 
+import haxe.PosInfos;
 import m3.log.Logga;
 
 class LoggaTimer {
@@ -15,14 +16,14 @@ class LoggaTimer {
         startTime = getNow();
     }
     
-    public function start(statement:String, ?level:LogLevel) {
+    public function start(statement:String, ?level:LogLevel, ?posInfo: PosInfos) {
         level = checkLevel(level);
         startTime = getNow();
         previousTime = startTime;
-        logger.log(statement, level);
+        logger.log(statement, level, posInfo);
     }
     
-    public function lap(statement:String, ?level:LogLevel) {
+    public function lap(statement:String, ?level:LogLevel, ?posInfo: PosInfos) {
         level = checkLevel(level);
         if(logger.logsAtLevel(level)) {
             var now = getNow();
@@ -30,16 +31,16 @@ class LoggaTimer {
             previousTime = now;
             var totalDiff = now - startTime;
             statement += " | " + lapDiff + "ms for lap | " + totalDiff + "ms total";
-            logger.log(statement, level);
+            logger.log(statement, level, posInfo);
         }
     }
     
-    public function stop(statement:String, ?level:LogLevel) {
+    public function stop(statement:String, ?level:LogLevel, ?posInfo: PosInfos) {
         level = checkLevel(level);
         var stopTime = getNow();
         var totalDiff = stopTime - startTime;
         statement += " | " + totalDiff + "ms total";
-        logger.log(statement, level);
+        logger.log(statement, level, posInfo);
     }
 
     private function checkLevel(level:LogLevel) {
