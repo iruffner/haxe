@@ -16,6 +16,7 @@ import m3.exception.ValidationException;
 using m3.forms.inputs.Select;
 using m3.forms.inputs.TextInput;
 using m3.forms.inputs.Textarea;
+using m3.forms.inputs.CheckboxInput;
 using m3.forms.inputs.DateComp;
 using m3.forms.inputs.CodeInput;
 using m3.helper.ArrayHelper;
@@ -126,6 +127,13 @@ extern class FormInput extends JQ {
 		        				input = t;
 		        				self._getResultFcn = function(): Array<String> {
 			        	 			return [t.result()];
+			        	 		}
+		        			case InputType.CHECKBOX:
+	        					var t: CheckboxInput = new CheckboxInput(selfElement)
+		        					.checkboxInput({formItem: formItem});
+		        				input = t;
+		        				self._getResultFcn = function(): Array<String> {
+			        	 			return t.result();
 			        	 		}
 		        			case InputType.SELECT: 
 		        				var s: Select = new Select(selfElement)

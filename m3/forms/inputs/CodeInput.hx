@@ -14,7 +14,6 @@ using m3.helper.ArrayHelper;
 using m3.forms.FormInput;
 using m3.forms.FormBuilder;
 using m3.forms.FormBuilderDialog.FormBuilderDialogOptions;
-using embi.plugins.BiFormBuilderPlugin.BiFormBuilderOptions;
 using m3.widget.CodeEditor;
 
 typedef CodeInputWidgetDef = {
