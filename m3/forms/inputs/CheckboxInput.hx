@@ -19,7 +19,7 @@ using m3.forms.FormBuilder;
 typedef CheckboxInputWidgetDef = {
 	@:optional var options: FormInputOptions;
 	var _create: Void->Void;
-	var result: Void->String;
+	var result: Void->Array<String>;
 	var destroy: Void->Void;
 	@:optional var input: JQ;
 	@:optional var iconDiv: JQ;
@@ -94,9 +94,9 @@ extern class CheckboxInput extends AbstractInput {
 		        	}
 */		        },
 
-		        result: function(): String {
+		        result: function(): Array<String> {
 		        	var self: CheckboxInputWidgetDef = Widgets.getSelf();
-		        	return self.input.val();
+		        	return [(self.input.val() == "on") ? "true" : "false"];
 		        },
 /*					var self: CheckboxInputWidgetDef = Widgets.getSelf();
 					var selfElement: JQ = Widgets.getSelfElement();

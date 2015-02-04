@@ -61,7 +61,10 @@ extern class Textarea extends AbstractInput {
 	        		.css({
 	        			"padding-top":"2%",	
         			});
-	        		// var multi: String = self.options.multi ? " multiple ": "";
+
+		        	self.iconDiv = new JQ("<div class='iconDiv'></div>");
+	        		self.iconDiv.hide();
+
 	        		var multi: String = "";
 	        		self.input = new JQ("<textarea name='" + question.name + "' id='quest" + question.name + "'></textarea>")
 	        		.css({
@@ -78,6 +81,11 @@ extern class Textarea extends AbstractInput {
 					});
 
 	        		if(question.value != null) self.input.val(question.value);
+	        		if(question.disabled) {
+	        			self.input.attr("disabled", "true").addClass("ui-state-active");
+	        			self.iconDiv.show().addClass("locked");
+	        		}
+	        		
 		        	
 	        		selfElement.append(self.input);
 		        },
