@@ -6,6 +6,7 @@ using m3.helper.StringHelper;
 using m3.helper.ArrayHelper;
 using StringTools;
 
+@:expose
 class OSetHelper {
     public static function getElement<T>(oset: OSet<T>, value: String, ?startingIndex: Int=0): T {
         return getElementComplex(oset, value, null, startingIndex);
