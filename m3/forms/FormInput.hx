@@ -16,9 +16,11 @@ import m3.exception.ValidationException;
 using m3.forms.inputs.Select;
 using m3.forms.inputs.TextInput;
 using m3.forms.inputs.Textarea;
+using m3.forms.inputs.ACComboBox;
 using m3.forms.inputs.CheckboxInput;
 using m3.forms.inputs.DateComp;
 using m3.forms.inputs.CodeInput;
+using m3.jq.ComboBox;
 using m3.helper.ArrayHelper;
 using m3.helper.StringHelper;
 using Lambda;
@@ -128,6 +130,13 @@ extern class FormInput extends JQ {
 		        				self._getResultFcn = function(): Array<String> {
 			        	 			return [t.result()];
 			        	 		}
+		        			case InputType.ACCOMBOBOX:
+	        					var t: ACComboBox = new ACComboBox(selfElement)
+		        					.accomboBox({formItem: formItem});
+		        				input = t;
+		        				self._getResultFcn = function(): Array<String> {
+			        	 			return [t.result()];
+			        	 		}
 		        			case InputType.CHECKBOX:
 	        					var t: CheckboxInput = new CheckboxInput(selfElement)
 		        					.checkboxInput({formItem: formItem});
@@ -142,14 +151,14 @@ extern class FormInput extends JQ {
 	        					self._getResultFcn = function(): Array<String> {
 			        	 			return [s.result()];
 			        	 		}
-		        			case InputType.COMBOBOX: 
+/*		        			case InputType.COMBOBOX: 
 		        				var s: Select = new Select(selfElement)
 		        					.selectComp({formItem: formItem});
 	        					input = s;
 	        					self._getResultFcn = function(): Array<String> {
 			        	 			return [s.result()];
 			        	 		}
-		        			case _:
+*/		        			case _:
 
 		        		}
 		        	}

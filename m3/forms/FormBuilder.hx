@@ -23,6 +23,7 @@ class InputType {
 	public static var TEXTAREA: String = "TEXTAREA";
 	public static var CHECKBOX: String = "CHECKBOX";
 	public static var COMBOBOX: String = "COMBOBOX";
+	public static var ACCOMBOBOX: String = "ACCOMBOBOX";
 	public static var DATE: String = "DATE";
 	public static var JAVASCRIPT: String = "JAVASCRIPT";
 	public static var SQL: String = "SQL";
