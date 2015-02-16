@@ -75,7 +75,7 @@ extern class ACComboBox extends AbstractInput {
 	                    wrapper: JQ = self.wrapper = new JQ( "<span>" )
 	                        .addClass( "ui-combobox" )
 	                        .insertAfter( self.select )
-	                        .attr( "style", "white-space:nowrap;margin-right:40px;" /*+ M.getX(self.options.customCssOnSpan, "")*/ );                       
+	                        .attr( "style", "white-space:nowrap;margin-right:40px;padding-left:2px;" /*+ M.getX(self.options.customCssOnSpan, "")*/ );                       
 	 
 	 				selfElement.addClass("center");
 	 				self._super();
@@ -120,6 +120,7 @@ extern class ACComboBox extends AbstractInput {
         				}
         			}
 
+        			var answer : String = null;
 	        		var answers: Array<String> = {
 	        			if(self.options.formItem.value != null) {
 	        				if(Std.is(self.options.formItem.value, Array)) {
@@ -140,7 +141,10 @@ extern class ACComboBox extends AbstractInput {
 			        								.attr("value", option[0])
 			        								.appendTo(self.select)
 			        								.append(option[1]);
-			        		if(answers.contains(option[0])) opt.attr("selected", "selected");
+			        		if(answers.contains(option[1])) {
+			        			opt.attr("selected", "selected");
+			        			answer = option[1];
+			        		}
 			        	}
 			        }
 
@@ -198,8 +202,8 @@ extern class ACComboBox extends AbstractInput {
 	                    .addClass( "ui-widget ui-widget-content ui-corner-left" )
 	                    .click(function(evt: js.JQuery.JqEvent) {
 	                    	JQ.cur.select();
-                		});
-                		//.appendTo(selfElement.parent());	
+            		});
+            		//.appendTo(selfElement.parent());	
                 		
 
 					self.input.data( "ui-autocomplete" )._renderItem = function( ul, item ) {
@@ -247,7 +251,7 @@ extern class ACComboBox extends AbstractInput {
                         },
                         tooltipClass: "ui-state-highlight"
                     });
-
+                    if (answer != "") self.input.val(answer);
                     //selfElement.append(autocomplete).show();
 		        },
 
