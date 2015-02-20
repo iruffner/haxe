@@ -27,6 +27,7 @@ typedef M3DialogWidgetDef = {
 	@:optional var maxIconWrapper: JQ;
 	@:optional var restoreIconWrapper: JQ;
 	var originalSize: UISize;
+	var originalPosition: UIPosition;
 	var _create: Void->Void;
 	var restore: Void->Void;
 	var maximize: Void->Void;
@@ -85,6 +86,11 @@ extern class M3Dialog extends JQ {
 		        	height: 10
 		        },
 
+		        originalPosition: {
+		        	top: 10,
+		        	left: 10
+		        },
+
 		        _create: function(): Void {
 		        	cast (JQ.curNoWrap)._super('create');
 		        	var self: M3DialogWidgetDef = Widgets.getSelf();
@@ -106,7 +112,7 @@ extern class M3Dialog extends JQ {
 						}
 
 					}
-					if(self.options.showMaximizer) {
+					if(self.options.showMaximizer = true) {
 						self.maxIconWrapper = new JQ("<a href='#' class='ui-dialog-titlebar-close ui-corner-all' style='margin-right: 18px;' role='button'>");
 						var maxIcon: JQ = new JQ("<span class='ui-icon ui-icon-extlink'>maximize</span>");
 						hovers = hovers.add(self.maxIconWrapper);
@@ -150,14 +156,14 @@ extern class M3Dialog extends JQ {
 					var selfElement: M3Dialog = Widgets.getSelfElement();
  
 					//restore the orignal dimensions
-					selfElement.m3dialog("option", "height", self.originalSize.height);
-					selfElement.m3dialog("option", "width", self.originalSize.width);
-					selfElement.parent().position({
-							my: "middle",
-							at:	"middle",
-							of:	js.Browser.window
+					//expand dialog
+					selfElement.parent().css({
+							top: self.originalPosition.top,
+							left:self.originalPosition.left,
+							width: self.originalSize.width, 
+							height: self.originalSize.height
 						});
-				 
+
 					//swap the buttons
 					self.restoreIconWrapper.hide();
 					self.maxIconWrapper.show();
@@ -167,25 +173,34 @@ extern class M3Dialog extends JQ {
 				maximize: function() { 
 					var self: M3DialogWidgetDef = Widgets.getSelf();
 					var selfElement: M3Dialog = Widgets.getSelfElement();
-
-					//Store the original height/width
-					self.originalSize = { height: selfElement.parent().height(), width: selfElement.parent().width() };
-				 	
+					
+					//Store the original height/width			 	
 				 	var window: JQ = new JQ(js.Browser.window);
-				 	var windowDimensions: UISize = { height: window.height(), width: window.width() };
+
+				 	self.originalPosition = {
+						top: selfElement.parent().position().top,
+						left: selfElement.parent().position().left,
+				 	};
+
+					self.originalSize = { 
+						height: selfElement.parent().height(), 
+						width: selfElement.parent().width() 
+					};
+
+				 	var windowDimensions: UISize = {
+				 		height: window.height(), 
+				 		width: window.width() 
+				 	};
+
 					//expand dialog
-					// selfElement.parent().css({
-					// 		width: windowDimensions.width * .85, 
-					// 		height: windowDimensions.height * .85
-					// 	});
-					selfElement.m3dialog("option", "height", windowDimensions.height * .85);
-					selfElement.m3dialog("option", "width", windowDimensions.width * .85);
-					selfElement.parent().position({
-							my: "middle",
-							at:	"middle",
-							of:	window
-					});
-				 
+					trace(selfElement.parent());
+					selfElement.parent().css({
+							top: 20,
+							left:20,
+							width: windowDimensions.width - 50, 
+							height: windowDimensions.height - 50
+						});
+
 					//swap buttons to show restore
 					self.maxIconWrapper.hide();
 					self.restoreIconWrapper.show();
