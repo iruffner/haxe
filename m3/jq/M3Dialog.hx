@@ -28,6 +28,8 @@ typedef M3DialogWidgetDef = {
 	@:optional var restoreIconWrapper: JQ;
 	var originalSize: UISize;
 	var _create: Void->Void;
+	var close: Void->Void;
+	var open: Void->Void;
 	var restore: Void->Void;
 	var maximize: Void->Void;
 	var destroy: Void->Void;
@@ -64,7 +66,11 @@ extern class M3Dialog extends JQ {
 
 	private static function __init__(): Void {
 		// untyped M3Dialog = window.jQuery;
+
 		var defineWidget: Void->M3DialogWidgetDef = function(): M3DialogWidgetDef {
+
+			var localStorage = js.Browser.getLocalStorage();
+
 			return {
 		        options: {
 		            autoOpen: true
@@ -91,6 +97,7 @@ extern class M3Dialog extends JQ {
 					var selfElement: JQ = Widgets.getSelfElement();
 					var closeBtn: JQ = selfElement.prev().find(".ui-dialog-titlebar-close");
 					var hovers: JQ = new JQ("blah");
+
 					if(self.options.showHelp && false) {
 						if(!Reflect.isFunction(self.options.buildHelp)) {
 							Logga.DEFAULT.error("Supposed to show help but buildHelp is not a function");
@@ -132,7 +139,6 @@ extern class M3Dialog extends JQ {
 							JQ.cur.removeClass("ui-state-hover");
 						}
 					);
-
 		        },
 
 		        _allowInteraction: function( event ): Bool {
@@ -142,7 +148,6 @@ extern class M3Dialog extends JQ {
 		        		r =  !!self.options.allowInteraction(event);
 		        	}
 		        	return r || self._super( event );
-					
 				},
 
 		        restore: function() {
@@ -183,7 +188,7 @@ extern class M3Dialog extends JQ {
 					selfElement.parent().position({
 							my: "middle",
 							at:	"middle",
-							of:	window
+							of:	js.Browser.window
 					});
 				 
 					//swap buttons to show restore
@@ -192,9 +197,50 @@ extern class M3Dialog extends JQ {
 
 					self.options.onMaxToggle();
 				},
-		        
+
 		        destroy: function() {
 		            untyped JQ.Widget.prototype.destroy.call( JQ.curNoWrap );
+		        },
+
+		        open: function(){
+		        	var self: M3DialogWidgetDef = Widgets.getSelf();
+
+					self._super();
+
+		        	var selfElement: M3Dialog = Widgets.getSelfElement();
+		        	var key = "dialog_position_"+selfElement.attr('id');
+		        	var position = haxe.Json.parse(localStorage.getItem(key));
+
+		        	if(position != null && (position.left != null || position.top != null)){
+		        		selfElement.parent().position({
+		        			at: "left+"+position.left+" top+"+position.top,
+		        			my: "left top",
+		        			of: js.Browser.window
+		        		});
+		        	}
+		        	else {
+		        		selfElement.parent().position({
+		        			at: "middle",
+		        			my: "middle",
+		        			of: js.Browser.window
+		        		});
+		        	}
+		        },
+
+		        close: function()
+		        {
+		        	var self: M3DialogWidgetDef = Widgets.getSelf();
+		        	var selfElement: M3Dialog = Widgets.getSelfElement();
+		        	var key = "dialog_position_"+selfElement.attr('id');
+		        	var localStorage = js.Browser.getLocalStorage();
+		        	var window: JQ = new JQ(js.Browser.window);
+		        	var position = selfElement.parent().position();
+		        	position.top -= window.scrollTop();
+		        	position.left -= window.scrollLeft();
+
+		        	localStorage.setItem(key, haxe.Json.stringify(position));
+
+		        	self._super();
 		        }
 		    };
 		}
