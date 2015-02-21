@@ -119,7 +119,7 @@ extern class JQ implements ArrayAccess<Element> {
 	static var noop(default, null): Void->Void;
 	static var fx(default, null) : { off : Bool, interval : Int };
 	static var browser(default, null) : { webkit : Bool, opera : Bool, msie : Bool, mozilla : Bool, version : String };
-
+	static var proxy: Dynamic;
 
 	@:overload(function(j:JQ):Void{})
 	@:overload(function(j:Document):Void{})
