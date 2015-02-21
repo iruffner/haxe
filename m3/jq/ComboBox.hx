@@ -244,16 +244,22 @@ extern class ComboBox extends JQ {
 			            	}
                         }
 			          });
+					selfElement.change(function(evt: JQEvent) {
+	                    var label: String = selfElement.children('[value="' + selfElement.val() + '"]').text();
+	                    self.input.val(label);
+	                });
 			        self.input.tooltip({
 			            tooltipClass: "ui-state-highlight"
 			          });
 			 
 			        self._on( self.input, {
-			          autocompleteselect: function( event, ui ) {
+			          autocompleteselect: function( event: JQEvent, ui: {item: {label: String, option: Dynamic, value: String, id: String}} ) {
 			            ui.item.option.selected = true;
 			            self._trigger( "select", event, {
 			              item: ui.item.option
 			            });
+			            selfElement.val(ui.item.id);
+			            selfElement.trigger("change");
 			          },
 			 
 			          autocompletechange: "_removeIfInvalid"
@@ -303,11 +309,19 @@ extern class ComboBox extends JQ {
 			        var matcher = new EReg( JQ.ui.autocomplete.escapeRegex(request.term), "i" );
 			        response( selfElement.children( "option" ).map(function(el: JQ, i: Int) {
 			          var text = JQ.cur.text();
-			          if ( JQ.curNoWrap.value && ( request.term.isBlank() || matcher.match(text) ) )
+                      var valU = JQ.curNoWrap.value;
+			          if ( valU && ( request.term.isBlank() || matcher.match(text) ) )
 			            return {
-			              label: text,
-			              value: text,
-			              option: JQ.cur
+			              // label: text.replaceAll(
+                 //                    new EReg(
+                 //                        "(?![^&;]+;)(?!<[^<>]*)(" +
+                 //                        JQ.ui.autocomplete.escapeRegex(request.term) +
+                 //                        ")(?![^<>]*>)(?![^&;]+;)", "gi"
+                 //                    ), "<strong>$1</strong>" ),
+			        	  label: text, //this is the value that shows in the search list
+			              value: text, //this is the value that will show up in the text box
+			              option: JQ.cur, //this is the html option element
+			              id: valU //this is the value that will get applied to the original html select element
 			            };
 		            	else {
 		            		return null;
@@ -315,7 +329,7 @@ extern class ComboBox extends JQ {
 			        }) );
 			      },
 			 
-			      _removeIfInvalid: function( event: JQEvent, ui: Dynamic ) {
+			      _removeIfInvalid: function( event: JQEvent, ui: {item: Dynamic} ) {
 			 		var self: ComboBoxWidgetDef = Widgets.getSelf();
 					var selfElement: JQ = Widgets.getSelfElement();
 
