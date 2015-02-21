@@ -149,10 +149,6 @@ extern class FormBuilderDialog extends M3Dialog {
 
 		        	selfElement.addClass("_formBuilderDialog");
 		        	
-		        	self.formBuilder = new FormBuilder("<div></div>")
-		        		.appendTo(selfElement)
-		        		.formBuilder(self.options.formOptions);
-
 		        	var castedOptions: Dynamic = cast self.options; 
 
 		        	var id = castedOptions.formOptions.view.requestObj.pageUid+'_'+castedOptions.formOptions.view.requestObj.id+'_'+StringTools.urlEncode(castedOptions.title);
@@ -160,6 +156,11 @@ extern class FormBuilderDialog extends M3Dialog {
 		        	selfElement.attr("id",id);
 
 		        	self._super();
+		        	
+		        	self.formBuilder = new FormBuilder("<div></div>")
+		        		.appendTo(selfElement)
+		        		.formBuilder(self.options.formOptions);
+
 		        },
 
 		        destroy: function() {
