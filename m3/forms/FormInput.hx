@@ -162,68 +162,6 @@ extern class FormInput extends JQ {
 
 		        		}
 		        	}
-
-
-
-		        	// var question: Question = self.options.question;
-        			// switch (question.qtype) {
-		        	//  	case QuestionType.RADIO: {
-		        	//  		var radio: Radio = new Radio("<div></div>");
-		        	//  		selfElement.append(radio);
-		        	//  		radio.radio(self.options);
-		        	//  		self._getResultFcn = function(): Array<String> {
-		        	//  			return [radio.result()];
-		        	//  		}
-		        	//  	}
-		        	//  	case QuestionType.CHECKBOX: {
-		        	//  		var cb = new Checkbox("<div></div>");
-		        	//  		selfElement.append(cb);
-		        	//  		cb.checkbox(self.options);
-		        	//  		self._getResultFcn = function(): Array<String> {
-		        	//  			return cb.result();
-		        	//  		}
-		        	//  	}
-		        	//  	case QuestionType.SELECT: {
-		        	//  		var s: Select = new Select("<div></div>");
-		        	//  		selfElement.append(s);
-		        	//  		s.selectComp(self.options);
-		        	//  		self._getResultFcn = function(): Array<String> {
-		        	//  			return [s.result()];
-		        	//  		}
-		        	//  	}
-		        	//  	case QuestionType.TEXT: {
-		        	//  		var t: TextComp = new TextComp("<div></div>");
-		        	//  		selfElement.append(t);
-		        	//  		t.textComp(self.options);
-		        	//  		self._getResultFcn = function(): Array<String> {
-		        	//  			return [t.result()];
-		        	//  		}
-		        	//  	}
-		        	//  	case QuestionType.DATE: {
-		        	//  		var t: DateComp = new DateComp("<div></div>");
-		        	//  		selfElement.append(t);
-		        	//  		t.dateComp(self.options);
-		        	//  		self._getResultFcn = function(): Array<String> {
-		        	//  			return [t.result()];
-		        	//  		}
-		        	//  	}
-		        	//  	case QuestionType.TEXTAREA: {
-		        	//  		var t: Textarea = new Textarea("<div></div>");
-		        	//  		selfElement.append(t);
-		        	//  		t.textarea(self.options);
-		        	//  		self._getResultFcn = function(): Array<String> {
-		        	//  			return [t.result()];
-		        	//  		}
-		        	//  	}
-		        	//  	case QuestionType.URL: {
-		        	//  		var t: UrlQ = new UrlQ("<div></div>");
-		        	//  		selfElement.append(t);
-		        	//  		t.urlQ(self.options);
-		        	//  		self._getResultFcn = function(): Array<String> {
-		        	//  			return [];
-		        	//  		}
-		        	//  	}
-	        		// }
 		        },
 
 		        validate: function(): Array<FormError> {
