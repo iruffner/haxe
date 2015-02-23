@@ -178,7 +178,7 @@ extern class M3Dialog extends JQ {
 							width: self.originalSize.width,
 							height: self.originalSize.height
 						});
-						selfElement.css({
+					selfElement.css({
 							height: '77%'		//bit nasty, need maybe a better way
 						});
 
