@@ -28,6 +28,7 @@ typedef M3DialogWidgetDef = {
 	@:optional var restoreIconWrapper: JQ;
 	var originalSize: UISize;
 	var originalPosition: UIPosition;
+	var originalScrollPosition: UIPosition;
 	var _create: Void->Void;
 	var close: Void->Void;
 	var open: Void->Void;
@@ -93,8 +94,13 @@ extern class M3Dialog extends JQ {
 		        },
 
 		        originalPosition: {
-		        	top: 10,
-		        	left: 10
+		        	top: 20,
+		        	left: 20
+		        },
+
+		        originalScrollPosition: {
+		        	top: 0,
+		        	left: 0
 		        },
 
 		        _create: function(): Void {
@@ -103,6 +109,7 @@ extern class M3Dialog extends JQ {
 					var selfElement: JQ = Widgets.getSelfElement();
 					var closeBtn: JQ = selfElement.prev().find(".ui-dialog-titlebar-close");
 					var hovers: JQ = new JQ("blah");
+					var window: JQ = new JQ(js.Browser.window);
 
 					if(self.options.showHelp && false) {
 						if(!Reflect.isFunction(self.options.buildHelp)) {
@@ -127,6 +134,7 @@ extern class M3Dialog extends JQ {
 						closeBtn.before(self.maxIconWrapper);
 						self.maxIconWrapper.click(function(evt: JQEvent) {
 								self.maximize();
+								return false;
 						});
 					}
 
@@ -137,6 +145,7 @@ extern class M3Dialog extends JQ {
 					closeBtn.before(self.restoreIconWrapper);
 					self.restoreIconWrapper.click(function(evt: JQEvent) {
 							self.restore();
+							return false;
 					});
 
 					hovers.hover(function(evt: JQEvent) {
@@ -159,14 +168,18 @@ extern class M3Dialog extends JQ {
 		        restore: function() {
 		        	var self: M3DialogWidgetDef = Widgets.getSelf();
 					var selfElement: M3Dialog = Widgets.getSelfElement();
+					var window: JQ = new JQ(js.Browser.window);
  
 					//restore the orignal dimensions
 					//expand dialog
 					selfElement.parent().css({
 							top: self.originalPosition.top,
 							left:self.originalPosition.left,
-							width: self.originalSize.width, 
+							width: self.originalSize.width,
 							height: self.originalSize.height
+						});
+						selfElement.css({
+							height: '77%'		//bit nasty, need maybe a better way
 						});
 
 					//swap the buttons
@@ -198,23 +211,21 @@ extern class M3Dialog extends JQ {
 				 	};
 
 					//expand dialog
-					// selfElement.parent().css({
-					// 		width: windowDimensions.width * .85, 
-					// 		height: windowDimensions.height * .85
-					// 	});
-					selfElement.m3dialog("option", "height", windowDimensions.height * .85);
-					selfElement.m3dialog("option", "width", windowDimensions.width * .85);
-					selfElement.parent().position({
-							my: "middle",
-							at:	"middle",
-							of:	js.Browser.window
-					});
-				 
+					selfElement.parent().css({
+							top: window.scrollTop() + 20,
+							left: window.scrollLeft() + 20,
+							width: windowDimensions.width - 50, 
+							height: windowDimensions.height - 50,
+						});
+					selfElement.css({
+							height: '87%'		//bit nasty, need maybe a better way
+						});
+
 					//swap buttons to show restore
 					self.maxIconWrapper.hide();
 					self.restoreIconWrapper.show();
-
 					self.options.onMaxToggle();
+
 				},
 
 		        destroy: function() {
