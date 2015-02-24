@@ -35,6 +35,22 @@ class JQTooltipHelper {
 	public static function getContent(t: JQTooltip): String {
 		return t.tooltip("option", "content");
 	}
+
+	public static function enable(t: JQTooltip): String {
+		return t.tooltip("enable");
+	}
+
+	public static function disable(t: JQTooltip): String {
+		return t.tooltip("disable");
+	}
+
+	public static function open(t: JQTooltip): String {
+		return t.tooltip("open");
+	}
+
+	public static function close(t: JQTooltip): String {
+		return t.tooltip("close");
+	}
 }
 
 @:native("$")
