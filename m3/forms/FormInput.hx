@@ -121,10 +121,6 @@ extern class FormInput extends JQ {
 		        			case InputType.TEXT:
 	        					var t: TextInput = new TextInput(selfElement)
 		        					.textInput({formItem: formItem});
-		        				// t.input.blur(function(ev){
-		        				// 	trace(ev);
-		        				// });
-
 		        				self.input = t;
 		        				self._getResultFcn = function(): Array<String> {
 			        	 			return [t.result()];

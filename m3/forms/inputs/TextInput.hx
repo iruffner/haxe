@@ -19,7 +19,7 @@ typedef TextInputWidgetDef = {
 	@:optional var options: FormInputOptions;
 	var _create: Void->Void;
 	var result: Void->String;
-	var validate: Void->Bool;
+	// var validate: Void->Bool;
 	var destroy: Void->Void;
 	@:optional var blur: Void->Bool;
 	@:optional var input: JQ;
@@ -54,7 +54,7 @@ extern class TextInput extends AbstractInput {
 			return {
 		        _create: function(): Void {
 		        	var self: TextInputWidgetDef = Widgets.getSelf();
-					var selfElement: JQ = Widgets.getSelfElement();
+					var selfElement: FormInput = Widgets.getSelfElement();
 
 		        	if(!selfElement.is("div")) {
 		        		throw new Exception("Root of TextInput must be a div element");
@@ -78,48 +78,10 @@ extern class TextInput extends AbstractInput {
 
 	        		selfElement.append("&nbsp;").append(self.input).append(self.iconDiv);
 	        		self.input.blur(function(ev){
-	        				self.validate();
+	        				selfElement.validate();
 		        		});
 
 		        },
-
-		        validate: function(): Bool {
-		        	var self: TextInputWidgetDef = Widgets.getSelf();
-					var selfElement: FormInput = Widgets.getSelfElement();
-
-		        	var errors: Array<FormError> = new Array();
-		        	if(self.options.formItem.validators.hasValues()) {
-		        		for(validator in self.options.formItem.validators) {
-		        			var validationResult: Dynamic = validator(self.result());
-		        			var processResult = function(result: Dynamic) {
-		        				if(result == null) {
-			        				//do nothing
-			        			} else if(Std.is(result, Bool) && !result) {
-			        				errors.push(new FormError(selfElement, "Validation Error"));
-			        			} else if(Std.is(result, String) && StringHelper.isNotBlank(result)) {
-			        				errors.push(new FormError(selfElement, result));
-		        				} else if(Std.is(result, FormError)){ 
-		        					errors.push(result);
-			        			} else {
-			        				Logga.DEFAULT.warn("unexpected return type from validation function");
-			        			}
-		        			};
-		        			if(JQ.isArray(validationResult)) {
-		        				var valResArr: Array<Dynamic> = validationResult;
-		        				for(res_ in valResArr) {
-		        					processResult(res_);
-		        				}
-		        			} else {
-		        				processResult(validationResult);
-		        			}
-		        		}
-	        		}else{
-	        			return true;
-	        		}
-
-	        		self.options.formItem.formLayoutPlugin.renderInputValidation(selfElement, errors);
-	        		return false;
-        		},
 
 		        result: function(): String {
 		        	var self: TextInputWidgetDef = Widgets.getSelf();
