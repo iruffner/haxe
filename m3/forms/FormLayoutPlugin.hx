@@ -1,6 +1,7 @@
 package m3.forms;
 
 import m3.jq.JQ;
+import m3.forms.inputs.AbstractInput;
 
 using m3.helper.StringHelper;
 using m3.forms.FormBuilder;

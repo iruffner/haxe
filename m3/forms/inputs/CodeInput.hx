@@ -9,6 +9,7 @@ import m3.exception.Exception;
 import m3.exception.ValidationException;
 import m3.log.Logga;
 
+using m3.jq.JQTooltip;
 using m3.helper.StringHelper;
 using m3.helper.ArrayHelper;
 using m3.forms.FormInput;
@@ -21,6 +22,7 @@ typedef CodeInputWidgetDef = {
 	@:optional var editor: Dynamic;	
  	@:optional var options: CodeInputOptions;
 	var _create: Void->Void;
+	var validate: Void->Bool;
 	var result: Void->String;
 	var destroy: Void->Void;
 	@:optional var input: JQ;
@@ -131,7 +133,48 @@ extern class CodeInput extends AbstractInput {
 	        		}
 
 	        		selfElement.append("&nbsp;").append(self.input).append(self.iconDiv);
+	        		self.input.find(":input").blur(function(ev){
+	        				self.validate();
+		        		});
 		        },
+
+		        validate: function(): Bool {
+		        	var self: CodeInputWidgetDef = Widgets.getSelf();
+					var selfElement: FormInput = Widgets.getSelfElement();
+
+		        	var errors: Array<FormError> = new Array();
+		        	if(self.options.formItem.validators.hasValues()) {
+		        		for(validator in self.options.formItem.validators) {
+		        			var validationResult: Dynamic = validator(self.result());
+		        			var processResult = function(result: Dynamic) {
+		        				if(result == null) {
+			        				//do nothing
+			        			} else if(Std.is(result, Bool) && !result) {
+			        				errors.push(new FormError(selfElement, "Validation Error"));
+			        			} else if(Std.is(result, String) && StringHelper.isNotBlank(result)) {
+			        				errors.push(new FormError(selfElement, result));
+		        				} else if(Std.is(result, FormError)){ 
+		        					errors.push(result);
+			        			} else {
+			        				Logga.DEFAULT.warn("unexpected return type from validation function");
+			        			}
+		        			};
+		        			if(JQ.isArray(validationResult)) {
+		        				var valResArr: Array<Dynamic> = validationResult;
+		        				for(res_ in valResArr) {
+		        					processResult(res_);
+		        				}
+		        			} else {
+		        				processResult(validationResult);
+		        			}
+		        		}
+	        		}else{
+	        			return true;
+	        		}
+
+	        		self.options.formItem.formLayoutPlugin.renderInputValidation(selfElement, errors);
+	        		return false;
+        		},
 
 		        result: function(): String {
 		        	var self: CodeInputWidgetDef = Widgets.getSelf();
