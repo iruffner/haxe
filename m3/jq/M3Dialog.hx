@@ -239,7 +239,10 @@ extern class M3Dialog extends JQ {
 
 		        	var selfElement: M3Dialog = Widgets.getSelfElement();
 		        	var key = "dialog_position_"+selfElement.attr('id');
+		        	var window: JQ = new JQ(js.Browser.window);
 		        	var position = haxe.Json.parse(localStorage.getItem(key));
+		        	var dialogMaxWidth = Math.round(window.width() - 50);
+		        	var dialogMaxHeight = Math.round(window.height() - 50);
 
 		        	if(position != null && (position.left != null || position.top != null)){
 		        		selfElement.parent().position({
@@ -257,12 +260,27 @@ extern class M3Dialog extends JQ {
 		        	}
 
 		        	if(position != null && (position.width != null || position.height != null)){
-		        		selfElement.parent().width(position.width);
-		        		selfElement.parent().height(position.height);
+		        		position.width = (position.width > dialogMaxWidth)?dialogMaxWidth:position.width;
+		        		position.height = (position.height > dialogMaxHeight)?dialogMaxWidth:position.height;
 
-		        		selfElement.css({
-							height: '87%'		//bit nasty, need maybe a better way
-						});
+		        		if(position.width >= dialogMaxWidth && position.height >= dialogMaxHeight)
+		        		{
+		        			self.maximize();
+		        		}
+		        		else
+		        		{
+		        			selfElement.parent().width(position.width);
+		        			selfElement.parent().height(position.height);
+
+		        			//swap buttons to show maximize
+							self.maxIconWrapper.show();
+							self.restoreIconWrapper.hide();
+							//self.options.onMaxToggle();
+
+		        			selfElement.css({
+								height: '87%'		//bit nasty, need maybe a better way
+							});
+		        		}
 		        	}
 		        },
 
