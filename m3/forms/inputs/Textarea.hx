@@ -19,7 +19,7 @@ typedef TextareaWidgetDef = {
 	@:optional var options: FormInputOptions;
 	var _create: Void->Void;
 	var result: Void->String;
-	var validate: Void->Bool;		
+		
 	var destroy: Void->Void;
 	@:optional var label: JQ;
 	@:optional var input: JQ;
@@ -48,7 +48,7 @@ extern class Textarea extends AbstractInput {
 			return {
 		        _create: function(): Void {
 		        	var self: TextareaWidgetDef = Widgets.getSelf();
-					var selfElement: JQ = Widgets.getSelfElement();
+					var selfElement: FormInput = Widgets.getSelfElement();
 
 		        	if(!selfElement.is("div")) {
 		        		throw new Exception("Root of TextArea must be a div element");
@@ -89,7 +89,7 @@ extern class Textarea extends AbstractInput {
 	        		
 	        		selfElement.append(self.input);
 	        		self.input.blur(function(ev){
-	        				self.validate();
+	        				selfElement.validate();
 		        		});
 		        },
 
@@ -106,45 +106,7 @@ extern class Textarea extends AbstractInput {
 						return value;
 					}
 	        	},
-
-		        validate: function(): Bool {
-		        	var self: TextareaWidgetDef = Widgets.getSelf();
-					var selfElement: FormInput = Widgets.getSelfElement();
-
-		        	var errors: Array<FormError> = new Array();
-		        	if(self.options.formItem.validators.hasValues()) {
-		        		for(validator in self.options.formItem.validators) {
-		        			var validationResult: Dynamic = validator(self.result());
-		        			var processResult = function(result: Dynamic) {
-		        				if(result == null) {
-			        				//do nothing
-			        			} else if(Std.is(result, Bool) && !result) {
-			        				errors.push(new FormError(selfElement, "Validation Error"));
-			        			} else if(Std.is(result, String) && StringHelper.isNotBlank(result)) {
-			        				errors.push(new FormError(selfElement, result));
-		        				} else if(Std.is(result, FormError)){ 
-		        					errors.push(result);
-			        			} else {
-			        				Logga.DEFAULT.warn("unexpected return type from validation function");
-			        			}
-		        			};
-		        			if(JQ.isArray(validationResult)) {
-		        				var valResArr: Array<Dynamic> = validationResult;
-		        				for(res_ in valResArr) {
-		        					processResult(res_);
-		        				}
-		        			} else {
-		        				processResult(validationResult);
-		        			}
-		        		}
-	        		}else{
-	        			return true;
-	        		}
-
-	        		self.options.formItem.formLayoutPlugin.renderInputValidation(selfElement, errors);
-	        		return false;
-        		},	        	
-
+	        	
 		        destroy: function() {
 		            untyped JQ.Widget.prototype.destroy.call( JQ.curNoWrap );
 		        }

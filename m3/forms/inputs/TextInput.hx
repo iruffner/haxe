@@ -80,7 +80,6 @@ extern class TextInput extends AbstractInput {
 	        		self.input.blur(function(ev){
 	        				selfElement.validate();
 		        		});
-
 		        },
 
 		        result: function(): String {
