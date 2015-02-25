@@ -284,21 +284,17 @@ extern class M3Dialog extends JQ {
 		        			//swap buttons to show maximize
 							self.maxIconWrapper.show();
 							self.restoreIconWrapper.hide();
-							//self.options.onMaxToggle();
-
-		        			selfElement.css({
-								height: '87%'		//bit nasty, need maybe a better way
-							});
+							self.options.onMaxToggle();
 		        		}
 		        		selfElement.parent().width(position.width);
 		        		selfElement.parent().height(position.height);
 
-						var contentHeight : Float = selfElement.parent().height();
-				 	 		selfElement.parent().children(".ui-dialog-titlebar").height();
-					 		selfElement.parent().children(".ui-dialog-buttonpane").height() - 50; //bit nasty, need maybe a better way
-			        		selfElement.css({
-								height: contentHeight
-							});
+						var contentHeight : Float = selfElement.parent().height()
+				 	 		- selfElement.parent().children(".ui-dialog-titlebar").height();
+					 		- selfElement.parent().children(".ui-dialog-buttonpane").height() - 50; //bit nasty, need maybe a better way
+		        		selfElement.css({
+							height: contentHeight
+						});
 		        	}
 		        },
 

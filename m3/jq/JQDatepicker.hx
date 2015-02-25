@@ -72,6 +72,8 @@ typedef JQDatepickerOpts = {
 	/**
 	 * Whether the year should be rendered as a dropdown instead of text.
 	*/
+
+	@:optional var onSelect: Dynamic;
 }
 
 class JQDatepickerTools {
