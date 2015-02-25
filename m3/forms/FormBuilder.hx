@@ -144,16 +144,19 @@ extern class FormBuilder extends JQ {
 					var selfElement: FormBuilder = Widgets.getSelfElement();
 
 	        		//validate each input
-	        		var errors: Array<FormError> = new Array();
+	        		var inputErrors: Array<FormError> = new Array();
+	        		var formErrors: Array<FormError> = new Array();
 	        		for(fi in self._formInputs) {
-	        			errors.addAll(fi.validate());
-	        		}
-
-	        		if(!errors.hasValues() && self.options.validate != null) {
-	        			errors.addAll(self.options.validate());
+	        			inputErrors.addAll(fi.validate());
 	        		}
 	        		
-	        		return errors;
+	        		//validate the form
+	        		if(!inputErrors.hasValues() && self.options.validate != null) {
+	        			formErrors.addAll(self.options.validate());
+        				self.options.formLayoutPlugin.renderFormValidation(selfElement, self.options, formErrors); //only render the form validation errors
+	        		}
+
+	        		return Lambda.array(Lambda.concat(inputErrors, formErrors));
 	        	},
 		        
 		        results: function(): Array<Array<String>> {
