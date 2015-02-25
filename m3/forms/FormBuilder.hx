@@ -148,14 +148,11 @@ extern class FormBuilder extends JQ {
 	        		for(fi in self._formInputs) {
 	        			errors.addAll(fi.validate());
 	        		}
+
 	        		if(!errors.hasValues() && self.options.validate != null) {
 	        			errors.addAll(self.options.validate());
 	        		}
-	        		//validate the form
-
-	        		//render the results
-        			self.options.formLayoutPlugin.renderFormValidation(selfElement, self.options, errors);
-
+	        		
 	        		return errors;
 	        	},
 		        
