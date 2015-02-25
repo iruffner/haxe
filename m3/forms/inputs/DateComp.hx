@@ -47,7 +47,7 @@ extern class DateComp extends AbstractInput {
 			return {
 		        _create: function(): Void {
 		        	var self: DateWidgetDef = Widgets.getSelf();
-					var selfElement: JQ = Widgets.getSelfElement();
+					var selfElement: FormInput = Widgets.getSelfElement();
 
 		        	if(!selfElement.is("div")) {
 		        		throw new Exception("Root of DateComp Comp must be a div element");
@@ -65,7 +65,10 @@ extern class DateComp extends AbstractInput {
 	        		self.input = new JQDatepicker("<input class='ui-widget-content ui-corner-all helpFilter' type='text'/>").datepicker({
 	        				"dateFormat": "yy-mm-dd",
 	        				"changeMonth": true,
-	        				"changeYear": true
+	        				"changeYear": true,
+	        				onSelect: function(ev){
+	        					selfElement.validate();
+		        			}
 	        			});
 					if( question.value == null) question.value = DateTools.format(Date.now(), "%Y-%m-%d");
 					self.input.val(question.value);
@@ -75,6 +78,9 @@ extern class DateComp extends AbstractInput {
 					}
 
 					selfElement.append("&nbsp;").append(self.input).append(self.iconDiv);
+	        		self.input.blur(function(ev){
+	        				selfElement.validate();
+		        		});					
 
         			/*try {
 	        			if(self.options.answers.hasValues()) {
@@ -96,7 +102,7 @@ extern class DateComp extends AbstractInput {
 					var self: DateWidgetDef = Widgets.getSelf();
 					return self.input.val();
 
-	        	},
+	        	},        	
 
 		        destroy: function() {
 		            untyped JQ.Widget.prototype.destroy.call( JQ.curNoWrap );

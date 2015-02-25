@@ -120,25 +120,27 @@ class Logga {
             statement = statementPrefix + " || " + statement;
         }
 
+        var posInfoMsg: String = posInfo.fileName + ":" + posInfo.className.substring(posInfo.className.lastIndexOf(".") + 1) + "." + posInfo.methodName + "(" + posInfo.lineNumber + ") || ";
+
         // var console = CrossMojo.windowConsole();
         if( logsAtLevel(level) && console != null ) {
             try {
                 if( (Type.enumEq(level, LogLevel.TRACE) || Type.enumEq(level, LogLevel.DEBUG)) && console.debug != null) {
-                    this.console.debug(statement, "-->", posInfo);
+                    this.console.debug(posInfoMsg, statement);
                 } else if (Type.enumEq(level, LogLevel.INFO) && console.info != null) {
-                    this.console.info(statement, "-->", posInfo);
+                    this.console.info(statement, posInfoMsg);
                 } else if (Type.enumEq(level, LogLevel.WARN) && console.warn != null) {
-                    this.console.warn(statement, "-->", posInfo);
+                    this.console.warn(statement, posInfoMsg);
                 } else if (Type.enumEq(level, LogLevel.ERROR) && this.preservedConsoleError != null) {
                     untyped this.preservedConsoleError.apply(this.console, [statement]);
                     this.console.trace();
                 } else if (Type.enumEq(level, LogLevel.ERROR) && console.error != null) {
-                    this.console.error(statement, posInfo);
+                    this.console.error(statement, posInfoMsg);
                     this.console.trace();
                 } else if (this.preservedConsoleLog != null) {
                     untyped this.preservedConsoleLog.apply(this.console, [statement]);
                 } else {
-                    this.console.log(statement, "-->", posInfo);
+                    this.console.log(statement, posInfoMsg);
                 }
             } catch (err : Dynamic) {
                 if(this.console != null && Reflect.hasField(this.console, "error")) {

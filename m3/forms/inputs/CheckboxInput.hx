@@ -48,7 +48,7 @@ extern class CheckboxInput extends AbstractInput {
 			return {
 		        _create: function(): Void {
 		        	var self: CheckboxInputWidgetDef = Widgets.getSelf();
-					var selfElement: JQ = Widgets.getSelfElement();
+					var selfElement: FormInput = Widgets.getSelfElement();
 
 		        	if(!selfElement.is("div")) {
 		        		throw new Exception("Root of CheckboxInput must be a div element");
@@ -78,7 +78,11 @@ extern class CheckboxInput extends AbstractInput {
 	        			self.iconDiv.show().addClass("locked");
 	        		}	        								
 
-					selfElement.append("&nbsp;").append(self.input).append(self.iconDiv);	        								
+	        		selfElement.append("&nbsp;").append(self.input).append(self.iconDiv);	 
+	        		self.input.blur(function(ev){
+	        			selfElement.validate();
+        				});
+
 
 /*		        	for(ans_ in 0...question.options.length) {
 		        		var choice: Choice = question.options[ans_];

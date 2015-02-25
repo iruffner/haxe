@@ -9,6 +9,7 @@ import m3.exception.Exception;
 import m3.exception.ValidationException;
 import m3.log.Logga;
 
+using m3.jq.JQTooltip;
 using m3.helper.StringHelper;
 using m3.helper.ArrayHelper;
 using m3.forms.FormInput;
@@ -59,7 +60,7 @@ extern class CodeInput extends AbstractInput {
 			return {
 		        _create: function(): Void {
 		        	var self: CodeInputWidgetDef = Widgets.getSelf();
-					var selfElement: JQ = Widgets.getSelfElement();
+					var selfElement: FormInput = Widgets.getSelfElement();
 
 		        	if(!selfElement.is("div")) {
 		        		throw new Exception("Root of CodeInput must be a div element");
@@ -131,6 +132,9 @@ extern class CodeInput extends AbstractInput {
 	        		}
 
 	        		selfElement.append("&nbsp;").append(self.input).append(self.iconDiv);
+	        		self.input.find(":input").blur(function(ev){
+	        				selfElement.validate();
+		        		});
 		        },
 
 		        result: function(): String {

@@ -36,6 +36,7 @@ typedef FormBuilderDialogWidgetDef = {
 
 	var _create: Void->Void;
 	var destroy: Void->Void;
+	//var close: Void->Void;
 
 	@:optional var _super: Dynamic;
 }
@@ -146,13 +147,20 @@ extern class FormBuilderDialog extends M3Dialog {
 		        		throw new Exception("Root of FormBuilderDialog must be a div element");
 		        	}
 
-		        	self._super();
-
 		        	selfElement.addClass("_formBuilderDialog");
+		        	
+		        	var castedOptions: Dynamic = cast self.options; 
+
+		        	var id = castedOptions.formOptions.view.requestObj.pageUid+'_'+castedOptions.formOptions.view.requestObj.id+'_'+StringTools.urlEncode(castedOptions.title);
+
+		        	selfElement.attr("id",id);
+
+		        	self._super();
 		        	
 		        	self.formBuilder = new FormBuilder("<div></div>")
 		        		.appendTo(selfElement)
 		        		.formBuilder(self.options.formOptions);
+
 		        },
 
 		        destroy: function() {

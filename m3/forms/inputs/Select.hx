@@ -51,7 +51,7 @@ extern class Select extends AbstractInput {
 			return {
 		        _create: function(): Void {
 		        	var self: SelectWidgetDef = Widgets.getSelf();
-					var selfElement: JQ = Widgets.getSelfElement();
+					var selfElement: FormInput = Widgets.getSelfElement();
 
 		        	if(!selfElement.is("div")) {
 		        		throw new Exception("Root of SelectComp must be a div element");
@@ -113,7 +113,10 @@ extern class Select extends AbstractInput {
 			        	}
 			        }
 	        		selfElement.append("&nbsp;").append(self.input).append(self.iconDiv);
-		        },
+	        		self.input.blur(function(ev){
+	        				selfElement.validate();
+		        		});
+		        },	        
 
 		        result: function(): String {
 		        	var self: SelectWidgetDef = Widgets.getSelf();

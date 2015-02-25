@@ -50,6 +50,7 @@ typedef FormItem = {
 	@:optional var disabled: Bool;
 	@:optional var validators: Array<Dynamic->Dynamic>;
 	@:optional var options: Dynamic;// Array<Array<String>> or a function returning Array<Array<String>>
+	var formLayoutPlugin : FormLayoutPlugin;
 }
 
 typedef FormBuilderOptions = {
@@ -143,19 +144,19 @@ extern class FormBuilder extends JQ {
 					var selfElement: FormBuilder = Widgets.getSelfElement();
 
 	        		//validate each input
-	        		var errors: Array<FormError> = new Array();
+	        		var inputErrors: Array<FormError> = new Array();
+	        		var formErrors: Array<FormError> = new Array();
 	        		for(fi in self._formInputs) {
-	        			errors.addAll(fi.validate());
+	        			inputErrors.addAll(fi.validate());
 	        		}
-	        		if(!errors.hasValues() && self.options.validate != null) {
-	        			errors.addAll(self.options.validate());
-	        		}
+	        		
 	        		//validate the form
+	        		if(!inputErrors.hasValues() && self.options.validate != null) {
+	        			formErrors.addAll(self.options.validate());
+        				self.options.formLayoutPlugin.renderFormValidation(selfElement, self.options, formErrors); //only render the form validation errors
+	        		}
 
-	        		//render the results
-        			self.options.formLayoutPlugin.renderValidation(selfElement, self.options, errors);
-
-	        		return errors;
+	        		return Lambda.array(Lambda.concat(inputErrors, formErrors));
 	        	},
 		        
 		        results: function(): Array<Array<String>> {

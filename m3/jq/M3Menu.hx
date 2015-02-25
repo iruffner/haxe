@@ -74,7 +74,7 @@ extern class M3Menu extends JQMenu {
 							else "";
 						};
 						var label: String = {
-							if(self.options.wrapLabelInAtag) "<a>" + menuOption.label + "</a";
+							if(self.options.wrapLabelInAtag) "<a>" + menuOption.label + "</a>";
 							else menuOption.label;
 						}
 						var li = new JQ("<li>" + icon + label + "</li>")

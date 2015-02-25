@@ -19,6 +19,7 @@ typedef TextareaWidgetDef = {
 	@:optional var options: FormInputOptions;
 	var _create: Void->Void;
 	var result: Void->String;
+		
 	var destroy: Void->Void;
 	@:optional var label: JQ;
 	@:optional var input: JQ;
@@ -47,7 +48,7 @@ extern class Textarea extends AbstractInput {
 			return {
 		        _create: function(): Void {
 		        	var self: TextareaWidgetDef = Widgets.getSelf();
-					var selfElement: JQ = Widgets.getSelfElement();
+					var selfElement: FormInput = Widgets.getSelfElement();
 
 		        	if(!selfElement.is("div")) {
 		        		throw new Exception("Root of TextArea must be a div element");
@@ -86,8 +87,10 @@ extern class Textarea extends AbstractInput {
 	        			self.iconDiv.show().addClass("locked");
 	        		}
 	        		
-		        	
 	        		selfElement.append(self.input);
+	        		self.input.blur(function(ev){
+	        				selfElement.validate();
+		        		});
 		        },
 
 		        result: function(): String {
@@ -103,7 +106,7 @@ extern class Textarea extends AbstractInput {
 						return value;
 					}
 	        	},
-
+	        	
 		        destroy: function() {
 		            untyped JQ.Widget.prototype.destroy.call( JQ.curNoWrap );
 		        }

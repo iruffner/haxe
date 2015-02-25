@@ -27,7 +27,11 @@ typedef M3DialogWidgetDef = {
 	@:optional var maxIconWrapper: JQ;
 	@:optional var restoreIconWrapper: JQ;
 	var originalSize: UISize;
+	var originalPosition: UIPosition;
+	var originalScrollPosition: UIPosition;
 	var _create: Void->Void;
+	var close: Void->Void;
+	var open: Void->Void;
 	var restore: Void->Void;
 	var maximize: Void->Void;
 	var destroy: Void->Void;
@@ -64,7 +68,11 @@ extern class M3Dialog extends JQ {
 
 	private static function __init__(): Void {
 		// untyped M3Dialog = window.jQuery;
+
 		var defineWidget: Void->M3DialogWidgetDef = function(): M3DialogWidgetDef {
+
+			var localStorage = js.Browser.getLocalStorage();
+
 			return {
 		        options: {
 		            autoOpen: true
@@ -85,12 +93,24 @@ extern class M3Dialog extends JQ {
 		        	height: 10
 		        },
 
+		        originalPosition: {
+		        	top: 20,
+		        	left: 20
+		        },
+
+		        originalScrollPosition: {
+		        	top: 0,
+		        	left: 0
+		        },
+
 		        _create: function(): Void {
 		        	cast (JQ.curNoWrap)._super('create');
 		        	var self: M3DialogWidgetDef = Widgets.getSelf();
 					var selfElement: JQ = Widgets.getSelfElement();
 					var closeBtn: JQ = selfElement.prev().find(".ui-dialog-titlebar-close");
 					var hovers: JQ = new JQ("blah");
+					var window: JQ = new JQ(js.Browser.window);
+
 					if(self.options.showHelp && false) {
 						if(!Reflect.isFunction(self.options.buildHelp)) {
 							Logga.DEFAULT.error("Supposed to show help but buildHelp is not a function");
@@ -106,7 +126,7 @@ extern class M3Dialog extends JQ {
 						}
 
 					}
-					if(self.options.showMaximizer) {
+					if(self.options.showMaximizer = true) {
 						self.maxIconWrapper = new JQ("<a href='#' class='ui-dialog-titlebar-close ui-corner-all' style='margin-right: 18px;' role='button'>");
 						var maxIcon: JQ = new JQ("<span class='ui-icon ui-icon-extlink'>maximize</span>");
 						hovers = hovers.add(self.maxIconWrapper);
@@ -114,6 +134,7 @@ extern class M3Dialog extends JQ {
 						closeBtn.before(self.maxIconWrapper);
 						self.maxIconWrapper.click(function(evt: JQEvent) {
 								self.maximize();
+								return false;
 						});
 					}
 
@@ -124,6 +145,7 @@ extern class M3Dialog extends JQ {
 					closeBtn.before(self.restoreIconWrapper);
 					self.restoreIconWrapper.click(function(evt: JQEvent) {
 							self.restore();
+							return false;
 					});
 
 					hovers.hover(function(evt: JQEvent) {
@@ -132,7 +154,6 @@ extern class M3Dialog extends JQ {
 							JQ.cur.removeClass("ui-state-hover");
 						}
 					);
-
 		        },
 
 		        _allowInteraction: function( event ): Bool {
@@ -142,22 +163,29 @@ extern class M3Dialog extends JQ {
 		        		r =  !!self.options.allowInteraction(event);
 		        	}
 		        	return r || self._super( event );
-					
 				},
 
 		        restore: function() {
 		        	var self: M3DialogWidgetDef = Widgets.getSelf();
 					var selfElement: M3Dialog = Widgets.getSelfElement();
+					var window: JQ = new JQ(js.Browser.window);
  
 					//restore the orignal dimensions
-					selfElement.m3dialog("option", "height", self.originalSize.height);
-					selfElement.m3dialog("option", "width", self.originalSize.width);
-					selfElement.parent().position({
-							my: "middle",
-							at:	"middle",
-							of:	js.Browser.window
+					//expand dialog
+					selfElement.parent().css({
+							top: self.originalPosition.top,
+							left:self.originalPosition.left,
+							width: self.originalSize.width,
+							height: self.originalSize.height
 						});
-				 
+					
+					var contentHeight : Float = selfElement.parent().height()
+					 	- selfElement.parent().children(".ui-dialog-titlebar").height()
+					 	- selfElement.parent().children(".ui-dialog-buttonpane").height() - 50; //bit nasty, need maybe a better way
+		        		selfElement.css({
+							height: contentHeight
+						});
+
 					//swap the buttons
 					self.restoreIconWrapper.hide();
 					self.maxIconWrapper.show();
@@ -167,34 +195,127 @@ extern class M3Dialog extends JQ {
 				maximize: function() { 
 					var self: M3DialogWidgetDef = Widgets.getSelf();
 					var selfElement: M3Dialog = Widgets.getSelfElement();
-
-					//Store the original height/width
-					self.originalSize = { height: selfElement.parent().height(), width: selfElement.parent().width() };
-				 	
+					
+					//Store the original height/width			 	
 				 	var window: JQ = new JQ(js.Browser.window);
-				 	var windowDimensions: UISize = { height: window.height(), width: window.width() };
+
+				 	self.originalPosition = {
+						top: selfElement.parent().position().top,
+						left: selfElement.parent().position().left,
+				 	};
+
+					self.originalSize = { 
+						height: selfElement.parent().height(), 
+						width: selfElement.parent().width() 
+					};
+
+				 	var windowDimensions: UISize = {
+				 		height: window.height(), 
+				 		width: window.width() 
+				 	};
+
 					//expand dialog
-					// selfElement.parent().css({
-					// 		width: windowDimensions.width * .85, 
-					// 		height: windowDimensions.height * .85
-					// 	});
-					selfElement.m3dialog("option", "height", windowDimensions.height * .85);
-					selfElement.m3dialog("option", "width", windowDimensions.width * .85);
-					selfElement.parent().position({
-							my: "middle",
-							at:	"middle",
-							of:	window
-					});
-				 
+					selfElement.parent().css({
+							top: window.scrollTop() + 20,
+							left: window.scrollLeft() + 20,
+							width: windowDimensions.width - 50, 
+							height: windowDimensions.height - 50,
+						});
+
+					var contentHeight : Float = selfElement.parent().height()
+					 	- selfElement.parent().children(".ui-dialog-titlebar").height()
+					 	- selfElement.parent().children(".ui-dialog-buttonpane").height() - 50; //bit nasty, need maybe a better way
+
+					selfElement.css({
+							height: contentHeight		
+						});
+
 					//swap buttons to show restore
 					self.maxIconWrapper.hide();
 					self.restoreIconWrapper.show();
-
 					self.options.onMaxToggle();
+
 				},
-		        
+
 		        destroy: function() {
 		            untyped JQ.Widget.prototype.destroy.call( JQ.curNoWrap );
+		        },
+
+		        open: function(){
+		        	var self: M3DialogWidgetDef = Widgets.getSelf();
+
+					self._super();
+
+		        	var selfElement: M3Dialog = Widgets.getSelfElement();
+		        	var key = "dialog_position_"+selfElement.attr('id');
+		        	var window: JQ = new JQ(js.Browser.window);
+		        	var position = haxe.Json.parse(localStorage.getItem(key));
+		        	var dialogMaxWidth = Math.round(window.width() - 50);
+		        	var dialogMaxHeight = Math.round(window.height() - 50);
+
+		        	if(position != null && (position.left != null || position.top != null)){
+		        		selfElement.parent().position({
+		        			at: "left+"+position.left+" top+"+position.top,
+		        			my: "left top",
+		        			of: js.Browser.window
+		        		});
+		        	}
+		        	else {
+		        		selfElement.parent().position({
+		        			at: "middle",
+		        			my: "middle",
+		        			of: js.Browser.window
+		        		});
+		        	}
+
+		        	if(position != null && (position.width != null || position.height != null)){
+		        		position.width = (position.width > dialogMaxWidth)?dialogMaxWidth:position.width;
+		        		position.height = (position.height > dialogMaxHeight)?dialogMaxWidth:position.height;
+
+		        		if(position.width >= dialogMaxWidth && position.height >= dialogMaxHeight)
+		        		{
+		        			self.maximize();
+		        		}
+		        		else
+		        		{
+		        			selfElement.parent().width(position.width);
+		        			selfElement.parent().height(position.height);
+
+		        			//swap buttons to show maximize
+							self.maxIconWrapper.show();
+							self.restoreIconWrapper.hide();
+							self.options.onMaxToggle();
+		        		}
+		        		selfElement.parent().width(position.width);
+		        		selfElement.parent().height(position.height);
+
+						var contentHeight : Float = selfElement.parent().height()
+				 	 		- selfElement.parent().children(".ui-dialog-titlebar").height()
+					 		- selfElement.parent().children(".ui-dialog-buttonpane").height() - 50; //bit nasty, need maybe a better way
+		        		selfElement.css({
+							height: contentHeight
+						});
+		        	}
+		        },
+
+		        close: function()
+		        {
+		        	var self: M3DialogWidgetDef = Widgets.getSelf();
+		        	var selfElement: M3Dialog = Widgets.getSelfElement();
+		        	var positionkey = "dialog_position_"+selfElement.attr('id');
+		        	var localStorage = js.Browser.getLocalStorage();
+		        	var window: JQ = new JQ(js.Browser.window);
+		        	var pos = selfElement.parent().position();
+		        	var position = {
+		        		top: pos.top-window.scrollTop(),
+		        		left: pos.left-window.scrollLeft(),
+		        		width: Math.round(selfElement.parent().width()),
+		        		height: Math.round(selfElement.parent().height())
+		        	}
+
+		        	localStorage.setItem(positionkey, haxe.Json.stringify(position));
+
+		        	self._super();
 		        }
 		    };
 		}
