@@ -290,7 +290,7 @@ extern class M3Dialog extends JQ {
 		        		selfElement.parent().height(position.height);
 
 						var contentHeight : Float = selfElement.parent().height()
-				 	 		- selfElement.parent().children(".ui-dialog-titlebar").height();
+				 	 		- selfElement.parent().children(".ui-dialog-titlebar").height()
 					 		- selfElement.parent().children(".ui-dialog-buttonpane").height() - 50; //bit nasty, need maybe a better way
 		        		selfElement.css({
 							height: contentHeight
