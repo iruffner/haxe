@@ -178,8 +178,12 @@ extern class M3Dialog extends JQ {
 							width: self.originalSize.width,
 							height: self.originalSize.height
 						});
-					selfElement.css({
-							height: '77%'		//bit nasty, need maybe a better way
+					
+					var contentHeight : Float = selfElement.parent().height()
+					 	- selfElement.parent().children(".ui-dialog-titlebar").height()
+					 	- selfElement.parent().children(".ui-dialog-buttonpane").height() - 50; //bit nasty, need maybe a better way
+		        		selfElement.css({
+							height: contentHeight
 						});
 
 					//swap the buttons
@@ -217,8 +221,13 @@ extern class M3Dialog extends JQ {
 							width: windowDimensions.width - 50, 
 							height: windowDimensions.height - 50,
 						});
+
+					var contentHeight : Float = selfElement.parent().height()
+					 	- selfElement.parent().children(".ui-dialog-titlebar").height()
+					 	- selfElement.parent().children(".ui-dialog-buttonpane").height() - 50; //bit nasty, need maybe a better way
+
 					selfElement.css({
-							height: '87%'		//bit nasty, need maybe a better way
+							height: contentHeight		
 						});
 
 					//swap buttons to show restore
@@ -281,6 +290,15 @@ extern class M3Dialog extends JQ {
 								height: '87%'		//bit nasty, need maybe a better way
 							});
 		        		}
+		        		selfElement.parent().width(position.width);
+		        		selfElement.parent().height(position.height);
+
+						var contentHeight : Float = selfElement.parent().height();
+				 	 		selfElement.parent().children(".ui-dialog-titlebar").height();
+					 		selfElement.parent().children(".ui-dialog-buttonpane").height() - 50; //bit nasty, need maybe a better way
+			        		selfElement.css({
+								height: contentHeight
+							});
 		        	}
 		        },
 

@@ -197,7 +197,8 @@ extern class FormInput extends JQ {
 		        			}
 		        		}
 	        		}
-	        		 // else if(self.options.formItem.required)
+
+	        		self.options.formItem.formLayoutPlugin.renderInputValidation(selfElement, errors);
 
 		        	return errors;
 	        	},
