@@ -255,20 +255,33 @@ extern class M3Dialog extends JQ {
 		        			of: js.Browser.window
 		        		});
 		        	}
+
+		        	if(position != null && (position.width != null || position.height != null)){
+		        		selfElement.parent().width(position.width);
+		        		selfElement.parent().height(position.height);
+
+		        		selfElement.css({
+							height: '87%'		//bit nasty, need maybe a better way
+						});
+		        	}
 		        },
 
 		        close: function()
 		        {
 		        	var self: M3DialogWidgetDef = Widgets.getSelf();
 		        	var selfElement: M3Dialog = Widgets.getSelfElement();
-		        	var key = "dialog_position_"+selfElement.attr('id');
+		        	var positionkey = "dialog_position_"+selfElement.attr('id');
 		        	var localStorage = js.Browser.getLocalStorage();
 		        	var window: JQ = new JQ(js.Browser.window);
-		        	var position = selfElement.parent().position();
-		        	position.top -= window.scrollTop();
-		        	position.left -= window.scrollLeft();
+		        	var pos = selfElement.parent().position();
+		        	var position = {
+		        		top: pos.top-window.scrollTop(),
+		        		left: pos.left-window.scrollLeft(),
+		        		width: Math.round(selfElement.parent().width()),
+		        		height: Math.round(selfElement.parent().height())
+		        	}
 
-		        	localStorage.setItem(key, haxe.Json.stringify(position));
+		        	localStorage.setItem(positionkey, haxe.Json.stringify(position));
 
 		        	self._super();
 		        }
