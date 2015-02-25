@@ -9,6 +9,7 @@ import m3.exception.Exception;
 import m3.exception.ValidationException;
 import m3.log.Logga;
 
+using m3.jq.JQTooltip;
 using m3.helper.StringHelper;
 using m3.helper.ArrayHelper;
 using m3.forms.FormInput;
@@ -18,12 +19,15 @@ typedef TextInputWidgetDef = {
 	@:optional var options: FormInputOptions;
 	var _create: Void->Void;
 	var result: Void->String;
+	// var validate: Void->Bool;
 	var destroy: Void->Void;
+	@:optional var blur: Void->Bool;
 	@:optional var input: JQ;
 	@:optional var iconDiv: JQ;
 
 	@:optional var _super: Dynamic;
 	@:optional var getDefaultValue: Dynamic;
+	@:optional var _getResultFcn: Void->Array<String>;
 
 }
 
@@ -50,7 +54,7 @@ extern class TextInput extends AbstractInput {
 			return {
 		        _create: function(): Void {
 		        	var self: TextInputWidgetDef = Widgets.getSelf();
-					var selfElement: JQ = Widgets.getSelfElement();
+					var selfElement: FormInput = Widgets.getSelfElement();
 
 		        	if(!selfElement.is("div")) {
 		        		throw new Exception("Root of TextInput must be a div element");
@@ -73,6 +77,10 @@ extern class TextInput extends AbstractInput {
 	        		}
 
 	        		selfElement.append("&nbsp;").append(self.input).append(self.iconDiv);
+	        		self.input.blur(function(ev){
+	        				selfElement.validate();
+		        		});
+
 		        },
 
 		        result: function(): String {

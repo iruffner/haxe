@@ -28,11 +28,6 @@ typedef AbstractInputWidgetDef = {
 @:native("$")
 extern class AbstractInput extends JQ {
 	
-	@:overload(function<T>(cmd : String):T{})
-	@:overload(function<T>(cmd : String, arg: Dynamic):T{})
-	@:overload(function(cmd : String, opt: String, newVal: Dynamic):JQ{})
-	function abstractInput(opts: FormInputOptions): AbstractInput;
-
 	private static function __init__(): Void {
 		
 		var defineWidget: Void->AbstractInputWidgetDef = function(): AbstractInputWidgetDef {

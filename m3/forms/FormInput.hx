@@ -30,13 +30,13 @@ typedef FormInputOptions = {
 }
 
 typedef FormInputWidgetDef = {
-	@:optional var editorDiv: JQ;	
-	@:optional var editor: Dynamic;	
+	@:optional var input: AbstractInput;	
 	@:optional var options: FormInputOptions;
 	var _create: Void->Void;
 	var result: Void->Array<String>;
 	var validate: Void->Array<FormError>;
 	@:optional var _getResultFcn: Void->Array<String>;
+	var getInput: Void->AbstractInput;
 	var destroy: Void->Void;
 }
 
@@ -51,6 +51,10 @@ class FormInputHelper {
 
 	public static function getFormItem(c: FormInput): FormItem {
 		return c.formInput("option", "formItem");
+	}
+
+	public static function getInput(c: FormInput): AbstractInput {
+		return c.formInput("getInput");
 	}
 }
 
@@ -88,12 +92,10 @@ extern class FormInput extends JQ {
 						self.options.formItem.validators.push(m3.forms.FormValidations.notBlank);
 		        	}
 
-		        	var input: AbstractInput = null;
-
 		        	if(formItem.disabled) {
 		        		var t: TextInput = new TextInput(selfElement)
 	        					.textInput({formItem: formItem});
-	        				input = t;
+	        				self.input = t;
 	        				self._getResultFcn = function(): Array<String> {
 		        	 			return [t.result()];
 		        	 		}
@@ -102,7 +104,7 @@ extern class FormInput extends JQ {
 							case InputType.DATE:
 								var t: DateComp = new DateComp(selfElement)
 									.dateComp({formItem: formItem});
-								input = t;
+								self.input = t;
 								self._getResultFcn = function(): Array<String> {
 									return [t.result()];
 								}			
@@ -112,42 +114,42 @@ extern class FormInput extends JQ {
 		        							formItem: formItem,
 		        							mode: formItem.type
 		        						});
-		        				input = t;
+		        				self.input = t;
 		        				self._getResultFcn = function(): Array<String> {
 			        	 			return [t.result()];
 			        	 		}
 		        			case InputType.TEXT:
 	        					var t: TextInput = new TextInput(selfElement)
 		        					.textInput({formItem: formItem});
-		        				input = t;
+		        				self.input = t;
 		        				self._getResultFcn = function(): Array<String> {
 			        	 			return [t.result()];
 			        	 		}
 		        			case InputType.TEXTAREA:
 	        					var t: Textarea = new Textarea(selfElement)
 		        					.textarea({formItem: formItem});
-		        				input = t;
+		        				self.input = t;
 		        				self._getResultFcn = function(): Array<String> {
 			        	 			return [t.result()];
 			        	 		}
 		        			case InputType.ACCOMBOBOX:
 	        					var t: ACComboBox = new ACComboBox(selfElement)
 		        					.accomboBox({formItem: formItem});
-		        				input = t;
+		        				self.input = t;
 		        				self._getResultFcn = function(): Array<String> {
 			        	 			return [t.result()];
 			        	 		}
 		        			case InputType.CHECKBOX:
 	        					var t: CheckboxInput = new CheckboxInput(selfElement)
 		        					.checkboxInput({formItem: formItem});
-		        				input = t;
+		        				self.input = t;
 		        				self._getResultFcn = function(): Array<String> {
 			        	 			return t.result();
 			        	 		}
 		        			case InputType.SELECT: 
 		        				var s: Select = new Select(selfElement)
 		        					.selectComp({formItem: formItem});
-	        					input = s;
+	        					self.input = s;
 	        					self._getResultFcn = function(): Array<String> {
 			        	 			return [s.result()];
 			        	 		}
@@ -209,6 +211,11 @@ extern class FormInput extends JQ {
 	        			answers.unshift(self.options.formItem.name);
 	        			return answers;
 	        		} else return null;
+	        	},
+
+	        	getInput: function(): AbstractInput {
+	        		var self : FormInputWidgetDef = Widgets.getSelf();
+	        		return self.input;
 	        	},
 
 		        destroy: function() {

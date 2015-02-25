@@ -50,6 +50,7 @@ typedef FormItem = {
 	@:optional var disabled: Bool;
 	@:optional var validators: Array<Dynamic->Dynamic>;
 	@:optional var options: Dynamic;// Array<Array<String>> or a function returning Array<Array<String>>
+	var formLayoutPlugin : FormLayoutPlugin;
 }
 
 typedef FormBuilderOptions = {
@@ -153,7 +154,7 @@ extern class FormBuilder extends JQ {
 	        		//validate the form
 
 	        		//render the results
-        			self.options.formLayoutPlugin.renderValidation(selfElement, self.options, errors);
+        			self.options.formLayoutPlugin.renderFormValidation(selfElement, self.options, errors);
 
 	        		return errors;
 	        	},
