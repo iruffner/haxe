@@ -270,7 +270,7 @@ extern class M3Dialog extends JQ {
 
 		        	if(position != null && (position.width != null || position.height != null)){
 		        		position.width = (position.width > dialogMaxWidth)?dialogMaxWidth:position.width;
-		        		position.height = (position.height > dialogMaxHeight)?dialogMaxWidth:position.height;
+		        		position.height = (position.height > dialogMaxHeight)?dialogMaxHeight:position.height;
 
 		        		if(position.width >= dialogMaxWidth && position.height >= dialogMaxHeight)
 		        		{
