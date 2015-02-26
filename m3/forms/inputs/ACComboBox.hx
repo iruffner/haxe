@@ -53,7 +53,7 @@ extern class ACComboBox extends AbstractInput {
 			return {
 				_create: function(): Void {
 					var self: ACComboBoxWidgetDef = Widgets.getSelf();
-					var selfElement: JQ = Widgets.getSelfElement();
+					var selfElement: FormInput = Widgets.getSelfElement();
 
 		        	selfElement.addClass("_accomboBox center");
 	 				self._super();
@@ -113,6 +113,15 @@ extern class ACComboBox extends AbstractInput {
 				    	customCssOnSpan: "",
 				    	wrapAll: true
 			    	});
+
+	        		self.input.change(function(ev){
+        				selfElement.validate();
+	        		});
+
+	        		selfElement.find(".ui-autocomplete-input").blur(function(ev){
+        				selfElement.validate();
+	        		});
+
 		        },
 
 		        result: function(): String {
