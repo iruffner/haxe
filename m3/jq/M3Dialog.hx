@@ -249,11 +249,21 @@ extern class M3Dialog extends JQ {
 		        	var selfElement: M3Dialog = Widgets.getSelfElement();
 		        	var key = "dialog_position_"+selfElement.attr('id');
 		        	var window: JQ = new JQ(js.Browser.window);
-		        	var position = haxe.Json.parse(localStorage.getItem(key));
+		        	var pos = haxe.Json.parse(localStorage.getItem(key));
+
+		        	//Because Json parse returns strings we have to turn them into Numbers
+
+		        	var position :Dynamic= {
+		        			top:	Std.parseInt(pos.top),
+		        			left:	Std.parseInt(pos.left),
+		        			width:	Std.parseInt(pos.width),
+		        			height: Std.parseInt(pos.height),
+		        		}
 		        	var dialogMaxWidth = Math.round(window.width() - 50);
 		        	var dialogMaxHeight = Math.round(window.height() - 50);
 
 		        	if(position != null && (position.left != null || position.top != null)){
+
 		        		selfElement.parent().position({
 		        			at: "left+"+position.left+" top+"+position.top,
 		        			my: "left top",
@@ -272,11 +282,12 @@ extern class M3Dialog extends JQ {
 		        		position.width = (position.width > dialogMaxWidth)?dialogMaxWidth:position.width;
 		        		position.height = (position.height > dialogMaxHeight)?dialogMaxHeight:position.height;
 
+		        		//If bth width and height is larger than the current screen - padding we maximize the window
 		        		if(position.width >= dialogMaxWidth && position.height >= dialogMaxHeight)
 		        		{
 		        			self.maximize();
 		        		}
-		        		else
+		        		else //we reduce the width/height until fitss the window
 		        		{
 		        			selfElement.parent().width(position.width);
 		        			selfElement.parent().height(position.height);
@@ -285,6 +296,23 @@ extern class M3Dialog extends JQ {
 							self.maxIconWrapper.show();
 							self.restoreIconWrapper.hide();
 							self.options.onMaxToggle();
+
+							//dialog is always have to be on the screen
+							if(position.height+position.top > dialogMaxHeight)
+							{
+								position.top = (dialogMaxHeight - position.height + 20);
+							}
+
+							if(position.width+position.left > dialogMaxHeight)
+							{
+								position.left = (dialogMaxWidth - position.width + 20);
+							}
+
+							selfElement.parent().position({
+		        				at: "left+"+position.left+" top+"+position.top,
+		        				my: "left top",
+		        				of: js.Browser.window
+		        			});
 		        		}
 		        		selfElement.parent().width(position.width);
 		        		selfElement.parent().height(position.height);
@@ -307,10 +335,10 @@ extern class M3Dialog extends JQ {
 		        	var window: JQ = new JQ(js.Browser.window);
 		        	var pos = selfElement.parent().position();
 		        	var position = {
-		        		top: pos.top-window.scrollTop(),
-		        		left: pos.left-window.scrollLeft(),
-		        		width: Math.round(selfElement.parent().width()),
-		        		height: Math.round(selfElement.parent().height())
+		        		top:	pos.top-window.scrollTop(), //relative to window
+		        		left:	pos.left-window.scrollLeft(),
+		        		width: 	selfElement.parent().width(),
+		        		height: selfElement.parent().height()
 		        	}
 
 		        	localStorage.setItem(positionkey, haxe.Json.stringify(position));
