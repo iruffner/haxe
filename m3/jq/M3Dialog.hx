@@ -26,6 +26,7 @@ typedef M3DialogWidgetDef = {
 	var options: M3DialogOptions;
 	@:optional var maxIconWrapper: JQ;
 	@:optional var restoreIconWrapper: JQ;
+	@:optional var defaultPositionIconWrapper: JQ;
 	var originalSize: UISize;
 	var originalPosition: UIPosition;
 	var originalScrollPosition: UIPosition;
@@ -147,6 +148,17 @@ extern class M3Dialog extends JQ {
 							self.restore();
 							return false;
 					});
+
+					self.defaultPositionIconWrapper = new JQ("<a href='#' class='ui-dialog-titlebar-close ui-corner-all' style='margin-right: 39px; display: none;' role='button'>");
+					var defaultPositionIcon: JQ = new JQ("<span class='ui-icon ui-icon-radio-on' style='size:'>default position</span>");
+					hovers = hovers.add(self.defaultPositionIconWrapper);
+					self.defaultPositionIconWrapper.append(defaultPositionIcon);
+					self.restoreIconWrapper.before(self.defaultPositionIconWrapper);
+					self.defaultPositionIconWrapper.show();
+					self.defaultPositionIconWrapper.click(function(evt: js.JQuery.JqEvent){
+						trace ('restore to default position');
+					});
+
 
 					hovers.hover(function(evt: JQEvent) {
 							JQ.cur.addClass("ui-state-hover");
@@ -335,11 +347,11 @@ extern class M3Dialog extends JQ {
 		        	var window: JQ = new JQ(js.Browser.window);
 		        	var pos = selfElement.parent().position();
 		        	var position = {
-		        		top:	pos.top-window.scrollTop(), //relative to window
-		        		left:	pos.left-window.scrollLeft(),
-		        		width: 	selfElement.parent().width(),
-		        		height: selfElement.parent().height()
-		        	}
+		        			top:	pos.top-window.scrollTop(), //relative to window
+		        			left:	pos.left-window.scrollLeft(),
+		        			width: 	selfElement.parent().width(),
+		        			height: selfElement.parent().height()
+		        		}
 
 		        	localStorage.setItem(positionkey, haxe.Json.stringify(position));
 
