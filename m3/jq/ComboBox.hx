@@ -235,6 +235,8 @@ extern class ComboBox extends JQ {
 			            	if(dialogParent.exists()) {
 			            		dialogParent.css("overflow", "visible");
 			            	}
+			          		var tooltip: JQTooltip = new JQTooltip(self.input);
+		          			tooltip.tooltip("close");
                         },
                         close: function( event: JQEvent, ui: Dynamic ): Void {
 			            	var menu: JQ = new JQ(JQ.cur.autocomplete("widget").data().uiMenu.element);
@@ -262,7 +264,11 @@ extern class ComboBox extends JQ {
 			            selfElement.trigger("change");
 			          },
 			 
-			          autocompletechange: "_removeIfInvalid"
+			          autocompletechange: "_removeIfInvalid",
+			          mouseout: function(){
+				          		var tooltip: JQTooltip = new JQTooltip(self.input);
+			          			tooltip.tooltip("close");
+			          		}
 			        });
 			      },
 			 
@@ -291,10 +297,13 @@ extern class ComboBox extends JQ {
 			          })
 			          .click(function() {
 			            input.focus();
+
 			 
 			            // Close if already visible
 			            if ( wasOpen ) {
-			              return;
+			          		var tooltip: JQTooltip = new JQTooltip(self.input);
+		          			tooltip.tooltip("close");			            	
+			              	return;
 			            }
 			 
 			            // Pass empty string as value to search for, displaying all results
