@@ -36,6 +36,7 @@ typedef M3DialogWidgetDef = {
 	var restore: Void->Void;
 	var maximize: Void->Void;
 	var destroy: Void->Void;
+	var defaultPosition: Void->Void;
 	var _allowInteraction: JQEvent->Bool;
 
 	@:optional var _super: Dynamic;
@@ -149,14 +150,13 @@ extern class M3Dialog extends JQ {
 							return false;
 					});
 
-					self.defaultPositionIconWrapper = new JQ("<a href='#' class='ui-dialog-titlebar-close ui-corner-all' style='margin-right: 39px; display: none;' role='button'>");
-					var defaultPositionIcon: JQ = new JQ("<span class='ui-icon ui-icon-radio-on' style='size:'>default position</span>");
+					self.defaultPositionIconWrapper = new JQ("<a href='#' class='ui-dialog-titlebar-close ui-corner-all' style='margin-right: 39px; padding:2px; text-align: center; font-size:13px;' role='button'>");
+					var defaultPositionIcon: JQ = new JQ("<i class='fi-target-two' title='default position'></i>");
 					hovers = hovers.add(self.defaultPositionIconWrapper);
 					self.defaultPositionIconWrapper.append(defaultPositionIcon);
 					self.restoreIconWrapper.before(self.defaultPositionIconWrapper);
-					self.defaultPositionIconWrapper.show();
-					self.defaultPositionIconWrapper.click(function(evt: js.JQuery.JqEvent){
-						trace ('restore to default position');
+					self.defaultPositionIconWrapper.click(function(evt: m3.jq.JQEvent){
+						self.defaultPosition();
 					});
 
 
@@ -249,6 +249,27 @@ extern class M3Dialog extends JQ {
 
 				},
 
+				defaultPosition: function() {
+					var self: M3DialogWidgetDef = Widgets.getSelf();
+					var selfElement: M3Dialog = Widgets.getSelfElement();
+					selfElement.parent().position({
+		        			at: "middle",
+		        			my: "middle",
+		        			of: js.Browser.window
+		        		});
+					trace(self.options.width);
+					trace(self.options.height);
+
+					selfElement.parent().css({
+						width:	self.options.width, 
+						height: self.options.height,
+					});
+
+					var contentHeight : Float = selfElement.parent().height()
+				 	 	- selfElement.parent().children(".ui-dialog-titlebar").height()
+					 	- selfElement.parent().children(".ui-dialog-buttonpane").height() - 50; //bit nasty, need maybe a better way
+				},
+
 		        destroy: function() {
 		            untyped JQ.Widget.prototype.destroy.call( JQ.curNoWrap );
 		        },
@@ -283,11 +304,7 @@ extern class M3Dialog extends JQ {
 		        		});
 		        	}
 		        	else {
-		        		selfElement.parent().position({
-		        			at: "middle",
-		        			my: "middle",
-		        			of: js.Browser.window
-		        		});
+		        		self.defaultPosition();
 		        	}
 
 		        	if(position != null && (position.width != null || position.height != null)){
