@@ -151,12 +151,13 @@ extern class M3Dialog extends JQ {
 					});
 
 					self.defaultPositionIconWrapper = new JQ("<a href='#' class='ui-dialog-titlebar-close ui-corner-all' style='margin-right: 39px; padding:2px; text-align: center; font-size:13px;' role='button'>");
-					var defaultPositionIcon: JQ = new JQ("<i class='fi-target-two' title='default position'></i>");
+					var defaultPositionIcon: JQ = new JQ("<i class='fi-die-one' title='default position'></i>");
 					hovers = hovers.add(self.defaultPositionIconWrapper);
 					self.defaultPositionIconWrapper.append(defaultPositionIcon);
 					self.restoreIconWrapper.before(self.defaultPositionIconWrapper);
 					self.defaultPositionIconWrapper.click(function(evt: m3.jq.JQEvent){
 						self.defaultPosition();
+						return false;
 					});
 
 
@@ -257,8 +258,6 @@ extern class M3Dialog extends JQ {
 		        			my: "middle",
 		        			of: js.Browser.window
 		        		});
-					trace(self.options.width);
-					trace(self.options.height);
 
 					selfElement.parent().css({
 						width:	self.options.width, 
@@ -270,7 +269,8 @@ extern class M3Dialog extends JQ {
 					 	- selfElement.parent().children(".ui-dialog-buttonpane").height() - 50; //bit nasty, need maybe a better way
 
 					var localStorage = js.Browser.getLocalStorage();
-					localStorage.clear();
+					var key = "dialog_position_"+selfElement.attr('id');
+					localStorage.removeItem(key);
 				},
 
 		        destroy: function() {
@@ -338,7 +338,7 @@ extern class M3Dialog extends JQ {
 								position.top = (dialogMaxHeight - position.height + 20);
 							}
 
-							if(position.width+position.left > dialogMaxHeight)
+							if(position.width+position.left > dialogMaxWidth)
 							{
 								position.left = (dialogMaxWidth - position.width + 20);
 							}
