@@ -268,6 +268,9 @@ extern class M3Dialog extends JQ {
 					var contentHeight : Float = selfElement.parent().height()
 				 	 	- selfElement.parent().children(".ui-dialog-titlebar").height()
 					 	- selfElement.parent().children(".ui-dialog-buttonpane").height() - 50; //bit nasty, need maybe a better way
+
+					var localStorage = js.Browser.getLocalStorage();
+					localStorage.clear();
 				},
 
 		        destroy: function() {
@@ -286,12 +289,15 @@ extern class M3Dialog extends JQ {
 
 		        	//Because Json parse returns strings we have to turn them into Numbers
 
-		        	var position :Dynamic= {
-		        			top:	Std.parseInt(pos.top),
-		        			left:	Std.parseInt(pos.left),
-		        			width:	Std.parseInt(pos.width),
-		        			height: Std.parseInt(pos.height),
-		        		}
+		        	var position = null;
+		        	if(pos != null) {
+			        	position = {
+			        			top:	Std.parseInt(pos.top),
+			        			left:	Std.parseInt(pos.left),
+			        			width:	Std.parseInt(pos.width),
+			        			height: Std.parseInt(pos.height)
+			        		}
+		        	}
 		        	var dialogMaxWidth = Math.round(window.width() - 50);
 		        	var dialogMaxHeight = Math.round(window.height() - 50);
 
