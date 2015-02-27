@@ -83,6 +83,9 @@ extern class CheckboxInput extends AbstractInput {
 	        			selfElement.validate();
         				});
 
+	        		self.input.change(function(ev){
+	        				selfElement.validate();
+		        		});
 
 /*		        	for(ans_ in 0...question.options.length) {
 		        		var choice: Choice = question.options[ans_];

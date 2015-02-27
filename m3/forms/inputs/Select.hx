@@ -116,6 +116,10 @@ extern class Select extends AbstractInput {
 	        		self.input.blur(function(ev){
 	        				selfElement.validate();
 		        		});
+
+	        		self.input.change(function(ev){
+	        				selfElement.validate();
+		        		});
 		        },	        
 
 		        result: function(): String {
