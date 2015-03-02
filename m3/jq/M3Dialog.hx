@@ -195,8 +195,10 @@ extern class M3Dialog extends JQ {
 					var contentHeight : Float = selfElement.parent().height()
 					 	- selfElement.parent().children(".ui-dialog-titlebar").height()
 					 	- selfElement.parent().children(".ui-dialog-buttonpane").height() - 50; //bit nasty, need maybe a better way
+					var contentWidth = selfElement.parent().width()-30;
 		        		selfElement.css({
-							height: contentHeight
+							height: contentHeight,
+							width: contentWidth
 						});
 
 					//swap the buttons
@@ -238,9 +240,11 @@ extern class M3Dialog extends JQ {
 					var contentHeight : Float = selfElement.parent().height()
 					 	- selfElement.parent().children(".ui-dialog-titlebar").height()
 					 	- selfElement.parent().children(".ui-dialog-buttonpane").height() - 50; //bit nasty, need maybe a better way
+					var contentWidth = selfElement.parent().width()-30;
 
 					selfElement.css({
-							height: contentHeight		
+							height: contentHeight,
+							width: contentWidth
 						});
 
 					//swap buttons to show restore
@@ -253,24 +257,40 @@ extern class M3Dialog extends JQ {
 				defaultPosition: function() {
 					var self: M3DialogWidgetDef = Widgets.getSelf();
 					var selfElement: M3Dialog = Widgets.getSelfElement();
-					selfElement.parent().position({
-		        			at: "middle",
-		        			my: "middle",
-		        			of: js.Browser.window
-		        		});
 
 					selfElement.parent().css({
 						width:	self.options.width, 
 						height: self.options.height,
 					});
 
+					trace(self.options.width);
+					trace(self.options.height);
+
+
 					var contentHeight : Float = selfElement.parent().height()
 				 	 	- selfElement.parent().children(".ui-dialog-titlebar").height()
 					 	- selfElement.parent().children(".ui-dialog-buttonpane").height() - 50; //bit nasty, need maybe a better way
+					var contentWidth = selfElement.parent().width()-30;
+
+					selfElement.css({
+							height: contentHeight,
+							width: contentWidth
+						});
+
+					selfElement.parent().position({
+		        			at: "middle",
+		        			my: "middle",
+		        			of: js.Browser.window
+		        		});
 
 					var localStorage = js.Browser.getLocalStorage();
 					var key = "dialog_position_"+selfElement.attr('id');
 					localStorage.removeItem(key);
+
+					//swap the buttons
+					self.restoreIconWrapper.hide();
+					self.maxIconWrapper.show();
+					self.options.onMaxToggle();
 				},
 
 		        destroy: function() {
