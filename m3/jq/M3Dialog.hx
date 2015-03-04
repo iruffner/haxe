@@ -8,6 +8,8 @@ typedef M3DialogOptions = {
 	@:optional var autoOpen:Bool;
 	@:optional var height:Dynamic;
 	@:optional var width: Dynamic;
+	@:optional var defaultHeight:Dynamic;
+	@:optional var defaultWidth: Dynamic;
 	@:optional var modal: Bool;
 	@:optional var title: String;
 	@:optional var buttons: Dynamic;
@@ -112,6 +114,9 @@ extern class M3Dialog extends JQ {
 					var closeBtn: JQ = selfElement.prev().find(".ui-dialog-titlebar-close");
 					var hovers: JQ = new JQ("blah");
 					var window: JQ = new JQ(js.Browser.window);
+
+					self.options.defaultWidth = self.options.width;
+					self.options.defaultHeight = self.options.height;
 
 					if(self.options.showHelp && false) {
 						if(!Reflect.isFunction(self.options.buildHelp)) {
@@ -259,12 +264,9 @@ extern class M3Dialog extends JQ {
 					var selfElement: M3Dialog = Widgets.getSelfElement();
 
 					selfElement.parent().css({
-						width:	self.options.width, 
-						height: self.options.height,
+						width:	self.options.defaultWidth, 
+						height: self.options.defaultHeight
 					});
-
-					trace(self.options.width);
-					trace(self.options.height);
 
 
 					var contentHeight : Float = selfElement.parent().height()
