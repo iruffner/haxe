@@ -36,6 +36,7 @@ typedef M3DialogWidgetDef = {
 	var close: Void->Void;
 	var open: Void->Void;
 	var restore: Void->Void;
+	var resize: Void -> Void;
 	var maximize: Void->Void;
 	var destroy: Void->Void;
 	var defaultPosition: Void->Void;
@@ -51,6 +52,10 @@ class M3DialogHelper {
 
 	public static function open(dlg: M3Dialog): Void {
 		dlg.m3dialog("open");
+	}
+
+	public static function resize(dlg: M3Dialog): Void {
+		dlg.m3dialog("resize");
 	}
 
 	public static function isOpen(dlg: M3Dialog): Bool {
@@ -172,6 +177,10 @@ extern class M3Dialog extends JQ {
 							JQ.cur.removeClass("ui-state-hover");
 						}
 					);
+
+					selfElement.parent().on("resize", function(event: js.JQuery.JqEvent, ui: Dynamic): Void {
+						self.resize();
+					});
 		        },
 
 		        _allowInteraction: function( event ): Bool {
@@ -180,7 +189,17 @@ extern class M3Dialog extends JQ {
 		        	if(self.options.allowInteraction != null) {
 		        		r =  !!self.options.allowInteraction(event);
 		        	}
+
 		        	return r || self._super( event );
+				},
+
+				resize: function(): Void{
+					var self: M3DialogWidgetDef = Widgets.getSelf();
+					self.restoreIconWrapper.hide();
+					self.maxIconWrapper.show();
+					self.options.onMaxToggle();
+
+					//self._super();
 				},
 
 		        restore: function() {
