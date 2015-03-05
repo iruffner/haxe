@@ -327,9 +327,26 @@ extern class M3Dialog extends JQ {
 		        	var key = "dialog_position_"+selfElement.attr('id');
 		        	var window: JQ = new JQ(js.Browser.window);
 		        	var pos = haxe.Json.parse(localStorage.getItem(key));
+		        	var dialogMaxWidth = Math.round(window.width() - 50);
+		        	var dialogMaxHeight = Math.round(window.height() - 50);
+
+		        	//Calculate optimal height
+		        	var castedOptions: Dynamic = cast self.options;
+		        	var contentHeight : Int = 0;
+		        	if(castedOptions.formOptions != null && castedOptions.formOptions.formItems != null)
+		        	{
+						for(formItemIndex in 0...castedOptions.formOptions.formItems.length)
+						{
+							var selector = ".ui-dialog .formInputs label[for='"+castedOptions.formOptions.formItems[formItemIndex].name+"']";
+							var elem: JQ = new JQ(selector).parent();
+							contentHeight += elem.height();
+						}
+					}
+
+					contentHeight = (contentHeight > dialogMaxHeight)?dialogMaxHeight:contentHeight;
+					self.options.defaultHeight = contentHeight;
 
 		        	//Because Json parse returns strings we have to turn them into Numbers
-
 		        	var position = null;
 		        	if(pos != null) {
 			        	position = {
@@ -339,8 +356,20 @@ extern class M3Dialog extends JQ {
 			        			height: Std.parseInt(pos.height)
 			        		}
 		        	}
-		        	var dialogMaxWidth = Math.round(window.width() - 50);
-		        	var dialogMaxHeight = Math.round(window.height() - 50);
+		        	else
+		        	{
+		        		var pos1 = selfElement.parent().position();
+		        		if(castedOptions.formOptions != null && castedOptions.formOptions.formItems != null)
+		        		{
+			        		position = {
+			        			top:	Std.parseInt(pos.top)-window.scrollTop(),
+			        			left:	Std.parseInt(pos.left)-window.scrollLeft(),
+								width:	self.options.defaultWidth,
+								height: contentHeight,
+							}
+
+						}
+		        	}
 
 		        	if(position != null && (position.left != null || position.top != null)){
 
