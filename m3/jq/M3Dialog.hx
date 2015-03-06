@@ -342,6 +342,10 @@ extern class M3Dialog extends JQ {
 							contentHeight += elem.height();
 						}
 					}
+					else
+					{
+						contentHeight = self.options.defaultHeight;
+					}
 
 					contentHeight = (contentHeight > dialogMaxHeight)?dialogMaxHeight:contentHeight;
 					self.options.defaultHeight = contentHeight;
