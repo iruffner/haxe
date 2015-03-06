@@ -366,8 +366,8 @@ extern class M3Dialog extends JQ {
 		        		if(castedOptions.formOptions != null && castedOptions.formOptions.formItems != null)
 		        		{
 			        		position = {
-			        			top:	Std.parseInt(pos.top)-window.scrollTop(),
-			        			left:	Std.parseInt(pos.left)-window.scrollLeft(),
+			        			top:	pos1.top - window.scrollTop(),
+			        			left:	pos1.left - window.scrollLeft(),
 								width:	self.options.defaultWidth,
 								height: contentHeight,
 							}
