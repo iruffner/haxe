@@ -335,12 +335,10 @@ extern class M3Dialog extends JQ {
 		        	var contentHeight : Int = 0;
 		        	if(castedOptions.formOptions != null && castedOptions.formOptions.formItems != null)
 		        	{
-						for(formItemIndex in 0...castedOptions.formOptions.formItems.length)
-						{
-							var selector = ".ui-dialog .formInputs label[for='"+castedOptions.formOptions.formItems[formItemIndex].name+"']";
-							var elem: JQ = new JQ(selector).parent();
-							contentHeight += elem.height();
-						}
+		        		contentHeight = selfElement.children('div').height() + 
+		        						selfElement.parent().children(".ui-dialog-titlebar").height() + 
+		        						selfElement.parent().children(".ui-dialog-buttonpane").height()+
+		        						selfElement.children().children('.subtitle').height()+40;
 					}
 					else
 					{
@@ -366,8 +364,8 @@ extern class M3Dialog extends JQ {
 		        		if(castedOptions.formOptions != null && castedOptions.formOptions.formItems != null)
 		        		{
 			        		position = {
-			        			top:	Std.parseInt(pos.top)-window.scrollTop(),
-			        			left:	Std.parseInt(pos.left)-window.scrollLeft(),
+			        			top:	pos1.top - window.scrollTop(),
+			        			left:	pos1.left - window.scrollLeft(),
 								width:	self.options.defaultWidth,
 								height: contentHeight,
 							}
@@ -396,11 +394,8 @@ extern class M3Dialog extends JQ {
 		        		{
 		        			self.maximize();
 		        		}
-		        		else //we reduce the width/height until fitss the window
+		        		else //we reduce the width/height until fits the window
 		        		{
-		        			selfElement.parent().width(position.width);
-		        			selfElement.parent().height(position.height);
-
 		        			//swap buttons to show maximize
 							self.maxIconWrapper.show();
 							self.restoreIconWrapper.hide();

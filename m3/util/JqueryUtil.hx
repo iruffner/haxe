@@ -90,7 +90,7 @@ class JqueryUtil {
 	            // width: 'auto',
 	            resizable: true,
 	            width: width,
-	            height: height,
+	            height: height+70,
                 buttons: {
                     Yes: function () {
                         action();
