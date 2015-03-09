@@ -83,12 +83,12 @@ class TestRunnerBase {
 
 				var resultsDiv = new JQ("<span>not run</span>");
 				var logDiv = new JQ("<div style='width: 800px; border: 1px solid black; min-height: 50px; overflow: auto; max-height: 500px; display: none; margin: auto; text-align: left;'></div>");
-				var toggler: JQ = new JQ("<span>Toggle Logs</span>");
+				var toggler: JQ = new JQ("<span class=\"toggleTestLogs\">Toggle Logs</span>").button();
 				toggler.click(function(evt: js.JQuery.JqEvent): Void {
 					logDiv.toggle();
 				});
 
-				var button = new JQ("<button>run</button>");
+				var button = new JQ("<button class=\"button runTestButton\">run</button>.button()").button();
 				button.click(function(evt: js.JQuery.JqEvent): Void {
 					testMethod.runTest();
 				});
@@ -103,7 +103,7 @@ class TestRunnerBase {
 				appendCell(logDiv, row);
 
 				testMethod.resultsFunc = function(results:TestResults) {
-					resultsDiv.text(results.status.getName());
+					resultsDiv.text(results.status.getName()).addClass('test'+results.status.getName());
 
 					logDiv.empty();
 					results.messages.iter(function(msg) {
