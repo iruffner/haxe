@@ -335,12 +335,29 @@ extern class M3Dialog extends JQ {
 		        	var contentHeight : Int = 0;
 		        	if(castedOptions.formOptions != null && castedOptions.formOptions.formItems != null)
 		        	{
-						for(formItemIndex in 0...castedOptions.formOptions.formItems.length)
+		        		/*var selector = "#"+selfElement.attr('id');
+		        		var r = ~/%/g;
+		        		selector = r.replace( selector , '\\\\%' );*/
+
+		        		contentHeight = selfElement.children('div').height() + 
+		        						selfElement.parent().children(".ui-dialog-titlebar").height() + 
+		        						selfElement.parent().children(".ui-dialog-buttonpane").height()+
+		        						selfElement.children(".subtitle").height();
+
+		        		/*trace(selfElement.children('div').height());
+						trace(selfElement.parent().children(".ui-dialog-titlebar").height());
+		        		trace(selfElement.parent().children(".ui-dialog-buttonpane").height());
+		        		trace(selfElement.children(".subtitle").height());*/
+
+						/*for(formItemIndex in 0...castedOptions.formOptions.formItems.length)
 						{
 							var selector = ".ui-dialog .formInputs label[for='"+castedOptions.formOptions.formItems[formItemIndex].name+"']";
-							var elem: JQ = new JQ(selector).parent();
+							//selector = "\"#"+selfElement.attr('id')+" label[for='"+castedOptions.formOptions.formItems[formItemIndex].name+"']\"";
+							var elem: JQ = new JQ(selector);//+" label[for='"+castedOptions.formOptions.formItems[formItemIndex].name+"']\"").parent();
 							contentHeight += elem.height();
-						}
+
+							trace(selfElement.children('div').height());
+						}*/
 					}
 					else
 					{
