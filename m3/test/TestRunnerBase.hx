@@ -112,7 +112,7 @@ class TestRunnerBase {
 				}
 			});
             var row: JQ = new JQ("<tr></tr>");
-            appendCell("<hr/>", row, ["colspan" => "5"]);
+            appendCell("<hr style=\"margin:5px\"/>", row, ["colspan" => "5"]);
 			tbody.append(row);
 	    }
 		
