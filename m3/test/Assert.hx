@@ -25,6 +25,7 @@ class Assert extends Exception {
             throw new Assert(msg);
         }   
     }
+
     public static function fail(msg: String) {
         throw msg;
     }

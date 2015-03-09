@@ -46,7 +46,8 @@ class TestRunnerBase {
 			m3.test.OSetTest,
 			m3.test.SerializationTest,
 			m3.test.StringHelperTest,
-			m3.test.UidGenTest
+			m3.test.UidGenTest,
+			m3.test.ArrayHelperTest
 		];
 		return tests;
 	}

@@ -232,4 +232,19 @@ class ArrayHelper {
             for(t in array2) array.push(t);
         }
     }
+
+    public static function arrayEquals(array1: Array<Dynamic>, array2:Array<Dynamic>): Bool{
+        if(array1 != null && array2 != null){
+            if(array1.length != array2.length){
+                return false;
+            }else{
+                for(i in 0...array1.length){
+                    if(array1[i] != array2[i]) return false;
+                }
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
