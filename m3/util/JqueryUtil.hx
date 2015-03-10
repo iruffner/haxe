@@ -148,7 +148,7 @@ class JqueryUtil {
         }
 	}
 
-	public static function error(errors:Dynamic, title:String="Error", ?action:Void->Void, ?width: Dynamic = 300, ?height: Int = 175): Void {
+	public static function error(errors:Dynamic, title:String="Error", ?action:Void->Void, ?width: Dynamic = 600, ?height: Int = 175): Void {
 		var statement:String = "";
 		var dlgOptions: M3DialogOptions = {
 	       	modal: true, 
@@ -179,15 +179,44 @@ class JqueryUtil {
 		{
 			for (i in 0...errors.length)
 			{
-				trace(errors[i].severity);
+				statement += '<div class="errorMessage"><p><span class="ui-icon ui-icon-carat-1-s"></span>'+errors[i].message+'</p>'+
+								'<pre class="errorMessageStack">'+errors[i].stackTrace+'</pre>'+
+							'</div>';
 			}
-			trace(errors);
 		}
-		var content = new JQ('<div style="text-align:center; color:#de2d0f; font-weight: bold">' + statement + '</div>');
+		var content = new JQ('<div>' + statement + '</div>');
 		dlg.append(content);
+
+		var window: JQ = new JQ(js.Browser.window);
+		var dialogMaxHeight = Math.round(window.height() - 50);
+
+		var contentHeight = dlg.children().height()+20;
+		var titleHeight = dlg.parent().children('.ui-dialog-titlebar').height();
+		var buttonHeight = dlg.parent().children('.ui-dialog-buttonpane').height();
+
+		var dialogHeight = contentHeight + titleHeight + buttonHeight + 40;
+		dialogHeight = (dialogHeight > dialogMaxHeight)?dialogMaxHeight:dialogHeight;
+		contentHeight = (dialogHeight <  dialogMaxHeight)?contentHeight:dialogHeight - titleHeight - buttonHeight;
+		dlg.setDefHeight(""+dialogHeight+"");
+
+		dlg.height(contentHeight);
+		dlg.parent().height(dialogHeight);
+		dlg.parent().children('.ui-dialog-titlebar').css({'background-color': '#de2d0f'});
+		dlg.parent().position({
+		        			at: "middle",
+		        			my: "middle",
+		        			of: js.Browser.window
+		        		});
+
 		if(!dlg.isOpen()) {
             dlg.open();
         }
+
+        var message:JQ = new JQ('.errorMessage');
+        message.click(function(evt: JQEvent) {
+			JQ.cur.children('.errorMessageStack').toggle();
+			JQ.cur.children('p').children('span.ui-icon').toggleClass('ui-icon-carat-1-s');
+		});
 	}
 
 	public static function getWindowWidth(): Int {
