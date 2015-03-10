@@ -118,7 +118,7 @@ class JqueryUtil {
 	 * @param title:String The title of the dialog box
 	 * @param action:Function The function to call after the user closes the dialog
 	 */
-	public static function alert(statement:String, title:String="Alert", ?action:Void->Void, ?width: Dynamic = "auto", ?height: Int = 175): Void {
+	public static function alert(statement:String, title:String="Alert", ?action:Void->Void, ?width: Dynamic = 300, ?height: Int = 175): Void {
 		var dlgOptions: M3DialogOptions = {
 	       		modal: true, 
 	       		title: title, 
@@ -141,7 +141,49 @@ class JqueryUtil {
                 }
 	    };
 		var dlg: M3Dialog = getOrCreateDialog("#alert-dialog", dlgOptions);
-		var content = new JQ('<div style="text-align:left;">' + statement + '</div>');
+		var content = new JQ('<div style="text-align:center; color:#008CBA; font-weight: bold">' + statement + '</div>');
+		dlg.append(content);
+		if(!dlg.isOpen()) {
+            dlg.open();
+        }
+	}
+
+	public static function error(errors:Dynamic, title:String="Error", ?action:Void->Void, ?width: Dynamic = 300, ?height: Int = 175): Void {
+		var statement:String = "";
+		var dlgOptions: M3DialogOptions = {
+	       	modal: true, 
+	       	title: title, 
+	       	zIndex: 10000, 
+	       	autoOpen: true,
+	        resizable: true,
+            width: width,
+	        height: height,
+	        buttons: {
+                OK: function () {
+                    M3Dialog.cur.close();
+                }
+            },
+            close: function () {
+               	if (action != null) {
+               		action();
+              	}
+                M3Dialog.cur.remove();
+            }
+	    };
+		var dlg: M3Dialog = getOrCreateDialog("#error-dialog", dlgOptions);
+		if(Std.is(errors, String))
+		{
+			statement = errors;
+		}
+		else
+		{
+			for (i in 0...errors.length)
+			{
+				trace(errors[i].severity);
+			}
+			trace(errors);
+		}
+		var content = new JQ('<div style="text-align:center; color:#de2d0f; font-weight: bold">' + statement + '</div>');
 		dlg.append(content);
 		if(!dlg.isOpen()) {
             dlg.open();
