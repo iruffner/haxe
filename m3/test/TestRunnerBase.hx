@@ -46,7 +46,8 @@ class TestRunnerBase {
 			m3.test.OSetTest,
 			m3.test.SerializationTest,
 			m3.test.StringHelperTest,
-			m3.test.UidGenTest
+			m3.test.UidGenTest,
+			m3.test.ArrayHelperTest
 		];
 		return tests;
 	}
@@ -112,7 +113,7 @@ class TestRunnerBase {
 				}
 			});
             var row: JQ = new JQ("<tr></tr>");
-            appendCell("<hr/>", row, ["colspan" => "5"]);
+            appendCell("<hr style=\"margin:5px\"/>", row, ["colspan" => "5"]);
 			tbody.append(row);
 	    }
 		

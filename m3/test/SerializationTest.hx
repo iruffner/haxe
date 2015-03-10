@@ -152,7 +152,7 @@ class ConcreteClass extends BaseClass {
 
 	@test
 	function arrayOfDynamicTest(): Void {
- 		var serializer = new Serializer();
+ 		var serializer = Serializer.instance;
  		{
 			var json = Json.parse("{ \"arrayOfDynamic\": [{\"name\": \"name\", \"name1\": \"name1\"}] }");
 			var reader = serializer.fromJson(json, HasArrayOfDynamic);
@@ -177,7 +177,7 @@ class ConcreteClass extends BaseClass {
 
 	@test
 	public function abstractTest(): Void {
-		var serializer = new Serializer();
+		var serializer = Serializer.instance;
 		serializer.addHandler(AbstractClass, new AbstractClassHandler(serializer));
 
 		{
@@ -207,7 +207,7 @@ class ConcreteClass extends BaseClass {
 
 	@test
 	public function typeDefTest(): Void {
-		var serializer = new Serializer();
+		var serializer = Serializer.instance;
 		var json = {
 			mtd: {a: "world", b: 32}
 		}
@@ -222,7 +222,7 @@ class ConcreteClass extends BaseClass {
 
 	@test
 	public function dynamiteTest(): Void {
-		var serializer = new Serializer();
+		var serializer = Serializer.instance;
 		var json = {
 			dynamite: {hello: "world"}
 		}
@@ -237,7 +237,7 @@ class ConcreteClass extends BaseClass {
 
 	@test
 	public function simpleSerialization(): Void {
-		var serializer = new Serializer();
+		var serializer = Serializer.instance;
 		var json = {
 			bool1: true, 
 			int1: 1, 
@@ -259,7 +259,7 @@ class ConcreteClass extends BaseClass {
 
 	@test
 	public function liftLoneValueIntoSingleValueArray(): Void {
-		var serializer = new Serializer();
+		var serializer = Serializer.instance;
 		var json = {
 			bool1: true, 
 			int1: 1, 
@@ -282,7 +282,7 @@ class ConcreteClass extends BaseClass {
 
 	@test
 	public function extraFieldInJsonFailure(): Void {
-		var serializer = new Serializer();
+		var serializer = Serializer.instance;
 		var json = {
 			bool1: true, 
 			int1: 1, 			
@@ -305,7 +305,7 @@ class ConcreteClass extends BaseClass {
 
 	@test
 	public function fieldMissingFromJson(): Void {
-		var serializer = new Serializer();
+		var serializer = Serializer.instance;
 		var json = {
 			// bool1: true, 
 			int1: 1, 			
@@ -328,7 +328,7 @@ class ConcreteClass extends BaseClass {
 
 	@test
 	public function transientFieldsAreNotRequired(): Void {
-		var serializer = new Serializer();
+		var serializer = Serializer.instance;
 		var json = {
 			bool1: true, 
 			int1: 1, 			
@@ -352,7 +352,7 @@ class ConcreteClass extends BaseClass {
 
 	@test
 	public function serializingFunctionText(): Void {
-		var serializer = new Serializer();
+		var serializer = Serializer.instance;
 		{ // required function has syntax errors we should blow up
 			var json0 = {
 				fn: "asdf asdf saf as fsaf sadfsdafa"
@@ -409,7 +409,7 @@ class ConcreteClass extends BaseClass {
 	@test
 	public function serializingBaseAndConcrete(): Void {
 		
-		var serializer = new Serializer();
+		var serializer = Serializer.instance;
 
 		var cc0 = new ConcreteClass();
 
@@ -432,7 +432,7 @@ class ConcreteClass extends BaseClass {
 	@test
 	public function arrayOfArray(): Void {
 		
-		var serializer = new Serializer();
+		var serializer = Serializer.instance;
 
 		var a0 = new ArrayOfArrays();
 

@@ -43,7 +43,7 @@ class Serializer {
 	var _handlersMap: Map<String,TypeHandler>;
 	var _defaultToStrict: Bool;
 
-	public function new(defaultToStrict: Bool = true) {
+	private function new(defaultToStrict: Bool = true) {
 		_defaultToStrict = defaultToStrict;
 		_handlersMap = new Map();
 		addHandlerViaName("Array<Dynamic>", new DynamicArrayHandler());
