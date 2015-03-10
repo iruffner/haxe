@@ -26,88 +26,221 @@ typedef ArrayComparison = {
         Assert.areEqual(expected1, actual1);
     }
 
-    public static function indexOfComplexTest(array:Array<Dynamic>, value:Dynamic, propOrFcn:Dynamic, ?startingIndex:Int=0):Int {
-
-        var result = -1;
-        if(array != null && array.length > 0) {
-            for(idx_ in startingIndex...array.length) {
-                var comparisonValue;
-                if(Std.is(propOrFcn, String)) {
-                    comparisonValue = Reflect.field(array[idx_], propOrFcn);
-                } else {
-                    comparisonValue = propOrFcn(array[idx_]);
-                }
-                if(value == comparisonValue) {
-                    result = idx_;
-                    break;
-                }
+    @test
+    function indexOfComplexTest() {
+        var expected = 1;
+        var array : Array<Dynamic> = [
+            {
+                requestObj : {
+                    id : 1421241808259, 
+                    context : {
+                        viewType : 'table', 
+                        parent : null, 
+                        entries : 10, 
+                        name : 'Cubes', 
+                        uid : 1421154130414, 
+                        colGroupings : [], 
+                        drilldowns : [], 
+                        levelBreaks : [], 
+                        sort : [], 
+                        dataCols : [], 
+                        activeLink : false, 
+                        editable : true, 
+                        editing : false, 
+                        preventAutoLoad : false
+                    }, 
+                    pageUid : 'yCPZlTr2KFOu4D6lrgIy', 
+                    cube : 'CUBE1'
+                },
+                asd : 'asd',
+            },
+            {
+                cube : 'CUBE2'
             }
-        }
-        return result;
+        ];
+        var actual = ArrayHelper.indexOfComplex(array,'CUBE2', 'cube');
+        Assert.areEqual(expected, actual);
+
+        var expected = -1;
+        var array : Array<Dynamic> = [
+            {
+                requestObj : {
+                    id : 1421241808259, 
+                    context : {
+                        viewType : 'table', 
+                        parent : null, 
+                        entries : 10, 
+                        name : 'Cubes', 
+                        uid : 1421154130414, 
+                        colGroupings : [], 
+                        drilldowns : [], 
+                        levelBreaks : [], 
+                        sort : [], 
+                        dataCols : [], 
+                        activeLink : false, 
+                        editable : true, 
+                        editing : false, 
+                        preventAutoLoad : false
+                    }, 
+                    pageUid : 'yCPZlTr2KFOu4D6lrgIy', 
+                    cube : 'CUBE1'
+                },
+                asd : 'asd',
+            },
+            {
+                cube : 'CUBE2'
+            }
+        ];
+        var actual = ArrayHelper.indexOfComplex(array,'CUBE1', 'cube1');
+        Assert.areEqual(expected, actual);   
+
+        var expected = 0;
+        var array : Array<Dynamic> = [
+            {
+                requestObj : {
+                    id : 1421241808259, 
+                    context : {
+                        viewType : 'table', 
+                        parent : null, 
+                        entries : 10, 
+                        name : 'Cubes', 
+                        uid : 1421154130414, 
+                        colGroupings : [], 
+                        drilldowns : [], 
+                        levelBreaks : [], 
+                        sort : [], 
+                        dataCols : [], 
+                        activeLink : false, 
+                        editable : true, 
+                        editing : false, 
+                        preventAutoLoad : false
+                    }, 
+                    pageUid : 'yCPZlTr2KFOu4D6lrgIy', 
+                    cube : 'CUBE1'
+                },
+                asd : 'asd',
+            },{
+                cube : 'CUBE2'
+            },{
+                func1: function(){return 'test';},
+                func: function(){return 'test';}
+            }
+        ];
+        var actual = ArrayHelper.indexOfComplex(array,'test', function(){return 'test';});
+        Assert.areEqual(expected, actual);        
     }
 
-    public static function indexOfComplexInSubArrayTest(array:Array<Dynamic>, value:Dynamic, subArrayProp:String, ?startingIndex:Int=0):Int {
-        if(array == null) return -1;
-        var result = -1;
-/*        for(idx_ in startingIndex...array.length) {
-            var subArray = Reflect.field(array[idx_], subArrayProp);
-            if(contains(subArray, value)) {
-                result = idx_;
-                break;
+    @test
+    function indexOfComplexInSubArrayTest() {
+        var expected = 1;
+        var array : Array<Dynamic> = [
+            {
+                cube : ['C','U','B','E','2']
+            },
+            {
+                nums : [1,2,3],
             }
-        }
-*/        return result;
+        ];
+        var actual = ArrayHelper.indexOfComplexInSubArray(array,2, 'nums');
+        Assert.areEqual(expected, actual);
+
+        var expected = 0;
+        var array : Array<Dynamic> = [
+            {
+                cube : ['C','U','B','E','2']
+            },
+            {
+                nums : [1,2,3],
+            }
+        ];
+        var actual = ArrayHelper.indexOfComplexInSubArray(array,'C', 'cube');
+        Assert.areEqual(expected, actual);
+
+        var expected = -1;
+        var array : Array<Dynamic> = [
+            {
+                cube : ['C','U','B','E','2']
+            },
+            {
+                nums : [1,2,3],
+            }
+        ];
+        var actual = ArrayHelper.indexOfComplexInSubArray(array,'D', 'cube');
+        Assert.areEqual(expected, actual);
     }
 
-    public static function indexOfArrayComparisonTest<T>(array:Array<T>, comparison:Array<ArrayComparison>, ?startingIndex:Int=0):Int {
-        var result:Int = -1;
-/*        if(array != null) {
-            if(hasValues(comparison)) {
-                var base:ArrayComparison = comparison[0];
-                var baseIndex = indexOfComplex(array, base.value, base.propOrFcn, startingIndex);
-                while(baseIndex > -1 && result < 0) {
-                    var candidate:T = array[baseIndex];
-                    var breakOut:Bool = false;
-                    for(c_ in 1...comparison.length) {
-                        var comparisonValue;
-                        if(Std.is(comparison[c_].propOrFcn, String)) {
-                            comparisonValue = Reflect.field(candidate, comparison[c_].propOrFcn);
-                        } else {
-                            comparisonValue = comparison[c_].propOrFcn(candidate);
-                        }
-                        if(comparison[c_].value == comparisonValue) {
-                            continue;
-                        } else {
-                            baseIndex = indexOfComplex(array, base.value, base.propOrFcn, baseIndex+1);
-                            breakOut = true;
-                            break;
-                        }
-                    } 
-                    if(breakOut) continue;
-                    result = baseIndex;  
-                }
-            }
-        }*/
-        
-        return result;
-    }
+    @test
+    function indexOfArrayComparisonTest() {
+        var expected = 1;
+        var actual = ArrayHelper.indexOfArrayComparison([
+            {
+                cube : 'cube',
+                field : 'field',
+                dataType : 'intt'
+            },{
+                cube : 'cube',
+                field : 'field',
+                dataType : 'int'
+            }],
+            [{value:'int', propOrFcn:"dataType"}]
+        );
+        Assert.areEqual(expected, actual);
 
-    public static function getElementComplexTest<T>(array:Array<T>, value:Dynamic, propOrFcn:Dynamic, ?startingIndex:Int=0):T {
-        if(array == null) return null;
-        var result:T = null;
-        for(idx_ in startingIndex...array.length) {
-            var comparisonValue;
-            if(Std.is(propOrFcn, String)) {
-                comparisonValue = Reflect.field(array[idx_], propOrFcn);
-            } else {
-                comparisonValue = propOrFcn(array[idx_]);
+        var expected = 2;
+        var actual = ArrayHelper.indexOfArrayComparison([
+            {
+                cube : 'cube',
+                field : 'field',
+                dataType : 'intt'
+            },{
+                cube : 'cube',
+                field : 'field',
+                dataType : 'int'
+            },{
+                cube : 'cube',
+                field : 'field',
+                dataType : 'int2'
+            }],
+            [{value:'int2', propOrFcn:"dataType"}]
+        );
+        Assert.areEqual(expected, actual);
+
+        var expected = -1;
+        var actual = ArrayHelper.indexOfArrayComparison([
+            {
+                cube : 'cube',
+                field : 'field',
+                dataType : 'intt'
+            },{
+                cube : 'cube',
+                field : 'field',
+                dataType : 'int'
+            },{
+                cube : 'cube',
+                field : 'field',
+                dataType : 'int2'
+            }],
+            [{value:'int1', propOrFcn:"dataType"}]
+        );
+        Assert.areEqual(expected, actual);
+   }
+
+    //@test
+    function getElementComplexTest() {
+        var expected = 
+        { 
+            cube : 'C' 
+        };
+        var array : Array<Dynamic> = [
+            {
+                cube : 'C'
+            },
+            {
+                nums : [1,2,3],
             }
-            if(value == comparisonValue) {
-                result = array[idx_];
-                break;
-            }
-        }
-        return result;
+        ];
+        var actual = ArrayHelper.getElementComplex(array,'C', 'cube');
+        Assert.areEqual(expected, actual);
     }
 
     public static function getElementComplexInSubArrayTest<T>(array:Array<T>, value:Dynamic, subArrayProp:String, ?startingIndex:Int=0):T {
@@ -205,22 +338,207 @@ typedef ArrayComparison = {
         Assert.areEqual(expected, actual);     
     }
 
-    public static function containsComplexTest<T>(array:Array<T>, value:Dynamic, propOrFcn:Dynamic, ?startingIndex:Int=0):Bool {
-        if(array == null) return false;
-        var contains = ArrayHelper.indexOfComplex(array, value, propOrFcn, startingIndex);
-        return contains > -1;
+    @test
+    function containsComplexTest() {
+        var expected = true;
+        var array : Array<Dynamic> = [
+            {
+                requestObj : {
+                    id : 1421241808259, 
+                    context : {
+                        viewType : 'table', 
+                        parent : null, 
+                        entries : 10, 
+                        name : 'Cubes', 
+                        uid : 1421154130414, 
+                        colGroupings : [], 
+                        drilldowns : [], 
+                        levelBreaks : [], 
+                        sort : [], 
+                        dataCols : [], 
+                        activeLink : false, 
+                        editable : true, 
+                        editing : false, 
+                        preventAutoLoad : false
+                    }, 
+                    pageUid : 'yCPZlTr2KFOu4D6lrgIy', 
+                    cube : 'CUBE1'
+                },
+                asd : 'asd',
+            },{
+                cube : 'CUBE2'
+            },{
+                func1: function(){return 'test';},
+                func: function(){return 'test';}
+            }
+        ];
+        var actual = ArrayHelper.containsComplex(array,'test', function(){return 'test';});
+        Assert.areEqual(expected, actual);
+
+        var expected = true;
+        var array : Array<Dynamic> = [
+            {
+                requestObj : {
+                    id : 1421241808259, 
+                    context : {
+                        viewType : 'table', 
+                        parent : null, 
+                        entries : 10, 
+                        name : 'Cubes', 
+                        uid : 1421154130414, 
+                        colGroupings : [], 
+                        drilldowns : [], 
+                        levelBreaks : [], 
+                        sort : [], 
+                        dataCols : [], 
+                        activeLink : false, 
+                        editable : true, 
+                        editing : false, 
+                        preventAutoLoad : false
+                    }, 
+                    pageUid : 'yCPZlTr2KFOu4D6lrgIy', 
+                    cube : 'CUBE1'
+                },
+                asd : 'asd',
+            },{
+                cube : 'CUBE2'
+            },{
+                func1: function(){return 'test1';},
+                func: function(){return 'test';}
+            }
+        ];
+        var actual = ArrayHelper.containsComplex(array,'CUBE2', 'cube');
+        Assert.areEqual(expected, actual); 
+
+        var expected = false;
+        var array : Array<Dynamic> = [
+            {
+                requestObj : {
+                    id : 1421241808259, 
+                    context : {
+                        viewType : 'table', 
+                        parent : null, 
+                        entries : 10, 
+                        name : 'Cubes', 
+                        uid : 1421154130414, 
+                        colGroupings : [], 
+                        drilldowns : [], 
+                        levelBreaks : [], 
+                        sort : [], 
+                        dataCols : [], 
+                        activeLink : false, 
+                        editable : true, 
+                        editing : false, 
+                        preventAutoLoad : false
+                    }, 
+                    pageUid : 'yCPZlTr2KFOu4D6lrgIy', 
+                    cube : 'CUBE1'
+                },
+                asd : 'asd',
+            },{
+                cube : 'CUBE2'
+            },{
+                func1: function(){return 'test';},
+                func: function(){return 'test';}
+            }
+        ];
+        var actual = ArrayHelper.containsComplex(array,'test', function(){return 'test1';});
+        Assert.areEqual(expected, actual);         
     }
 
-    public static function containsComplexInSubArrayTest<T>(array:Array<T>, value:Dynamic, subArrayProp:String, ?startingIndex:Int=0):Bool {
-        if(array == null) return false;
-        var contains = ArrayHelper.indexOfComplexInSubArray(array, value, subArrayProp, startingIndex);
-        return contains > -1;
+    @test
+    function containsComplexInSubArrayTest() {
+        var expected = true;
+        var array : Array<Dynamic> = [
+            {
+                cube : ['C','U','B','E','2']
+            },
+            {
+                nums : [1,2,3],
+            }
+        ];
+        var actual = ArrayHelper.containsComplexInSubArray(array,2, 'nums');
+        Assert.areEqual(expected, actual);
+
+        var expected = true;
+        var array : Array<Dynamic> = [
+            {
+                cube : ['C','U','B','E','2']
+            },
+            {
+                nums : [1,2,3],
+            }
+        ];
+        var actual = ArrayHelper.containsComplexInSubArray(array,'C', 'cube');
+        Assert.areEqual(expected, actual);
+
+        var expected = false;
+        var array : Array<Dynamic> = [
+            {
+                cube : ['C','U','B','E','2']
+            },
+            {
+                nums : [1,2,3],
+            }
+        ];
+        var actual = ArrayHelper.containsComplexInSubArray(array,'D', 'cube');
+        Assert.areEqual(expected, actual);
     }
 
-    public static function containsArrayComparisonTest<T>(array:Array<T>, comparison:Array<ArrayComparison>, ?startingIndex:Int=0):Bool {
-        if(array == null) return false;
-        var contains = ArrayHelper.indexOfArrayComparison(array, comparison, startingIndex);
-        return contains > -1;
+    @test
+    function containsArrayComparisonTest(){
+        var expected = true;
+        var actual = ArrayHelper.containsArrayComparison([
+            {
+                cube : 'cube',
+                field : 'field',
+                dataType : 'intt'
+            },{
+                cube : 'cube',
+                field : 'field',
+                dataType : 'int'
+            }],
+            [{value:'int', propOrFcn:"dataType"}]
+        );
+        Assert.areEqual(expected, actual);
+
+        var expected = true;
+        var actual = ArrayHelper.containsArrayComparison([
+            {
+                cube : 'cube',
+                field : 'field',
+                dataType : 'intt'
+            },{
+                cube : 'cube',
+                field : 'field',
+                dataType : 'int'
+            },{
+                cube : 'cube',
+                field : 'field',
+                dataType : 'int2'
+            }],
+            [{value:'int2', propOrFcn:"dataType"}]
+        );
+        Assert.areEqual(expected, actual);
+
+        var expected = false;
+        var actual = ArrayHelper.containsArrayComparison([
+            {
+                cube : 'cube',
+                field : 'field',
+                dataType : 'intt'
+            },{
+                cube : 'cube',
+                field : 'field',
+                dataType : 'int'
+            },{
+                cube : 'cube',
+                field : 'field',
+                dataType : 'int2'
+            }],
+            [{value:'int1', propOrFcn:"dataType"}]
+        );
+        Assert.areEqual(expected, actual);
     }
 
     @test
@@ -238,20 +556,15 @@ typedef ArrayComparison = {
         Assert.areEqual(expected, actual);        
     }
 
-    public static function joinXTest(array: Array<String>, sep: String): String {
-        if(array == null) return null;
-        var s: String = "";
-/*        for(str_ in 0...array.length) {
-            var tmp: String = array[str_];
-            if(tmp.isNotBlank()) {
-                tmp = tmp.trim();
-            }
-            if(tmp.isNotBlank() && str_ > 0 && s.length > 0) {
-                s += sep;
-            }
-            s += array[str_];
-        }
-*/        return s;
+    @test
+    function joinXTest() {
+        var expected = 'a.bcd.dd';
+        var actual = ArrayHelper.joinX(['a', 'bcd', 'dd'], '.');
+        Assert.areEqual(expected, actual);
+
+        var expected = 'a,bcd,dd';
+        var actual = ArrayHelper.joinX(['a', 'bcd', 'dd'], ',');
+        Assert.areEqual(expected, actual);
     }
 
     @test

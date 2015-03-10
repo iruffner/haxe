@@ -89,8 +89,7 @@ class ArrayHelper {
                     result = baseIndex;  
                 }
             }
-        }
-        
+        }      
         return result;
     }
 
