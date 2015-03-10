@@ -40,6 +40,7 @@ typedef M3DialogWidgetDef = {
 	var maximize: Void->Void;
 	var destroy: Void->Void;
 	var defaultPosition: Void->Void;
+	var setDefHeight: Int->Bool;
 	var _allowInteraction: JQEvent->Bool;
 
 	@:optional var _super: Dynamic;
@@ -60,6 +61,14 @@ class M3DialogHelper {
 
 	public static function isOpen(dlg: M3Dialog): Bool {
 		return dlg.m3dialog("isOpen");
+	}
+
+	public static function setDefHeight(dlg: M3Dialog, height: String): Bool {
+		return dlg.m3dialog("setDefHeight", height);
+	}
+
+	public static function defaultPosition(dlg: M3Dialog): Bool {
+		return dlg.m3dialog("defaultPosition");
 	}
 }
 
@@ -191,6 +200,12 @@ extern class M3Dialog extends JQ {
 		        	}
 
 		        	return r || self._super( event );
+				},
+
+				setDefHeight: function(height:Int): Bool {
+					var self: M3DialogWidgetDef = Widgets.getSelf();
+					self.options.defaultHeight = height;
+					return true;
 				},
 
 				resize: function(): Void{
