@@ -128,9 +128,9 @@ class Logga {
                 if( (Type.enumEq(level, LogLevel.TRACE) || Type.enumEq(level, LogLevel.DEBUG)) && console.debug != null) {
                     this.console.debug(posInfoMsg, statement);
                 } else if (Type.enumEq(level, LogLevel.INFO) && console.info != null) {
-                    this.console.info(statement, posInfoMsg);
+                    this.console.info(posInfoMsg, statement);
                 } else if (Type.enumEq(level, LogLevel.WARN) && console.warn != null) {
-                    this.console.warn(statement, posInfoMsg);
+                    this.console.warn(posInfoMsg, statement);
                 } else if (Type.enumEq(level, LogLevel.ERROR) && this.preservedConsoleError != null) {
                     untyped this.preservedConsoleError.apply(this.console, [statement]);
                     this.console.trace();
@@ -140,7 +140,7 @@ class Logga {
                 } else if (this.preservedConsoleLog != null) {
                     untyped this.preservedConsoleLog.apply(this.console, [statement]);
                 } else {
-                    this.console.log(statement, posInfoMsg);
+                    this.console.log(posInfoMsg, statement);
                 }
             } catch (err : Dynamic) {
                 if(this.console != null && Reflect.hasField(this.console, "error")) {
