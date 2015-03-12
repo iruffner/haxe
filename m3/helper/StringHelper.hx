@@ -44,7 +44,7 @@ class StringHelper {
 	    var pathSplit = original.split(splitValue);
 	    pathSplit.pop();
 	    pathSplit.push(newLastTerm);
-	    return pathSplit.join(".");
+	    return pathSplit.join(splitValue);
 	}
 
 	public static function capitalizeFirstLetter(str:String): String {
