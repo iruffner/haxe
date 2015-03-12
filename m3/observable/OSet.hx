@@ -523,6 +523,10 @@ class GroupedSet<T> extends AbstractSet<OSet<T>> {
 	public function removeKeyListen(l: String->EventType->Void, autoFire: Bool = true): Void {
 		_groupingKeys.removeListener(l);
 	}
+
+	public function getGrouping(groupingId: String): ObservableSet<T> {
+		return _groupedSets.get(groupingId);
+	}
 }
 
 class SortedSet<T> extends AbstractSet<T> {
