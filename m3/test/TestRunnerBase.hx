@@ -41,7 +41,12 @@ class TestRunnerBase {
 	// All m3 units tests classes should go here
 	private function getM3TestClasses() {
 		var tests: Array<Dynamic> = [
+			m3.test.BrowserUtilTest,
+			m3.test.ColorProviderTest,
+			m3.test.FixedSizeArrayTest,
 			m3.test.DeepCompareTest,
+			m3.test.HotKeyManagerTest,
+			m3.test.HtmlUtilTest,
 			m3.test.MTest,
 			m3.test.OSetTest,
 			m3.test.SerializationTest,

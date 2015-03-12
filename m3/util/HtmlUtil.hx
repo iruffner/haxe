@@ -12,6 +12,10 @@ class HtmlUtil {
 
 	public static function setCookie(name:String, value:Dynamic) {
 		js.Cookie.set(name, value);
+	}	
+
+	public static function deleteCookie(name:String, value:Dynamic) {
+		js.Cookie.remove(name, value);
 	}
 
 	public static function getUrlVars(): Dynamic<String> {
