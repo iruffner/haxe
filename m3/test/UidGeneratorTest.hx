@@ -62,7 +62,7 @@ import m3.test.Assert;
 	function randomCharTest()
 	{
 		var test = m3.util.UidGenerator.randomChar();
-		var r = ~/[a-z]/i;
+		var r = ~/[a-z1-9]/i;
 
 		if(!r.match(test))
 		{
