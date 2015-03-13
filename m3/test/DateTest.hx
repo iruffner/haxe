@@ -19,16 +19,6 @@ import m3.test.Assert;
 		var test3 = DateHelper.inThePast(date3);
 		var test4 = DateHelper.inThePast(date4);
 
-		trace(now.getDate());
-		trace(date1);
-		trace(test1);
-		trace(date2);
-		trace(test2);
-		trace(date3);
-		trace(test3);
-		trace(date4);
-		trace(test4);
-
 		Assert.isTrue(test1);
 		Assert.isTrue(test3);
 		Assert.isFalse(test2);
