@@ -12,7 +12,7 @@ class OSetHelper {
         return getElementComplex(oset, value, null, startingIndex);
     }
 
-    public static function getElementComplex<T>(oset: OSet<T>, value: Dynamic, ?propOrFcn: Dynamic, ?startingIndex: Int=0): T {
+    public static function getElementComplex<T>(oset: OSet<T>, value: Dynamic, ?propOrFcn: Dynamic, ?startingIndex: Int=0, caseInsensitive: Bool=false): T {
         if(oset == null) return null;
         if(propOrFcn == null) {
             propOrFcn = oset.identifier();
@@ -20,6 +20,9 @@ class OSetHelper {
         var result: T = null;
         var index_ = -1;
         var iter: Iterator<T> = oset.iterator();
+        if(caseInsensitive && Std.is(value, String)) {
+            value = Std.string(value).toLowerCase();
+        }
         while(iter.hasNext()) {
             if(startingIndex > ++index_) {
                 continue; //we need to get farther into the set
@@ -30,6 +33,9 @@ class OSetHelper {
                     comparisonValue = Reflect.field(comparisonT, propOrFcn);
                 } else {
                     comparisonValue = propOrFcn(comparisonT);
+                }
+                if(caseInsensitive && Std.is(comparisonValue, String)) {
+                    comparisonValue = Std.string(comparisonValue).toLowerCase();
                 }
                 if(value == comparisonValue) {
                     result = comparisonT;

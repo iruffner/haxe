@@ -1,17 +1,21 @@
 package m3.zoolander;
 
+import m3.observable.OSet;
+
+using m3.helper.OSetHelper;
+
 /**
   *   A is the instance type 
   *   B is the key type
   */
 class InstanceContainer<A,B> {
 
-  var _map: Map<String,A>;
+  var _oset: ObservableSet<A>;
 
   var _keyGetter: A->B;
 
   public function new(keyGetter: A->B) {
-    _map = new Map<String,A>();
+    _oset = new ObservableSet<A>(aToKey);
     _keyGetter = keyGetter;
   }
 
@@ -24,19 +28,27 @@ class InstanceContainer<A,B> {
   }
 
   public function add(a: A): A {
-    _map[aToKey(a)] = a;
+    _oset.add(a);
     return a;
   }
 
-  public function remove(a: A): Bool {
-    return _map.remove(aToKey(a));
+  public function remove(a: A): Void {
+    _oset.delete(a);
   }
-  public function removeByKey(b: B): Bool {
-    return _map.remove(bToKey(b));
+  public function removeByKey(b: B): Void {
+    _oset.delete(fetch(b));
   }
 
   public function fetch(b: B): A {
-    return _map.get(bToKey(b));
+    return _oset.getElement(bToKey(b));
+  }
+
+  public function iterator(): Iterator<A> {
+    return _oset.iterator();
+  }
+
+  public function oset(): ObservableSet<A> {
+    return _oset;
   }
 
 }

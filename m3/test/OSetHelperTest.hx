@@ -10,10 +10,64 @@ using Lambda;
 
 @:rtti class OSetHelperTest {
 
+	function criteriaFunction<T>(menu: MenuItem):Bool {
+		if(Reflect.field(menu, 'uid') == 'b')
+		{
+			return true;
+		}
+		return false;
+	};
+
 	@test
 	function getElementComplex(){
 		var set = new ObservableSet<String>(M.fn1(it));
 		trace(set);
+	}
+
+	@test
+	function getElementComplexTest(){
+		var oset = sampleSet();
+
+		var test1 = OSetHelper.getElementComplex(oset, 'b');
+		var test2 = OSetHelper.getElementComplex(oset, 'meganess', 'category');
+
+		var expected1: MenuItem = {
+			uid: "b",
+			category: "coolness",
+			description: "extra coolness"
+		}
+
+		var expected2: MenuItem = {
+			uid: "c",
+			category: "meganess",
+			description: "when you need more -ness go mega"
+		}
+
+		Assert.areEqual(test1.uid, expected1.uid);
+		Assert.areEqual(test1.category, expected1.category);
+		Assert.areEqual(test1.description, expected1.description);
+		Assert.areEqual(test2.uid, expected2.uid);
+		Assert.areEqual(test2.category, expected2.category);
+		Assert.areEqual(test2.description, expected2.description);
+	}
+
+	@test
+	function getElementComplex2Test(){
+		var oset = sampleSet();
+
+		var test1 = OSetHelper.getElementComplex2(oset, null);
+		var test2 = OSetHelper.getElementComplex2(oset, criteriaFunction);
+
+		var expected: MenuItem = {
+			uid: "b",
+			category: "coolness",
+			description: "extra coolness"
+		}
+
+		Assert.areEqual(test1, null);
+		Assert.areEqual(test2.uid, expected.uid);
+		Assert.areEqual(test2.category, expected.category);
+		Assert.areEqual(test2.description, expected.description);
 	}
 
 	@test
@@ -23,8 +77,6 @@ using Lambda;
 
 		var test1 = OSetHelper.joinX(oset, '|');
 		var test2 = OSetHelper.joinX(oset, '|', oset2.identifier());
-
-		trace(test2);
 
 		Assert.areEqual(test1, 'a|b|c');
 		Assert.areEqual(test2, 'testMenuId|testMenuId|testMenuId');

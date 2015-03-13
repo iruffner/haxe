@@ -75,7 +75,8 @@ class StringFormatHelper {
 		var r: String;
 		if(num.isBlank()) r = num;
 		else{ 
-			r = ~/[^\d|\.]/g.replace(num,"");
+			//r = ~/[^\d|\.]/g.replace(num,"");
+			r = ~/[^\d.]/g.replace(num,"");
 			if(!allowDecimal) { 
 				//todo strip non-decimal chars
 			// 	// r = ~/[^0-9\.]/g.replace(num,"");
@@ -128,6 +129,12 @@ class StringFormatHelper {
 	        var temp = Math.pow (10, decimals);
 	        number = Math.round (number * temp) / temp;
 	    }
+
+	    if(Math.isNaN(number))
+		{
+			return "NaN";
+		}
+
 	    var sign = number < 0 ? "-" : "";
 	    var integer = Std.string(number > 0 ? 
 	        Math.floor (number) : Math.abs (Math.ceil (number)));
