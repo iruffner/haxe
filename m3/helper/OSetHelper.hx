@@ -8,7 +8,7 @@ using StringTools;
 
 @:expose
 class OSetHelper {
-    public static function getElement<T>(oset: OSet<T>, value: Dynamic, ?fcn: T->Dynamic, ?caseInsensitive: Bool=true, ?startingIndex: Int=0): T {
+    public static function getElement<T,V>(oset: OSet<T>, value: V, ?fcn: T->V, ?caseInsensitive: Bool=true, ?startingIndex: Int=0): T {
         if(oset == null) return null;
         if(fcn == null) {
             fcn = cast oset.identifier;
@@ -17,7 +17,7 @@ class OSetHelper {
         var index_ = -1;
         var iter: Iterator<T> = oset.iterator();
         if(caseInsensitive && Std.is(value, String)) {
-            value = Std.string(value).toLowerCase();
+            value = cast Std.string(value).toLowerCase();
         }
         while(iter.hasNext()) {
             if(startingIndex > ++index_) {
@@ -26,7 +26,7 @@ class OSetHelper {
                 var comparisonT: T = iter.next();
                 var comparisonValue = fcn(comparisonT);
                 if(caseInsensitive && Std.is(comparisonValue, String)) {
-                    comparisonValue = Std.string(comparisonValue).toLowerCase();
+                    comparisonValue = cast Std.string(comparisonValue).toLowerCase();
                 }
                 if(value == comparisonValue) {
                     result = comparisonT;

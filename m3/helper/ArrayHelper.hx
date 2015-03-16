@@ -3,9 +3,9 @@ package m3.helper;
 using m3.helper.StringHelper;
 using StringTools;
 
-typedef ArrayComparison = {
-    var propOrFcn:Dynamic;
-    var value:Dynamic;
+typedef ArrayComparison<T,V> = {
+    var fcn:T->V;
+    var value:V;
 }
 
 // this is exposed for BI
@@ -16,26 +16,29 @@ class ArrayHelper {
         untyped __js__("if(!Array.indexOf){Array.prototype.indexOf = function(obj){for(var i=0; i<this.length; i++){if(this[i]==obj){return i;}}return -1;}}");
     }
 
-    public static function indexOf<T>(array:Array<T>, t:T):Int {
-        if(array == null) return -1;
-        var index = -1;
-        for(i_ in 0...array.length) {
-            if(array[i_] == t) {
-                index = i_;
-                break;
-            }
-        }
-        return index;
-    }
+    // public static function indexOf<T,V>(array:Array<T>, t:T):Int {
+    //     if(array == null) return -1;
+    //     var index = -1;
+    //     for(i_ in 0...array.length) {
+    //         if(array[i_] == t) {
+    //             index = i_;
+    //             break;
+    //         }
+    //     }
+    //     return index;
+    // }
 
-    public static function indexOfComplex<T,V>(array:Array<Dynamic>, value:V, fcn:T->V, ?caseInsensitive: Bool=true, ?startingIndex:Int=0):Int {
+    public static function indexOfComplex<T,V>(array:Array<T>, value:V, ?fcn:T->V, ?caseInsensitive: Bool=true, ?startingIndex:Int=0):Int {
         if(array == null) return -1;
         var result = -1;
         if(caseInsensitive && Std.is(value, String)) {
             value = cast Std.string(value).toLowerCase();
         }
         for(idx_ in startingIndex...array.length) {
-            var comparisonValue = fcn(array[idx_]);
+            var comparisonValue: V = {
+                if(fcn == null) cast array[idx_];
+                else fcn(array[idx_]);
+            }
             if(caseInsensitive && Std.is(comparisonValue, String)) {
                 comparisonValue = cast Std.string(comparisonValue).toLowerCase();
             }
@@ -47,39 +50,34 @@ class ArrayHelper {
         return result;
     }
 
-    public static function indexOfComplexInSubArray(array:Array<Dynamic>, value:Dynamic, subArrayProp:String, ?startingIndex:Int=0):Int {
-        if(array == null) return -1;
-        var result = -1;
-        for(idx_ in startingIndex...array.length) {
-            var subArray = Reflect.field(array[idx_], subArrayProp);
-            if(contains(subArray, value)) {
-                result = idx_;
-                break;
-            }
-        }
-        return result;
-    }
+    // public static function indexOfComplexInSubArray(array:Array<Dynamic>, value:Dynamic, subArrayProp:String, ?startingIndex:Int=0):Int {
+    //     if(array == null) return -1;
+    //     var result = -1;
+    //     for(idx_ in startingIndex...array.length) {
+    //         var subArray = Reflect.field(array[idx_], subArrayProp);
+    //         if(contains(subArray, value)) {
+    //             result = idx_;
+    //             break;
+    //         }
+    //     }
+    //     return result;
+    // }
 
-    public static function indexOfArrayComparison<T>(array:Array<T>, comparison:Array<ArrayComparison>, ?startingIndex:Int=0):Int {
+    public static function indexOfArrayComparison<T,V>(array:Array<T>, comparison:Array<ArrayComparison<T,V>>, ?startingIndex:Int=0):Int {
         var result:Int = -1;
         if(array != null) {
             if(hasValues(comparison)) {
-                var base:ArrayComparison = comparison[0];
-                var baseIndex = indexOfComplex(array, base.value, base.propOrFcn, startingIndex);
+                var base:ArrayComparison<T,V> = comparison[0];
+                var baseIndex = indexOfComplex(array, base.value, base.fcn, startingIndex);
                 while(baseIndex > -1 && result < 0) {
                     var candidate:T = array[baseIndex];
                     var breakOut:Bool = false;
                     for(c_ in 1...comparison.length) {
-                        var comparisonValue;
-                        if(Std.is(comparison[c_].propOrFcn, String)) {
-                            comparisonValue = Reflect.field(candidate, comparison[c_].propOrFcn);
-                        } else {
-                            comparisonValue = comparison[c_].propOrFcn(candidate);
-                        }
+                        var comparisonValue = comparison[c_].fcn(candidate);
                         if(comparison[c_].value == comparisonValue) {
                             continue;
                         } else {
-                            baseIndex = indexOfComplex(array, base.value, base.propOrFcn, baseIndex+1);
+                            baseIndex = indexOfComplex(array, base.value, base.fcn, baseIndex+1);
                             breakOut = true;
                             break;
                         }
@@ -124,26 +122,21 @@ class ArrayHelper {
     //     return result;
     // }
 
-    public static function getElementArrayComparison<T>(array:Array<T>, comparison:Array<ArrayComparison>, ?startingIndex:Int=0):T {
+    public static function getElementArrayComparison<T,V>(array:Array<T>, comparison:Array<ArrayComparison<T,V>>, ?startingIndex:Int=0):T {
         var result:T = null;
         if(array != null) {
             if(hasValues(comparison)) {
-                var base:ArrayComparison = comparison[0];
-                var baseIndex = indexOfComplex(array, base.value, base.propOrFcn, startingIndex);
+                var base:ArrayComparison<T,V> = comparison[0];
+                var baseIndex = indexOfComplex(array, base.value, base.fcn, startingIndex);
                 while(baseIndex > -1 && result == null) {
                     var candidate:T = array[baseIndex];
                     var breakOut:Bool = false;
                     for(c_ in 1...comparison.length) {
-                        var comparisonValue;
-                        if(Std.is(comparison[c_].propOrFcn, String)) {
-                            comparisonValue = Reflect.field(candidate, comparison[c_].propOrFcn);
-                        } else {
-                            comparisonValue = comparison[c_].propOrFcn(candidate);
-                        }
+                        var comparisonValue = comparison[c_].fcn(candidate);
                         if(comparison[c_].value == comparisonValue) {
                             continue;
                         } else {
-                            baseIndex = indexOfComplex(array, base.value, base.propOrFcn, baseIndex+1);
+                            baseIndex = indexOfComplex(array, base.value, base.fcn, baseIndex+1);
                             breakOut = true;
                             break;
                         }
@@ -188,19 +181,19 @@ class ArrayHelper {
         return !anyFailures;
     }
 
-    public static function containsComplex<T>(array:Array<T>, value:Dynamic, propOrFcn:Dynamic, ?startingIndex:Int=0):Bool {
+    public static function containsComplex<T,V>(array:Array<T>, value:V, fcn:T->V, ?startingIndex:Int=0):Bool {
         if(array == null) return false;
-        var contains = indexOfComplex(array, value, propOrFcn, startingIndex);
+        var contains = indexOfComplex(array, value, fcn, startingIndex);
         return contains > -1;
     }
 
-    public static function containsComplexInSubArray<T>(array:Array<T>, value:Dynamic, subArrayProp:String, ?startingIndex:Int=0):Bool {
-        if(array == null) return false;
-        var contains = indexOfComplexInSubArray(array, value, subArrayProp, startingIndex);
-        return contains > -1;
-    }
+    // public static function containsComplexInSubArray<T>(array:Array<T>, value:Dynamic, subArrayProp:String, ?startingIndex:Int=0):Bool {
+    //     if(array == null) return false;
+    //     var contains = indexOfComplexInSubArray(array, value, subArrayProp, startingIndex);
+    //     return contains > -1;
+    // }
 
-    public static function containsArrayComparison<T>(array:Array<T>, comparison:Array<ArrayComparison>, ?startingIndex:Int=0):Bool {
+    public static function containsArrayComparison<T,V>(array:Array<T>, comparison:Array<ArrayComparison<T,V>>, ?startingIndex:Int=0):Bool {
         if(array == null) return false;
         var contains = indexOfArrayComparison(array, comparison, startingIndex);
         return contains > -1;
