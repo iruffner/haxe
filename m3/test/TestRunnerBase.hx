@@ -47,6 +47,7 @@ class TestRunnerBase {
 			m3.test.DeepCompareTest,
 			m3.test.HotKeyManagerTest,
 			m3.test.HtmlUtilTest,
+			m3.test.JqueryUtilTest,
 			m3.test.MTest,
 			m3.test.OSetTest,
 			m3.test.SerializationTest,

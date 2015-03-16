@@ -8,6 +8,12 @@ typedef ArrayComparison = {
     var value:Dynamic;
 }
 
+/*untested functions:
+getElementComplexTest
+getElementComplexInSubArrayTest
+getElementArrayComparisonTest
+*/
+
 // this is exposed for BI
 @:rtti class ArrayHelperTest {
 
@@ -243,8 +249,9 @@ typedef ArrayComparison = {
         Assert.areEqual(expected, actual);
     }
 
-    public static function getElementComplexInSubArrayTest<T>(array:Array<T>, value:Dynamic, subArrayProp:String, ?startingIndex:Int=0):T {
-        if(array == null) return null;
+    //@test
+    function getElementComplexInSubArrayTest() {
+/*        if(array == null) return null;
         var result:T = null;
         for(idx_ in startingIndex...array.length) {
             var subArray = Reflect.field(array[idx_], subArrayProp);
@@ -254,10 +261,11 @@ typedef ArrayComparison = {
             }
         }
         return result;
-    }
+*/    }
 
-    public static function getElementArrayComparisonTest<T>(array:Array<T>, comparison:Array<ArrayComparison>, ?startingIndex:Int=0):T {
-        var result:T = null;
+    //@test
+    function getElementArrayComparisonTest() {
+/*        var result:T = null;
         if(array != null) {
             if(ArrayHelper.hasValues(comparison)) {
                 var base:ArrayComparison = comparison[0];
@@ -286,7 +294,7 @@ typedef ArrayComparison = {
             }
         }
         
-        return result;
+        return result;*/
     }
 
     @test

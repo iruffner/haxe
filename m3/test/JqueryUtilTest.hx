@@ -14,10 +14,16 @@ using m3.helper.StringHelper;
 
 	@test
 	function isAttachedTest(){
+		var elem = new JQ('<p id="jqtest">test</p>');
+		var body = new JQ('body').append(elem);
+		Assert.areEqual(JqueryUtil.isAttached(elem), true);
 	}
 
 	@test
 	function labelSelectTest() {
+		var elem = new JQ('<p id="jqtest">test</p>');
+		var body = new JQ('body').append(elem);
+		Assert.areEqual(JqueryUtil.isAttached(elem), true);
 	}
 
 	@test

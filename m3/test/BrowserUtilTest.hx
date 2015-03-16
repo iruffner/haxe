@@ -5,6 +5,10 @@ using m3.helper.StringHelper;
 using m3.util.BrowserUtil;
 using Lambda;
 
+/*untested functions:
+versionTest
+*/
+
 @:rtti class BrowserUtilTest {
 	@test
 	function msieTest() {
@@ -13,8 +17,8 @@ using Lambda;
 		Assert.areEqual(expected1, actual1);		
 	}
 
-	@test
-/*	function versionTest(): String {
+/*	@test
+	function versionTest(): String {
 		var expected1 = null;
 		var actual1 = BrowserUtil.msie;
 		Assert.areEqual(expected1, actual1);	

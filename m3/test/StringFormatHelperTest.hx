@@ -3,10 +3,14 @@ package m3.test;
 import m3.helper.StringFormatHelper;
 import m3.test.Assert;
 
+/*untested functions:
+toString
+formatNumber - is missing because it's used by a lot of function what is aleady
+here, for toFormattedNumberDyn and toFormattedNumberDyn just call it with different parameters
+*/
+
 @:rtti class StringFormatHelperTest {
 
-	/* formatNumber is missing because it's used by a lot of function what is aleady
-	here, for toFormattedNumberDyn and toFormattedNumberDyn just call it with different parameters */
 
 	@test
 	function toStringTest(){

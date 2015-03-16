@@ -4,6 +4,12 @@ using m3.helper.ArrayHelper;
 import m3.util.FixedSizeArray;
 import m3.test.Assert;
 
+/*untested functions:
+pushTest - contained in testfixedSizeArray
+containsTest - testfixedSizeArray
+*/
+
+
 @:rtti class FixedSizeArrayTest{
 
 	@test

@@ -3,6 +3,11 @@ package m3.test;
 import m3.util.ColorProvider;
 import m3.test.Assert;
 
+/*untested functions:
+__init__ - no use testing
+getRandomColor - unable to really test
+*/
+
 @:rtti class ColorProviderTest {
 	
 	@test
