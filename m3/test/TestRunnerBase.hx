@@ -57,7 +57,8 @@ class TestRunnerBase {
 			m3.test.DateTest,
 			m3.test.OSetHelperTest,
 			m3.test.StringFormatHelperTest,
-			UidGeneratorTest
+			m3.test.UidGeneratorTest,
+			m3.test.SizedMapTest
 		];
 		return tests;
 	}

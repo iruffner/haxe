@@ -5,6 +5,7 @@ import m3.test.Assert;
 
 /*Not tested:
 - get_chars, get_nums - They return a simple hardcoded string nothing to test or fail
+- randomIndex - is a rivate function
 */
 
 @:rtti class UidGeneratorTest {
@@ -44,5 +45,39 @@ import m3.test.Assert;
 
 		Assert.isTrue(test1);
 		Assert.isFalse(test2);
+	}
+
+	@test
+	function randomNumTest()
+	{
+		var test = m3.util.UidGenerator.randomNum();
+
+		if(Math.isNaN(test))
+		{
+			Assert.fail("The generated value is not a number");
+		}
+	}
+
+	@test
+	function randomCharTest()
+	{
+		var test = m3.util.UidGenerator.randomChar();
+		var r = ~/[a-z1-9]/i;
+
+		if(!r.match(test))
+		{
+			Assert.fail("The generated value is not a character");
+		}
+	}
+
+	@test
+	function randomNumChar()
+	{
+		var test = m3.util.UidGenerator.randomNumChar();
+
+		if(Math.isNaN(test))
+		{
+			Assert.fail("The generated value is not a number");
+		}
 	}
 }
