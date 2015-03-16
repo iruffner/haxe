@@ -8,14 +8,10 @@ using StringTools;
 
 @:expose
 class OSetHelper {
-    public static function getElement<T>(oset: OSet<T>, value: String, ?startingIndex: Int=0): T {
-        return getElementComplex(oset, value, null, startingIndex);
-    }
-
-    public static function getElementComplex<T>(oset: OSet<T>, value: Dynamic, ?propOrFcn: Dynamic, ?startingIndex: Int=0, caseInsensitive: Bool=false): T {
+    public static function getElement<T>(oset: OSet<T>, value: Dynamic, ?fcn: T->Dynamic, ?caseInsensitive: Bool=true, ?startingIndex: Int=0): T {
         if(oset == null) return null;
-        if(propOrFcn == null) {
-            propOrFcn = oset.identifier();
+        if(fcn == null) {
+            fcn = cast oset.identifier;
         }
         var result: T = null;
         var index_ = -1;
@@ -28,12 +24,7 @@ class OSetHelper {
                 continue; //we need to get farther into the set
             } else {
                 var comparisonT: T = iter.next();
-                var comparisonValue;
-                if(Std.is(propOrFcn, String)) {
-                    comparisonValue = Reflect.field(comparisonT, propOrFcn);
-                } else {
-                    comparisonValue = propOrFcn(comparisonT);
-                }
+                var comparisonValue = fcn(comparisonT);
                 if(caseInsensitive && Std.is(comparisonValue, String)) {
                     comparisonValue = Std.string(comparisonValue).toLowerCase();
                 }

@@ -133,18 +133,18 @@ class Logga {
                     this.console.warn(posInfoMsg, statement);
                 } else if (Type.enumEq(level, LogLevel.ERROR) && this.preservedConsoleError != null) {
                     untyped this.preservedConsoleError.apply(this.console, [statement]);
-                    this.console.trace();
+                    // this.console.trace();
                 } else if (Type.enumEq(level, LogLevel.ERROR) && console.error != null) {
-                    this.console.error(statement, posInfoMsg);
-                    this.console.trace();
+                    this.console.error(posInfoMsg, statement, posInfoMsg);
+                    // this.console.trace();
                 } else if (this.preservedConsoleLog != null) {
-                    untyped this.preservedConsoleLog.apply(this.console, [statement]);
+                    untyped this.preservedConsoleLog.apply(this.console, [posInfoMsg, statement]);
                 } else {
                     this.console.log(posInfoMsg, statement);
                 }
             } catch (err : Dynamic) {
                 if(this.console != null && Reflect.hasField(this.console, "error")) {
-                    this.console.error(err);
+                    this.console.error(posInfoMsg, err);
                 }
             }
         }

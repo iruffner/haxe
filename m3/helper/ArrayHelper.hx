@@ -28,21 +28,20 @@ class ArrayHelper {
         return index;
     }
 
-    public static function indexOfComplex(array:Array<Dynamic>, value:Dynamic, propOrFcn:Dynamic, ?startingIndex:Int=0):Int {
+    public static function indexOfComplex<T,V>(array:Array<Dynamic>, value:V, fcn:T->V, ?caseInsensitive: Bool=true, ?startingIndex:Int=0):Int {
         if(array == null) return -1;
         var result = -1;
-        if(array != null && array.length > 0) {
-            for(idx_ in startingIndex...array.length) {
-                var comparisonValue;
-                if(Std.is(propOrFcn, String)) {
-                    comparisonValue = Reflect.field(array[idx_], propOrFcn);
-                } else {
-                    comparisonValue = propOrFcn(array[idx_]);
-                }
-                if(value == comparisonValue) {
-                    result = idx_;
-                    break;
-                }
+        if(caseInsensitive && Std.is(value, String)) {
+            value = cast Std.string(value).toLowerCase();
+        }
+        for(idx_ in startingIndex...array.length) {
+            var comparisonValue = fcn(array[idx_]);
+            if(caseInsensitive && Std.is(comparisonValue, String)) {
+                comparisonValue = cast Std.string(comparisonValue).toLowerCase();
+            }
+            if(value == comparisonValue) {
+                result = idx_;
+                break;
             }
         }
         return result;
@@ -93,15 +92,16 @@ class ArrayHelper {
         return result;
     }
 
-    public static function getElementComplex<T>(array:Array<T>, value:Dynamic, propOrFcn:Dynamic, ?startingIndex:Int=0):T {
+    public static function getElement<T,V>(array:Array<T>, value:V, fcn:T->V, ?caseInsensitive: Bool=true, ?startingIndex:Int=0):T {
         if(array == null) return null;
         var result:T = null;
+        if(caseInsensitive && Std.is(value, String)) {
+            value = cast Std.string(value).toLowerCase();
+        }
         for(idx_ in startingIndex...array.length) {
-            var comparisonValue;
-            if(Std.is(propOrFcn, String)) {
-                comparisonValue = Reflect.field(array[idx_], propOrFcn);
-            } else {
-                comparisonValue = propOrFcn(array[idx_]);
+            var comparisonValue = fcn(array[idx_]);
+            if(caseInsensitive && Std.is(comparisonValue, String)) {
+                comparisonValue = cast Std.string(comparisonValue).toLowerCase();
             }
             if(value == comparisonValue) {
                 result = array[idx_];
@@ -111,18 +111,18 @@ class ArrayHelper {
         return result;
     }
 
-    public static function getElementComplexInSubArray<T>(array:Array<T>, value:Dynamic, subArrayProp:String, ?startingIndex:Int=0):T {
-        if(array == null) return null;
-        var result:T = null;
-        for(idx_ in startingIndex...array.length) {
-            var subArray = Reflect.field(array[idx_], subArrayProp);
-            if(ArrayHelper.contains(subArray, value)) {
-                result = array[idx_];
-                break;
-            }
-        }
-        return result;
-    }
+    // public static function getElementComplexInSubArray<T>(array:Array<T>, value:Dynamic, subArrayProp:String, ?startingIndex:Int=0):T {
+    //     if(array == null) return null;
+    //     var result:T = null;
+    //     for(idx_ in startingIndex...array.length) {
+    //         var subArray = Reflect.field(array[idx_], subArrayProp);
+    //         if(ArrayHelper.contains(subArray, value)) {
+    //             result = array[idx_];
+    //             break;
+    //         }
+    //     }
+    //     return result;
+    // }
 
     public static function getElementArrayComparison<T>(array:Array<T>, comparison:Array<ArrayComparison>, ?startingIndex:Int=0):T {
         var result:T = null;
