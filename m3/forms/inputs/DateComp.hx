@@ -62,7 +62,17 @@ extern class DateComp extends AbstractInput {
 					self.iconDiv = new JQ("<div class='iconDiv'></div>");
 	        		self.iconDiv.hide();
 
-	        		self.input = new JQDatepicker("<input class='ui-widget-content ui-corner-all helpFilter' type='text'/>").datepicker({
+	        		var inputElement;
+	        		if (question.options != null && question.options.displayInline && question.options.displayInline)//changeThis
+	        		{
+	        			inputElement = new JQDatepicker("<div class='ui-widget-content ui-corner-all' style='display:inline-flex;margin: 10px;'></div>");
+	        		}
+	        		else
+	        		{
+	        			inputElement = new JQDatepicker("<input class='ui-widget-content ui-corner-all helpFilter' type='text'/>");
+	        		}
+
+	        		self.input = inputElement.datepicker({
 	        				"dateFormat": "yy-mm-dd",
 	        				"changeMonth": true,
 	        				"changeYear": true,
