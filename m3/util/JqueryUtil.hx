@@ -38,7 +38,7 @@ class JqueryUtil {
 	            width: 320,
 	            modal: true
 	        };
-	    }
+	    
 	    if(!dialog.exists()) {
 	        dialog = new M3Dialog("<div id=" + selector.substr(1) + " style='display:none;'></div>");
 	        if(Reflect.isFunction(createdFcn)) {
