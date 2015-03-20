@@ -19,6 +19,7 @@ using m3.forms.inputs.Textarea;
 using m3.forms.inputs.ACComboBox;
 using m3.forms.inputs.CheckboxInput;
 using m3.forms.inputs.DateComp;
+using m3.forms.inputs.DateRange;
 using m3.forms.inputs.CodeInput;
 using m3.jq.ComboBox;
 using m3.helper.ArrayHelper;
@@ -107,7 +108,14 @@ extern class FormInput extends JQ {
 								self.input = t;
 								self._getResultFcn = function(): Array<String> {
 									return [t.result()];
-								}			
+								}
+							case InputType.DATERANGE:
+								var t: DateRange = new DateRange(selfElement)
+									.dateRange({formItem: formItem});
+								self.input = t;
+								self._getResultFcn = function(): Array<String> {
+									return [t.result()];
+								}	
 							case InputType.JAVASCRIPT, InputType.JSON, InputType.HTML, InputType.SQL:
 	        					var t: CodeInput = new CodeInput(selfElement)
 		        					.codeInput({
