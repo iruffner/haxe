@@ -25,6 +25,7 @@ class InputType {
 	public static var COMBOBOX: String = "COMBOBOX";
 	public static var ACCOMBOBOX: String = "ACCOMBOBOX";
 	public static var DATE: String = "DATE";
+	public static var DATERANGE: String = "DATERANGE";
 	public static var JAVASCRIPT: String = "JAVASCRIPT";
 	public static var SQL: String = "SQL";
 	public static var JSON: String = "JSON";
