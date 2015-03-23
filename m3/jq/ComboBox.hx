@@ -10,6 +10,7 @@ import m3.widget.Widgets;
 using m3.helper.StringHelper;
 
 typedef ComboBoxOptions = {
+	@:optional var customCssOnWrapper: String;
 	@:optional var customCssOnInput: String;
 	@:optional var customCssOnSpan: String;
 	@:optional var wrapAll: Bool;
@@ -50,15 +51,16 @@ extern class ComboBox extends JQ {
 					var self: ComboBoxWidgetDef = Widgets.getSelf();
 					var selfElement: JQ = Widgets.getSelfElement();
 
+
 					self.innerWrapper = new JQ( "<span>" )
 						.addClass( "custom-combobox" )
 						.insertAfter( selfElement )
 	                    .attr( "style", "white-space:nowrap;margin-right:40px;" + M.getX(self.options.customCssOnSpan, "") );
 
 	                if(self.options.wrapAll) {
-                    	self.outerWrapper = new JQ("<div>")
-                    		.insertBefore(selfElement);
+                    	self.outerWrapper = new JQ("<div>").insertBefore(selfElement);
                 		self.outerWrapper.append(selfElement).append(self.innerWrapper);
+						self.outerWrapper.attr("style", M.getX(self.options.customCssOnWrapper, ""));
                 		self.innerWrapper.removeClass("ui-combobox").addClass("ui-combobox-span");
                 		self.outerWrapper.addClass("ui-combobox");
                     }
@@ -223,7 +225,7 @@ extern class ComboBox extends JQ {
 			        self.input = new JQTooltip( "<input>" );
 			        self.input.appendTo( self.innerWrapper )
 			          .val( value )
-			          .attr( "title", "" )
+			          .attr( {"title": "" , "style": self.options.customCssOnInput} )
 			          .addClass( "ui-combobox-input ui-widget ui-widget-content ui-corner-left" )
 			          .autocomplete({
 			            delay: 0,
