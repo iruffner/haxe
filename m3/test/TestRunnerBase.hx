@@ -47,12 +47,19 @@ class TestRunnerBase {
 			m3.test.DeepCompareTest,
 			m3.test.HotKeyManagerTest,
 			m3.test.HtmlUtilTest,
+			m3.test.JqueryUtilTest,
 			m3.test.MTest,
 			m3.test.OSetTest,
 			m3.test.SerializationTest,
 			m3.test.StringHelperTest,
 			m3.test.UidGenTest,
-			m3.test.ArrayHelperTest
+			m3.test.ArrayHelperTest,
+			m3.test.DateTest,
+			m3.test.OSetHelperTest,
+			m3.test.StringFormatHelperTest,
+			m3.test.UidGeneratorTest,
+			m3.test.SizedMapTest,
+			m3.test.TupleTest
 		];
 		return tests;
 	}

@@ -39,6 +39,7 @@ class JqueryUtil {
 	            modal: true
 	        };
 	    }
+	    
 	    if(!dialog.exists()) {
 	        dialog = new M3Dialog("<div id=" + selector.substr(1) + " style='display:none;'></div>");
 	        if(Reflect.isFunction(createdFcn)) {
@@ -46,7 +47,7 @@ class JqueryUtil {
 	        }
 	        new JQ('body').append(dialog);
 	        dialog.m3dialog(dlgOptions);
-	    } else if(!dialog.is(':data(dialog)') ) {
+	    } else if(!dialog.is(':data(dialog)') /*&& (!dialog.parent().hasClass('ui-dialog')) */) {
 	        dialog.m3dialog(dlgOptions);
 	    }
 	    if(dialog.exists()) {

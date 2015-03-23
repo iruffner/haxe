@@ -7,10 +7,12 @@ using Lambda;
 class HtmlUtil {
 	
 	public static function readCookie(name:String):Dynamic {
+		trace('Readcookie');
 		return js.Cookie.get(name);
 	}
 
 	public static function setCookie(name:String, value:Dynamic) {
+		trace('Setcookie');
 		js.Cookie.set(name, value);
 	}	
 

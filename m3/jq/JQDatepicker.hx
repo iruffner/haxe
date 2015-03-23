@@ -64,14 +64,16 @@ typedef JQDatepickerOpts = {
 			          seven days from today.
 	*/
 	@:optional var minDate: Dynamic;//null
-	@:optional var changeMonth: Bool; //false
+
 	/**
 	 * Whether the month should be rendered as a dropdown instead of text.
 	*/
-	@:optional var changeYear: Bool; //false
+	@:optional var changeMonth: Bool; //false
+
 	/**
 	 * Whether the year should be rendered as a dropdown instead of text.
 	*/
+	@:optional var changeYear: Bool; //false
 
 	@:optional var onSelect: Dynamic;
 }
