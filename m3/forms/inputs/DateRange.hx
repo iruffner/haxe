@@ -53,8 +53,8 @@ extern class DateRange extends AbstractInput {
 		        	self.iconDiv = new JQ("<div class='iconDiv'></div>");
 	        		self.iconDiv.hide();
 
-                    var inputFrom = new JQDatepicker("<input name='dateRangeFrom' class='ui-widget-content ui-corner-all' style='width:45%'/>");
-                    var inputTo = new JQDatepicker("<input name='dateRangeTo' class='ui-widget-content ui-corner-all' style='width:45%'/>");
+                    var inputFrom = new JQDatepicker("<input name='dateRangeFrom' class='ui-widget-content helpFilter ui-corner-all' style='min-width:initial'/>");
+                    var inputTo = new JQDatepicker("<input name='dateRangeTo' class='ui-widget-content helpFilter ui-corner-all' style='min-width:initial'/>");
 
                     self.inputFrom = inputFrom.datepicker({
                         "dateFormat": "yy-mm-dd",
@@ -63,13 +63,25 @@ extern class DateRange extends AbstractInput {
                         "dateFormat": "yy-mm-dd",
                     });
 
-                    /*selfElement.append("&nbsp;").append(self.inputFrom).append('<label for="dateRangeTo" style="width:10%" >To</label>');
-                    selfElement.append("&nbsp;").append(self.inputTo).append(self.iconDiv);*/
+                    var dateExp = ~/[0-9]{4}-[0-9]{2}-[0-9]{2}/;
+
+                    if(question.value != null && dateExp.match(question.value))
+                    {
+                        var valueArray = question.value.split(" - ");
+                        self.inputFrom.val(valueArray[0]);
+                        self.inputTo.val(valueArray[1]);
+                    }
+
+                    var container = new JQ("<div></div>");
+
+                    container.append(self.inputFrom).append('&nbsp<label for="dateRangeTo" style="width:10%" >To</label>');
+                    container.append("&nbsp;").append(self.inputTo).append(self.iconDiv);
+                    selfElement.append(container);
 				},
 
 				result: function(): String {
 					var self: DateRangeWidgetDef = Widgets.getSelf();
-					return self.inputFrom.val()+'-'+self.inputTo.val();
+					return self.inputFrom.val()+' - '+self.inputTo.val();
 	        	},
 
 				destroy: function() {
