@@ -16,18 +16,6 @@ class ArrayHelper {
         untyped __js__("if(!Array.indexOf){Array.prototype.indexOf = function(obj){for(var i=0; i<this.length; i++){if(this[i]==obj){return i;}}return -1;}}");
     }
 
-    // public static function indexOf<T,V>(array:Array<T>, t:T):Int {
-    //     if(array == null) return -1;
-    //     var index = -1;
-    //     for(i_ in 0...array.length) {
-    //         if(array[i_] == t) {
-    //             index = i_;
-    //             break;
-    //         }
-    //     }
-    //     return index;
-    // }
-
     public static function indexOfComplex<T,V>(array:Array<T>, value:V, ?fcn:T->V, ?caseInsensitive: Bool=true, ?startingIndex:Int=0):Int {
         if(array == null) return -1;
         var result = -1;
@@ -49,19 +37,6 @@ class ArrayHelper {
         }
         return result;
     }
-
-    // public static function indexOfComplexInSubArray(array:Array<Dynamic>, value:Dynamic, subArrayProp:String, ?startingIndex:Int=0):Int {
-    //     if(array == null) return -1;
-    //     var result = -1;
-    //     for(idx_ in startingIndex...array.length) {
-    //         var subArray = Reflect.field(array[idx_], subArrayProp);
-    //         if(contains(subArray, value)) {
-    //             result = idx_;
-    //             break;
-    //         }
-    //     }
-    //     return result;
-    // }
 
     public static function indexOfArrayComparison<T,V>(array:Array<T>, comparison:Array<ArrayComparison<T,V>>, ?startingIndex:Int=0):Int {
         var result:Int = -1;
@@ -109,41 +84,26 @@ class ArrayHelper {
         return result;
     }
 
-    // public static function getElementComplexInSubArray<T>(array:Array<T>, value:Dynamic, subArrayProp:String, ?startingIndex:Int=0):T {
-    //     if(array == null) return null;
-    //     var result:T = null;
-    //     for(idx_ in startingIndex...array.length) {
-    //         var subArray = Reflect.field(array[idx_], subArrayProp);
-    //         if(ArrayHelper.contains(subArray, value)) {
-    //             result = array[idx_];
-    //             break;
-    //         }
-    //     }
-    //     return result;
-    // }
-
     public static function getElementArrayComparison<T,V>(array:Array<T>, comparison:Array<ArrayComparison<T,V>>, ?startingIndex:Int=0):T {
         var result:T = null;
-        if(array != null) {
-            if(hasValues(comparison)) {
-                var base:ArrayComparison<T,V> = comparison[0];
-                var baseIndex = indexOfComplex(array, base.value, base.fcn, startingIndex);
-                while(baseIndex > -1 && result == null) {
-                    var candidate:T = array[baseIndex];
-                    var breakOut:Bool = false;
-                    for(c_ in 1...comparison.length) {
-                        var comparisonValue = comparison[c_].fcn(candidate);
-                        if(comparison[c_].value == comparisonValue) {
-                            continue;
-                        } else {
-                            baseIndex = indexOfComplex(array, base.value, base.fcn, baseIndex+1);
-                            breakOut = true;
-                            break;
-                        }
-                    } 
-                    if(breakOut) continue;
-                    result = candidate;
-                }
+        if(hasValues(array) && hasValues(comparison)) {
+            var base:ArrayComparison<T,V> = comparison[0];
+            var baseIndex = indexOfComplex(array, base.value, base.fcn, startingIndex);
+            while(baseIndex > -1 && result == null) {
+                var candidate:T = array[baseIndex];
+                var breakOut:Bool = false;
+                for(c_ in 1...comparison.length) {
+                    var comparisonValue = comparison[c_].fcn(candidate);
+                    if(comparison[c_].value == comparisonValue) {
+                        continue;
+                    } else {
+                        baseIndex = indexOfComplex(array, base.value, base.fcn, baseIndex+1);
+                        breakOut = true;
+                        break;
+                    }
+                } 
+                if(breakOut) continue;
+                result = candidate;
             }
         }
         

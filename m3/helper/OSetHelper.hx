@@ -11,7 +11,7 @@ class OSetHelper {
     public static function getElement<T,V>(oset: OSet<T>, value: V, ?fcn: T->V, ?caseInsensitive: Bool=true, ?startingIndex: Int=0): T {
         if(oset == null) return null;
         if(fcn == null) {
-            fcn = cast oset.identifier;
+            fcn = cast oset.identifier();
         }
         var result: T = null;
         var index_ = -1;
