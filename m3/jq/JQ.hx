@@ -463,7 +463,7 @@ extern class JQ implements ArrayAccess<Element> {
 	function intersects(el: JQ): Bool;
 
 	//my custom widgets
-	function buttonsetv(i:Int, ?cmd: String):JQ;
+	function buttonset(?cmd: String):JQ;
 	function helpToolTips(): JQ;
 	
 	//JQUI
