@@ -1,28 +1,32 @@
 package m3.jq;
 
 import m3.jq.JQ;
+import js.html.Element;
 
-using m3.helper.StringHelper;
+@:native("$.fn")
+extern class ButtonSetV{
+    public static function buttonsetv(self: JQ, defaultMaxWidth: Int, ?arg2: String): JQ;
 
-class ButtonSetV extends JQ{
-	public function buttonsetv(element: Dynamic, defaultMaxWidth: Int, arg2: String) {
-        if(arg2 == "refresh") {
-            new JQ('label', this).removeClass('ui-corner-bottom').removeClass('ui-corner-top');
-            new JQ(this).buttonset("refresh");
-        } else {
-//            $(':radio, :checkbox', this).wrap('<div style="margin: 1px"/>');
-            new JQ(this).buttonset();
-        } 
-        new JQ('label:first', this).removeClass('ui-corner-left').addClass('ui-corner-top');
-        new JQ('label:last', this).removeClass('ui-corner-right').addClass('ui-corner-bottom');
-        new JQ('label:visible', this).filter(":first").addClass('ui-corner-top').end().filter(":last").addClass("ui-corner-bottom");
-        var mw = defaultMaxWidth; // max width
-        new JQ('label', this).each(function(index){
-            var w = new JQ(this).width();
-            if (w > mw) mw = w; 
-        });
-        new JQ('label', this).each(function(index){
-            $(this).width(mw);
-        });
-	}
+    private static function __init__(): Void {
+        JQ.fn.buttonsetv = function(self: JQ, defaultMaxWidth: Int, ?arg2: String): JQ {
+            if(arg2 == "refresh") {
+                new JQ('label', self).removeClass('ui-corner-bottom').removeClass('ui-corner-top');
+                self.buttonset("refresh");
+            } else {
+                self.buttonset();
+            } 
+            new JQ('label:first', self).removeClass('ui-corner-left').addClass('ui-corner-top');
+            new JQ('label:last', self).removeClass('ui-corner-right').addClass('ui-corner-bottom');
+            new JQ('label:visible', self).filter(":first").addClass('ui-corner-top').end().filter(":last").addClass("ui-corner-bottom");
+            var mw = defaultMaxWidth; // max width
+            new JQ('label', self).each(function(){
+                var w = JQ.cur.width();
+                if (w > mw) mw = w; 
+            });
+            new JQ('label', self).each(function(){
+                JQ.cur.width(mw);
+            });      
+            return self;              
+        }
+    }
 }
