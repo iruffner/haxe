@@ -58,7 +58,8 @@ class TestRunnerBase {
 			m3.test.OSetHelperTest,
 			m3.test.StringFormatHelperTest,
 			m3.test.UidGeneratorTest,
-			m3.test.SizedMapTest
+			m3.test.SizedMapTest,
+			m3.test.TupleTest
 		];
 		return tests;
 	}

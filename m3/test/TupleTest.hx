@@ -41,7 +41,7 @@ import m3.util.Tuple;
   @test
   function toStringtuple3(){
     var test3 = t3.toString();
-    Assert.areEqual(test3, '["apple","pie",["Mercury","Venus","Earth","Mars","Jupiter","Saturn","Uranus","Neptune"]]')
+    Assert.areEqual(test3, '["apple","pie",["Mercury","Venus","Earth","Mars","Jupiter","Saturn","Uranus","Neptune"]]');
   }
 
 }
