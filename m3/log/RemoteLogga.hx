@@ -2,6 +2,7 @@ package m3.log;
 
 import haxe.PosInfos;
 import haxe.Timer;
+import js.Error;
 import m3.util.UidGenerator;
 import m3.exception.Exception;
 
@@ -30,7 +31,7 @@ class RemoteLogga extends Logga {
 		log("SessionUid: " + this.sessionUid);
 	}
 
-	override public function log(statement: String, ?level: LogLevel, ?exception: Exception, ?posInfo: PosInfos) {
+	override public function log(statement: String, ?level: LogLevel, ?exception: Error, ?posInfo: PosInfos) {
 		if(level == null) {
             level = LogLevel.INFO;
         }
@@ -38,8 +39,8 @@ class RemoteLogga extends Logga {
 
         if(this.timer != null && this.remoteLogsAtLevel(level)) {
         	try {
-	            if(exception != null && exception.stackTrace != null && Reflect.isFunction(exception.stackTrace) ) {
-	                statement += "\n" + exception.stackTrace();
+	            if(exception != null && exception.stack != null /*&& Reflect.isFunction(exception.stackTrace)*/ ) {
+	                statement += "\n" + exception.stack;
 	            }
 	        } catch (err: Dynamic) {
 	            // log("Could not get stackTrace", LogLevel.ERROR);

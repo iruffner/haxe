@@ -1,5 +1,7 @@
 package m3.log;
 
+import js.Browser;
+import js.Error;
 import m3.CrossMojo;
 import m3.exception.Exception;
 import m3.util.M;
@@ -11,7 +13,7 @@ class Logga {
     
     var loggerLevel: LogLevel;
     var console: js.html.Console;
-       var statementPrefix: String;
+    var statementPrefix: String;
     @:isVar public static var DEFAULT(get,null): Logga;
     private var initialized: Bool = false;
 
@@ -34,7 +36,7 @@ class Logga {
     }
 
     private function _getLogger(): Void {
-        console = js.Browser.window.console;
+        console = Browser.window.console;
         
         initialized = true;
     }
@@ -93,7 +95,7 @@ class Logga {
         this.statementPrefix = prefix;
     }
 
-    public function log(statement: String, ?level: LogLevel, ?exception: Exception, ?posInfo: haxe.PosInfos) {
+    public function log(statement: String, ?level: LogLevel, ?exception: Error, ?posInfo: haxe.PosInfos) {
         if(!initialized) {
             this._getLogger();
         }
@@ -102,8 +104,8 @@ class Logga {
         }
 
         try {
-            if(exception != null && exception.stackTrace != null && Reflect.isFunction(exception.stackTrace) ) {
-                statement += "\n" + exception.stackTrace();
+            if(exception != null && exception.stack != null /*&& Reflect.isFunction(exception.stackTrace)*/ ) {
+                statement += "\n" + exception.stack;
             }
         } catch (err: Dynamic) {
             log("Could not get stackTrace", LogLevel.ERROR);
@@ -127,18 +129,22 @@ class Logga {
             try {
                 if( (Type.enumEq(level, LogLevel.TRACE) || Type.enumEq(level, LogLevel.DEBUG)) && console.debug != null) {
                     this.console.debug(posInfoMsg, statement);
+                
                 } else if (Type.enumEq(level, LogLevel.INFO) && console.info != null) {
                     this.console.info(posInfoMsg, statement);
+                
                 } else if (Type.enumEq(level, LogLevel.WARN) && console.warn != null) {
                     this.console.warn(posInfoMsg, statement);
+                
                 } else if (Type.enumEq(level, LogLevel.ERROR) && this.preservedConsoleError != null) {
                     untyped this.preservedConsoleError.apply(this.console, [statement]);
-                    // this.console.trace();
+                
                 } else if (Type.enumEq(level, LogLevel.ERROR) && console.error != null) {
-                    this.console.error(posInfoMsg, statement, posInfoMsg);
-                    // this.console.trace();
+                    this.console.error(posInfoMsg, statement);
+                
                 } else if (this.preservedConsoleLog != null) {
                     untyped this.preservedConsoleLog.apply(this.console, [posInfoMsg, statement]);
+                
                 } else {
                     this.console.log(posInfoMsg, statement);
                 }
@@ -167,15 +173,21 @@ class Logga {
     public function warn(statement:String, ?exception:Exception, ?posInfo: haxe.PosInfos) {
         log(statement, LogLevel.WARN, exception, posInfo);
     }
-    public function error(statement:String, ?exception:Exception, ?posInfo: haxe.PosInfos) {
+    public function error(statement:String, ?exception:Error, ?posInfo: haxe.PosInfos) {
+        if(Std.is(statement, Error)) {
+            statement = "Error: ";
+            exception = cast statement;
+        }
         log(statement, LogLevel.ERROR, exception, posInfo);
     }
 
-    public static function getExceptionInst(err: Dynamic) {
-        if(Std.is(err, Exception)) {
+    public static function getExceptionInst(err: Dynamic): Error {
+        if(Std.is(err, Error)) {
             return err;
-        } else {
+        } else if(Std.is(err, String)) {
             return new Exception(err);
+        } else {
+            return new Exception(Std.string(err));
         }
     }
 }
