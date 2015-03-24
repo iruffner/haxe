@@ -464,7 +464,7 @@ extern class JQ implements ArrayAccess<Element> {
 
 	//my custom widgets
 	function buttonset(?cmd: String):JQ;
-	function helpToolTips(): JQ;
+	//function helpToolTips(): JQ;
 	
 	//JQUI
 	@:overload(function<T>(cmd : String):T{})

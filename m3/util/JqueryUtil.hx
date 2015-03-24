@@ -47,7 +47,7 @@ class JqueryUtil {
 	        }
 	        new JQ('body').append(dialog);
 	        dialog.m3dialog(dlgOptions);
-	    } else if(!dialog.is(':data(dialog)') /*&& (!dialog.parent().hasClass('ui-dialog')) */) {
+	    } else if(!dialog.is(':data(dialog)') && (!dialog.parent().hasClass('ui-dialog')) ) {
 	        dialog.m3dialog(dlgOptions);
 	    }
 	    if(dialog.exists()) {
