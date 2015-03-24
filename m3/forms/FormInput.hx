@@ -28,6 +28,7 @@ using Lambda;
 
 typedef FormInputOptions = {
 	var formItem: FormItem;
+    @:optional var displayInline: Bool;
 }
 
 typedef FormInputWidgetDef = {
