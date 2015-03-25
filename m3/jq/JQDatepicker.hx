@@ -76,6 +76,11 @@ typedef JQDatepickerOpts = {
 	@:optional var changeYear: Bool; //false
 
 	@:optional var onSelect: Dynamic;
+
+    /**
+     * Whether the datepicker should be displayed inline
+    */
+    @:optional var displayInline: Bool;
 }
 
 class JQDatepickerTools {
