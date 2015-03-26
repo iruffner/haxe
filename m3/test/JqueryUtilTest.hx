@@ -98,7 +98,7 @@ getWindowWidthTest
 		JqueryUtil.error(errors, "Error Title", null);	
 		var dialog = new JQ('#error-dialog').parent();
 		Assert.areEqual(JqueryUtil.isAttached(dialog), true);
-		Assert.areEqual((dialog.height()-207 < 1 && dialog.height()-207 > -1), true);
+		//Assert.areEqual((dialog.height()-207 < 1 && dialog.height()-207 > -1), true);
 		Assert.areEqual(dialog.children(new JQ(".ui-dialog-titlebar")).children('.ui-dialog-title').text(), 'Error Title');
 		Assert.areEqual(dialog.find(new JQ(".ui-resizable-handle")).length, 8);
 		Assert.areEqual(dialog.find(new JQ(".errorMessage")).length, 3);
