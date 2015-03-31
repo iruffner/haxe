@@ -1,5 +1,6 @@
 package m3.serialization;
 
+import haxe.PosInfos;
 import m3.exception.Exception;
 import m3.observable.OSet;
 
@@ -530,7 +531,7 @@ class ClassHandler<T> implements TypeHandler {
 				// 	}
 				// }
 				if ( !found ) {
-					reader.error("instance of " + _typename + " has required field named " + f.name + " json does not does not "  + Json.stringify(fromJson) );
+					reader.error("instance of " + _typename + " has required field named " + f.name + ", but json does not \n"  + Json.stringify(fromJson) );
 				}
 			}
 		}
@@ -593,8 +594,8 @@ class ClassHandler<T> implements TypeHandler {
 
 class JsonException extends Exception {
 	
-	public function new(msg: String, ?cause: Exception) {
-		super(msg, cause);
+	public function new(msg: String, ?cause: Exception, ?posInfo: PosInfos) {
+		super(msg, cause, posInfo);
 	}
 
 }
@@ -619,9 +620,11 @@ class JsonReader<T> {
  		this.instance = handler.read(fromJson, this, instance);
  	}
 
- 	public function error(msg: String, ?cause: Exception): Dynamic {
+ 	public function error(msg: String, ?cause: Exception, ?posInfo: PosInfos): Dynamic {
  		if ( strict ) {
- 			throw new JsonException(msg, cause);
+ 			throw new JsonException(msg, cause, posInfo);
+ 			// throw new Exception(msg, cause);
+ 			// throw new js.Error(msg);
  		} else {
  			return null;
  		}
