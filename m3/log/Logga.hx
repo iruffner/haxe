@@ -148,7 +148,7 @@ class Logga {
                     untyped this.preservedConsoleError.apply(this.console, [posInfoMsg]);
                 
                 } else if (Type.enumEq(level, LogLevel.ERROR) && console.error != null) {
-                    this.console.error(posInfoMsg, statement);
+                    this.console.error(posInfoMsg);
                 
                 } else if (this.preservedConsoleLog != null) {
                     untyped this.preservedConsoleLog.apply(this.console, [posInfoMsg]);

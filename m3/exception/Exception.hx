@@ -44,11 +44,13 @@ class Exception extends Error {
 		var l = new Array<String>();
         var index:Int = 0;
 		for ( e in chain() ) {
-			if(index++ > 0) l.push("CAUSED BY: " + e.message) 
-			else 
+			var s: String;
+			if(index++ > 0) s = "CAUSED BY: ";
+			else s = "  ";
+			// else 
 			// l.push("ERROR: " + e.message);
 			// for ( s in e.callStack ) {
-				l.push("  " + e.errorRef.stack);
+				l.push(s + e.errorRef.stack);
 			// }
 		}
 		return l.join("\n");
