@@ -353,7 +353,7 @@ extern class M3Dialog extends JQ {
 		        		contentHeight = selfElement.children('div').height() + 
 		        						selfElement.parent().children(".ui-dialog-titlebar").height() + 
 		        						selfElement.parent().children(".ui-dialog-buttonpane").height()+
-		        						selfElement.children().children('.subtitle').height()+40;
+		        						selfElement.children().children('.subtitle').height()+60;
 					}
 					else
 					{

@@ -151,7 +151,16 @@ extern class FormBuilderDialog extends M3Dialog {
 		        	
 		        	var castedOptions: Dynamic = cast self.options; 
 
-		        	var id = castedOptions.formOptions.view.requestObj.pageUid+'_'+castedOptions.formOptions.view.requestObj.id+'_'+StringTools.urlEncode(castedOptions.title);
+                    var id;
+                    if(Reflect.hasField(castedOptions.formOptions, 'view'))
+                    {
+                        id = castedOptions.formOptions.view.page.uid+'_'+castedOptions.formOptions.view.requestObj.id+'_'+StringTools.urlEncode(castedOptions.title);
+                    }
+                    else //if (castedOptions.view.page)
+                    {
+                        id = castedOptions.view.page.uid+'_'+castedOptions.view.requestObj.id+'_'+StringTools.urlEncode(castedOptions.title);
+                    }
+
 
 		        	selfElement.attr("id",id);
 

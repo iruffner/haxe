@@ -16,16 +16,19 @@ using m3.helper.ArrayHelper;
 using m3.forms.FormInput;
 using m3.forms.FormBuilder;
 
+typedef DateCompOptions = {
+    >FormInputOptions,
+    var displayInline: Bool;
+}
+
 typedef DateWidgetDef = {
-	@:optional var options: FormInputOptions;
 	var _create: Void->Void;
 	var result: Void->String;
 	var destroy: Void->Void;
 	@:optional var input: JQDatepicker;
 	@:optional var iconDiv: JQ;
-
+    @:optional var options: DateCompOptions;
 	@:optional var _super: Dynamic;
-
 }
 
 class DateCompHelper {
@@ -59,13 +62,15 @@ extern class DateComp extends AbstractInput {
 
 					var question: FormItem = self.options.formItem;
 
+                    var castedQuestion = cast question;
+
 					self.iconDiv = new JQ("<div class='iconDiv'></div>");
 	        		self.iconDiv.hide();
 
 	        		var inputElement;
-	        		if (question.options != null && question.options.displayInline && question.options.displayInline)//changeThis
+	        		if (castedQuestion.displayInline)
 	        		{
-	        			inputElement = new JQDatepicker("<div class='ui-widget-content ui-corner-all' style='display:inline-flex;margin: 10px;'></div>");
+	        			inputElement = new JQDatepicker("<div class='ui-widget-content ui-corner-all' style='display:inline-flex; margin: 10px;'></div>");
 	        		}
 	        		else
 	        		{
