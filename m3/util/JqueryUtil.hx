@@ -202,7 +202,7 @@ class JqueryUtil {
 
 		dlg.height(contentHeight);
 		dlg.parent().height(dialogHeight);
-		dlg.parent().children('.ui-dialog-titlebar').css({'background-color': '#de2d0f'});
+		//dlg.parent().children('.ui-dialog-titlebar').css({'background-color': '#de2d0f'});
 		dlg.parent().position({
 		        			at: "middle",
 		        			my: "middle",
