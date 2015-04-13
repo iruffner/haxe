@@ -87,7 +87,8 @@ class Logga {
 
     private static function get_DEFAULT(): Logga {
         if(DEFAULT == null) {
-            DEFAULT = new RemoteLogga(LogLevel.DEBUG, LogLevel.DEBUG);
+            // DEFAULT = new RemoteLogga(LogLevel.DEBUG, LogLevel.DEBUG);
+            DEFAULT = new Logga(LogLevel.DEBUG);
         }
         return DEFAULT;
     }
@@ -115,7 +116,7 @@ class Logga {
             statement = statementPrefix + " || " + statement;
         }
 
-        var posInfoMsg: String = posInfo.fileName + ":" + posInfo.className.substring(posInfo.className.lastIndexOf(".") + 1) + "." + posInfo.methodName + "(" + posInfo.lineNumber + ") " + "|| " + statement;
+        var posInfoMsg: String = posInfo == null ? "" : posInfo.fileName + ":" + posInfo.className.substring(posInfo.className.lastIndexOf(".") + 1) + "." + posInfo.methodName + "(" + posInfo.lineNumber + ") " + "|| " + statement;
         
         if(exception != null && Std.is(exception,Exception)) {
             posInfoMsg = "Error logged from: " + posInfoMsg;

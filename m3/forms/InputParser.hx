@@ -3,6 +3,7 @@ package m3.forms;
 import m3.exception.Exception;
 using m3.helper.StringHelper;
 using m3.helper.ArrayHelper;
+using StringTools;
 
 /**
 
@@ -13,9 +14,14 @@ using m3.helper.ArrayHelper;
 interface InputParser<T> {
 
     /**
+     *   null means all characters are allowed
+     */
+    public function validInputCharacters(): String;
+
+    /**
      *  Convert a given instance to the value shown to the user in the text box
      */
-    public function toString(t: T): String;
+    public function format(t: T): String;
 
     /**
      *
@@ -30,7 +36,12 @@ interface InputParser<T> {
 }
 
 class AbstractInputParser<T> implements InputParser<T> {
-    public function toString(t: T): String {
+
+    public function validInputCharacters(): String {
+        return null;
+    }
+
+    public function format(t: T): String {
         return Std.string(t);
     }
     public function inputWidgetHints(): InputWidgetHints {
@@ -55,11 +66,19 @@ class BoolInputParser extends AbstractInputParser<Bool> {
     var truths = ["yes", "true", "1", "t", "y", "on"];
     var untruths = ["no", "false", "0", "f", "n", "off"];
 
-    override public function parse(s: String): ParseResult<String> {
+    function truthsStr(): String {
+        return truths.join(",");
+    }
+
+    function untruthsStr(): String {
+        return untruths.join(",");
+    }
+
+    override public function parse(s: String): ParseResult<Bool> {
         var v = s.toLowerCase().trim();
         if ( truths.indexOf(v) >= 0 ) return ParseResult.success(true);
         else if ( untruths.indexOf(v) >= 0 ) return ParseResult.success(false);
-        else return ParseResult.error("Please enter a valid boolean value for true [${truths.join(",")}] or false [${untruths.join(",")}].");
+        else return ParseResult.error("Please enter a valid boolean value for true [${truthsStr()}] or false [${untruthsStr}].");
     }  
 
 }
@@ -67,9 +86,17 @@ class BoolInputParser extends AbstractInputParser<Bool> {
 
 class IntInputParser extends AbstractInputParser<Int> {
 
+    /**
+     *   null means all characters are allowed
+     */
+    override public function validInputCharacters(): String {
+        return "0123456789,";
+    }
+
     override public function parse(s: String): ParseResult<Int> {
-        var i = Std.parseInt(s);
-        if ( i == null ) return ParseResult.error("Please enter a valid integer.  ${s} is not a valid integer.");
+        var stripped = s.replace(",","");
+        var i = Std.parseInt(stripped);
+        if ( i == null ) return ParseResult.error("Please enter a valid integer.");
         else return ParseResult.success(i);
     }  
 
@@ -90,24 +117,18 @@ class NullableInputParser<T> extends DefaultValueInputParser<T> {
 
 }
 
-class RequiredInputParser<T> implements InputParser<T> {
-
-    var _delegate: InputParser<T>;
+class RequiredInputParser<T> extends DelegatedInputParser<T> {
 
     public function new(delegate: InputParser<T>) {
-        _delegate = delegate;
+        super(delegate);
     }
 
-    public function toString(t: T): String {
-        return _delegate.toString(t);
-    }
-
-    public function parse(s: String): ParseResult<T> {
+    override public function parse(s: String): ParseResult<T> {
         if ( s.isBlank() ) return ParseResult.error("A valid entry is required");
         else return _delegate.parse(s);
     }
 
-    public function inputWidgetHints(): InputWidgetHints {
+    override public function inputWidgetHints(): InputWidgetHints {
         var h = _delegate.inputWidgetHints();
         h.required = true;
         return h;
@@ -115,33 +136,63 @@ class RequiredInputParser<T> implements InputParser<T> {
 
 }
 
-class DefaultValueInputParser<T> implements InputParser<T> {
+
+class DelegatedInputParser<T> implements InputParser<T> {
 
     var _delegate: InputParser<T>;
+
+    public function new(delegate: InputParser<T>) {
+        _delegate = delegate;
+    }
+
+    public function format(t: T): String {
+        return _delegate.format(t);
+    }
+
+    public function parse(s: String): ParseResult<T> {
+        return _delegate.parse(s);
+    }
+
+    public function inputWidgetHints(): InputWidgetHints {
+        return _delegate.inputWidgetHints();
+    }
+
+    public function validInputCharacters(): String {
+        return _delegate.validInputCharacters();
+    }
+    
+}
+
+
+class DefaultValueInputParser<T> extends DelegatedInputParser<T> {
+
     var _defaultValue: T;
     var _populateUiWithDefaultValue: Bool;
 
     public function new(delegate: InputParser<T>, defaultValue: T, populateUiWithDefaultValue: Bool) {
-        _delegate = delegate;
+        super(delegate);
         _defaultValue = defaultValue;
         _populateUiWithDefaultValue = populateUiWithDefaultValue;
     }
 
-    public function toString(t: T): String {
+    override public function format(t: T): String {
         if ( t == null )
-            if (_populateUiWithDefaultValue) return _delegate.toString(_defaultValue);
+            if (_populateUiWithDefaultValue) return _delegate.format(_defaultValue);
             else return "";
-        else return _delegate.toString(t);
+        else return _delegate.format(t);
     }
 
-    public function parse(s: String): ParseResult<T> {
-        if ( s.isBlank() ) return ParseResult.success(_defaultValue);
+    override public function parse(s: String): ParseResult<T> {
+        if ( s.isBlank() ) 
+            if ( _populateUiWithDefaultValue ) return ParseResult.error("A valid value is required.")        
+            else return ParseResult.success(_defaultValue);
         else return _delegate.parse(s);
-    }  
+    }
 
-    public function inputWidgetHints(): InputWidgetHints {
+    override public function inputWidgetHints(): InputWidgetHints {
         var h = _delegate.inputWidgetHints();
         h.hasDefaultValue = true;
+        h.required = _populateUiWithDefaultValue;
         h.defaultValue = _defaultValue;
         return h;
     }
@@ -180,6 +231,7 @@ class ParseResult<T> {
 }
 
 typedef InputWidgetHints = {
+    @:optional var maxLength: Int;
     @:optional var nullable: Bool;
     @:optional var required: Bool;
     @:optional var hasDefaultValue: Bool;
