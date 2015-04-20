@@ -15,6 +15,7 @@ typedef M3DialogOptions = {
 	@:optional var buttons: Dynamic;
 	@:optional var close: Void->Void;
 	@:optional var position: Array<Float>;
+	@:optional var positionFixed: Bool;
 	@:optional var showMaximizer: Bool;
 	@:optional var showHelp: Bool;
 	@:optional var buildHelp: Void->Void;
@@ -348,7 +349,7 @@ extern class M3Dialog extends JQ {
 		        	//Calculate optimal height
 		        	var castedOptions: Dynamic = cast self.options;
 		        	var contentHeight : Int = 0;
-		        	if(castedOptions.formOptions != null && castedOptions.formOptions.formItems != null)
+		        	if(self.options.positionFixed != true && castedOptions.formOptions != null && castedOptions.formOptions.formItems != null)
 		        	{
 		        		contentHeight = selfElement.children('div').height() + 
 		        						selfElement.parent().children(".ui-dialog-titlebar").height() + 
@@ -365,7 +366,7 @@ extern class M3Dialog extends JQ {
 
 		        	//Because Json parse returns strings we have to turn them into Numbers
 		        	var position = null;
-		        	if(pos != null) {
+		        	if(pos != null && self.options.positionFixed != true) {
 			        	position = {
 			        			top:	Std.parseInt(pos.top),
 			        			left:	Std.parseInt(pos.left),
