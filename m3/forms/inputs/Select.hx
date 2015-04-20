@@ -16,7 +16,7 @@ using m3.forms.FormInput;
 using m3.forms.FormBuilder;
 
 typedef SelectWidgetDef = {
-	@:optional var options: FormInputOptions;
+	@:optional var options: SelectOptions;
 	var _create: Void->Void;
 	var result: Void->String;
 	var destroy: Void->Void;
@@ -26,6 +26,12 @@ typedef SelectWidgetDef = {
 	
 	@:optional var _super: Dynamic;
 	@:optional var getDefaultValue: Dynamic;
+}
+
+typedef SelectOptions = {
+    >FormInputOptions,
+    var multi 	: Bool;
+    var size 	: Int;
 }
 
 class SelectHelper {
@@ -68,8 +74,9 @@ extern class Select extends AbstractInput {
 
 		        	// var uid: String = UidGenerator.create(8);
 	        		// self.label = new JQ("<label for='quest" + uid + "'>" + question.label + "</label>").appendTo(selfElement);
-	        		// var multi: String = self.options.multi ? " multiple ": "";
-	        		var multi: String = "";
+	        		var multi: String = (question.options != null && question.options.multi != null && question.options.multi) ? " multiple ": "";
+	        		//var multi: String = "";
+	        		var size: Int = (question.options != null && question.options.size != null && question.options.size != null) ? question.options.size : 1;
 	        		var defaultValue : String = "No data available...";
         			var choices: Array<Array<String>> = {
         				if(Reflect.isFunction(question.options)) {
@@ -83,7 +90,7 @@ extern class Select extends AbstractInput {
         				defaultValue = "Please choose...";
         			}
 
-	        		self.input = new JQ("<select class='ui-combobox-input ui-widget ui-widget-content' name='" + self.options.formItem.name + "' id='" + self.options.formItem.name + "' " + multi + "><option value=''>"+defaultValue+"</option></select>");
+	        		self.input = new JQ("<select class='ui-combobox-input ui-widget ui-widget-content' name='" + self.options.formItem.name + "' id='" + self.options.formItem.name + "' " + multi + " size = '" + size + "'><option value=''>"+defaultValue+"</option></select>");
 	        		if(question.disabled) {
 	        			self.input.attr("disabled", "true");
 	        			self.iconDiv.show().addClass("locked");
