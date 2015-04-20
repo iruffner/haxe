@@ -351,14 +351,16 @@ extern class M3Dialog extends JQ {
 		        	var contentHeight : Int = 0;
 		        	if(self.options.positionFixed != true && castedOptions.formOptions != null && castedOptions.formOptions.formItems != null)
 		        	{
-		        		contentHeight = selfElement.children('div').height() + 
+		        		var innerHeight = (selfElement.children('._formBuilder').height() > 0)?selfElement.children('._formBuilder').height():selfElement.children('div').height();
+		        		contentHeight = innerHeight + 
 		        						selfElement.parent().children(".ui-dialog-titlebar").height() + 
 		        						selfElement.parent().children(".ui-dialog-buttonpane").height()+
-		        						selfElement.children().children('.subtitle').height()+60;
+		        						selfElement.children().children('.subtitle').height()+
+		        						Math.round(castedOptions.formOptions.formItems.length*2);
 					}
 					else
 					{
-						contentHeight = self.options.defaultHeight;
+						contentHeight = self.options.defaultHeight+11;
 					}
 
 					contentHeight = (contentHeight > dialogMaxHeight)?dialogMaxHeight:contentHeight;
@@ -379,11 +381,15 @@ extern class M3Dialog extends JQ {
 		        		var pos1 = selfElement.parent().position();
 		        		if(castedOptions.formOptions != null && castedOptions.formOptions.formItems != null)
 		        		{
+		        			var calculatedHeight = contentHeight +
+										selfElement.parent().children(".ui-dialog-titlebar").height() + 
+										selfElement.parent().children(".ui-dialog-buttonpane").height();
+
 			        		position = {
-			        			top:	pos1.top - window.scrollTop(),
+			        			top :	window.scrollTop()+ Math.round((window.height() - calculatedHeight)/2),
 			        			left:	pos1.left - window.scrollLeft(),
 								width:	self.options.defaultWidth,
-								height: contentHeight,
+								height: calculatedHeight
 							}
 
 						}
