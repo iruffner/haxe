@@ -55,7 +55,7 @@ extern class ComboBox extends JQ {
 					self.innerWrapper = new JQ( "<span>" )
 						.addClass( "custom-combobox" )
 						.insertAfter( selfElement )
-	                    .attr( "style", "white-space:nowrap;margin-right:40px;" + M.getX(self.options.customCssOnSpan, "") );
+	                    .attr( "style", "white-space:nowrap;" + M.getX(self.options.customCssOnSpan, "") );
 
 	                if(self.options.wrapAll) {
                     	self.outerWrapper = new JQ("<div>").insertBefore(selfElement);
