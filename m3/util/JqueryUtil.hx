@@ -88,9 +88,9 @@ class JqueryUtil {
 	       		title: title, 
 	       		zIndex: 10000, 
 	       		autoOpen: true,
-	            // width: 'auto',
+	            //width: 'auto',
 	            resizable: true,
-	            width: width,
+	            width: (width == 'auto')?350:width,//because the content is inserted jst after the dialog is reendered, auotu doesn't work. This is a temporary sollution, need to be improved
 	            height: height+70,
                 buttons: {
                     Yes: function () {
@@ -106,7 +106,7 @@ class JqueryUtil {
                 }
 	    };
 		var dlg: M3Dialog = getOrCreateDialog("#confirm-dialog", dlgOptions);
-		var content = new JQ('<div style="text-align:left;">' + question + '</div>');
+		var content = new JQ('<div style="text-align:left;" class="statement">' + question + '</div>');
 		dlg.append(content);
 		if(!dlg.isOpen()) {
             dlg.open();
