@@ -77,7 +77,7 @@ extern class ACComboBox extends AbstractInput {
         				defaultValue = "Please choose...";
         			}
 
-	        		self.input = new ComboBox("<select class='ui-combobox-input ui-widget ui-widget-content' name='" + self.options.formItem.name + "' " + multi + "><option value=''>"+defaultValue+"</option></select>");
+	        		self.input = new ComboBox("<select class='ui-combobox-input ui-widget ui-widget-content' name='" + self.options.formItem.name + "' id='" + self.options.formItem.name + "'" + multi + "><option value=''>"+defaultValue+"</option></select>");
 	        		if(question.disabled) {
 	        			self.input.attr("disabled", "true");
 	        			self.iconDiv.show().addClass("locked");

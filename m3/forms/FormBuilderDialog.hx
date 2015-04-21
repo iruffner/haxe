@@ -33,7 +33,7 @@ typedef FormBuilderDialogWidgetDef = {
 	var options: FormBuilderDialogOptions;
 
 	@:optional var formBuilder: FormBuilder;
-
+	var getFormBuilder: Void->FormBuilder;
 	var _create: Void->Void;
 	var destroy: Void->Void;
 	//var close: Void->Void;
@@ -56,6 +56,10 @@ class FormBuilderDialogHelper {
 
 	public static function options(dlg: FormBuilderDialog): FormBuilderDialogOptions {
 		return dlg.formBuilderDialog("option");
+	}	
+
+	public static function getFormBuilder(dlg: FormBuilderDialog): FormBuilder {
+		return dlg.formBuilderDialog("getFormBuilder");
 	}
 }
 
@@ -171,6 +175,11 @@ extern class FormBuilderDialog extends M3Dialog {
 		        		.formBuilder(self.options.formOptions);
 
 		        },
+
+		        getFormBuilder: function(){
+		        	var self: FormBuilderDialogWidgetDef = Widgets.getSelf();
+		        	return self.formBuilder;
+	        	},
 
 		        destroy: function() {
 		            untyped JQ.Widget.prototype.destroy.call( JQ.curNoWrap );
