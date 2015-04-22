@@ -300,17 +300,18 @@ extern class M3Dialog extends JQ {
 
 					selfElement.parent().css({
 						width:	self.options.defaultWidth, 
-						height: self.options.defaultHeight
+						height: self.options.defaultHeight + 20
 					});
 
-
-					var contentHeight : Float = selfElement.parent().height()
-				 	 	- selfElement.parent().children(".ui-dialog-titlebar").height()
-					 	- selfElement.parent().children(".ui-dialog-buttonpane").height() - 50; //bit nasty, need maybe a better way
+					var castedOptions: Dynamic = cast self.options;
+					var innerHeight : Float = 	self.options.defaultHeight - 
+												selfElement.parent().children(".ui-dialog-titlebar").outerHeight() -
+		        								selfElement.parent().children(".ui-dialog-buttonpane").outerHeight() -
+		        								selfElement.children().children('.subtitle').outerHeight();
 					var contentWidth = selfElement.parent().width()-30;
 
 					selfElement.css({
-							height: contentHeight,
+							height: innerHeight, 
 							width: contentWidth
 						});
 
@@ -346,23 +347,24 @@ extern class M3Dialog extends JQ {
 		        	var dialogMaxWidth = Math.round(window.width() - 50);
 		        	var dialogMaxHeight = Math.round(window.height() - 50);
 
+		        	selfElement.parent().css({"position":"fixed"});
 		        	//Calculate optimal height
 		        	var castedOptions: Dynamic = cast self.options;
 		        	var contentHeight : Int = 0;
 		        	if(self.options.positionFixed != true && castedOptions.formOptions != null && castedOptions.formOptions.formItems != null)
 		        	{
-		        		var innerHeight = (selfElement.children('._formBuilder').height() > 0)?selfElement.children('._formBuilder').height():selfElement.children('div').height();
+		        		var innerHeight = (selfElement.children('._formBuilder').height() > 0)?selfElement.children('._formBuilder').height():selfElement.children('div').outerHeight();
 		        		contentHeight = innerHeight + 
-		        						selfElement.parent().children(".ui-dialog-titlebar").height() + 
-		        						selfElement.parent().children(".ui-dialog-buttonpane").height()+
-		        						selfElement.children().children('.subtitle').height()+
-		        						Math.round(castedOptions.formOptions.formItems.length*2);
+		        						selfElement.parent().children(".ui-dialog-titlebar").outerHeight() + 
+		        						selfElement.parent().children(".ui-dialog-buttonpane").outerHeight()+
+		        						selfElement.children().children('.subtitle').outerHeight();
 					}
 					else
 					{
-						contentHeight = self.options.defaultHeight+11;
+						contentHeight = self.options.defaultHeight;
 					}
 
+					//save the calculated height, so defaultPosition can use it to 
 					contentHeight = (contentHeight > dialogMaxHeight)?dialogMaxHeight:contentHeight;
 					self.options.defaultHeight = contentHeight;
 
@@ -381,15 +383,11 @@ extern class M3Dialog extends JQ {
 		        		var pos1 = selfElement.parent().position();
 		        		if(castedOptions.formOptions != null && castedOptions.formOptions.formItems != null)
 		        		{
-		        			var calculatedHeight = contentHeight +
-										selfElement.parent().children(".ui-dialog-titlebar").height() + 
-										selfElement.parent().children(".ui-dialog-buttonpane").height();
-
 			        		position = {
-			        			top :	window.scrollTop()+ Math.round((window.height() - calculatedHeight)/2),
+			        			top :	Math.round((window.height() - contentHeight)/2),
 			        			left:	pos1.left - window.scrollLeft(),
 								width:	self.options.defaultWidth,
-								height: calculatedHeight
+								height: contentHeight
 							}
 
 						}
@@ -439,15 +437,16 @@ extern class M3Dialog extends JQ {
 		        				my: "left top",
 		        				of: js.Browser.window
 		        			});
+			        		selfElement.parent().width(position.width);
+			        		selfElement.parent().height(position.height+20);
 		        		}
-		        		selfElement.parent().width(position.width);
-		        		selfElement.parent().height(position.height);
 
-						var contentHeight : Float = selfElement.parent().height()
-				 	 		- selfElement.parent().children(".ui-dialog-titlebar").height()
-					 		- selfElement.parent().children(".ui-dialog-buttonpane").height() - 50; //bit nasty, need maybe a better way
+						var innerHeight  =	contentHeight -
+											selfElement.parent().children(".ui-dialog-titlebar").outerHeight() - 
+		        							selfElement.parent().children(".ui-dialog-buttonpane").outerHeight() -
+		        							selfElement.children().children('.subtitle').outerHeight();
 		        		selfElement.css({
-							height: contentHeight
+							height: innerHeight
 						});
 		        	}
 		        },
@@ -460,11 +459,15 @@ extern class M3Dialog extends JQ {
 		        	var localStorage = js.Browser.getLocalStorage();
 		        	var window: JQ = new JQ(js.Browser.window);
 		        	var pos = selfElement.parent().position();
+
+		        	trace(pos);
+		        	trace(window.scrollTop());
+
 		        	var position = {
-		        			top:	pos.top-window.scrollTop(), //relative to window
+		        			top:	pos.top//relative to window
 		        			left:	pos.left-window.scrollLeft(),
 		        			width: 	selfElement.parent().width(),
-		        			height: selfElement.parent().height()
+		        			height: selfElement.parent().outerHeight()-29
 		        		}
 
 		        	localStorage.setItem(positionkey, haxe.Json.stringify(position));
