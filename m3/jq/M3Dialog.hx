@@ -223,8 +223,29 @@ extern class M3Dialog extends JQ {
 					var selfElement: M3Dialog = Widgets.getSelfElement();
 					var window: JQ = new JQ(js.Browser.window);
  
+					var dialogMaxWidth = Math.round(window.width() - 50);
+		        	var dialogMaxHeight = Math.round(window.height() - 50);
+
 					//restore the orignal dimensions
 					//expand dialog
+
+					var position = {
+						top: (self.originalPosition.top <= 0)?20:self.originalPosition.top,
+						left: (self.originalPosition.left <= 0)?20:self.originalPosition.left,
+						width: (self.originalSize.width > dialogMaxWidth)?dialogMaxWidth:self.originalSize.width,
+						height: (self.originalSize.height > dialogMaxHeight)?dialogMaxHeight:self.originalSize.height
+					}
+
+					if((position.top+position.height) > dialogMaxHeight)
+					{
+						position.top = dialogMaxHeight - position.height;
+					}
+
+					if((position.left+position.width) > dialogMaxWidth)
+					{
+						position.left = dialogMaxWidth - position.width;
+					}
+
 					selfElement.parent().css({
 							top: self.originalPosition.top,
 							left:self.originalPosition.left,
@@ -232,9 +253,9 @@ extern class M3Dialog extends JQ {
 							height: self.originalSize.height
 						});
 					
-					var contentHeight : Float = selfElement.parent().height()
-					 	- selfElement.parent().children(".ui-dialog-titlebar").height()
-					 	- selfElement.parent().children(".ui-dialog-buttonpane").height() - 50; //bit nasty, need maybe a better way
+					var contentHeight : Float = selfElement.parent().outerHeight()
+					 	- selfElement.parent().children(".ui-dialog-titlebar").outerHeight()
+					 	- selfElement.parent().children(".ui-dialog-buttonpane").outerHeight() - 25; //bit nasty, need maybe a better way
 					var contentWidth = selfElement.parent().width()-30;
 		        		selfElement.css({
 							height: contentHeight,
@@ -264,22 +285,17 @@ extern class M3Dialog extends JQ {
 						width: selfElement.parent().width() 
 					};
 
-				 	var windowDimensions: UISize = {
-				 		height: window.height(), 
-				 		width: window.width() 
-				 	};
-
 					//expand dialog
 					selfElement.parent().css({
-							top: window.scrollTop() + 20,
-							left: window.scrollLeft() + 20,
-							width: windowDimensions.width - 50, 
-							height: windowDimensions.height - 50,
+							top: 20,
+							left: 20,
+							width: window.width() - 50, 
+							height: window.height() - 50,
 						});
 
-					var contentHeight : Float = selfElement.parent().height()
-					 	- selfElement.parent().children(".ui-dialog-titlebar").height()
-					 	- selfElement.parent().children(".ui-dialog-buttonpane").height() - 50; //bit nasty, need maybe a better way
+					var contentHeight : Float = selfElement.parent().outerHeight()
+					 	- selfElement.parent().children(".ui-dialog-titlebar").outerHeight()
+					 	- selfElement.parent().children(".ui-dialog-buttonpane").outerHeight() - 30; //bit nasty, need maybe a better way
 					var contentWidth = selfElement.parent().width()-30;
 
 					selfElement.css({
@@ -297,29 +313,41 @@ extern class M3Dialog extends JQ {
 				defaultPosition: function() {
 					var self: M3DialogWidgetDef = Widgets.getSelf();
 					var selfElement: M3Dialog = Widgets.getSelfElement();
+					var window: JQ = new JQ(js.Browser.window);
 
-					selfElement.parent().css({
-						width:	self.options.defaultWidth, 
-						height: self.options.defaultHeight + 20
-					});
+					var dialogMaxWidth = Math.round(window.width() - 50);
+		        	var dialogMaxHeight = Math.round(window.height() - 50);
 
-					var castedOptions: Dynamic = cast self.options;
-					var innerHeight : Float = 	self.options.defaultHeight - 
-												selfElement.parent().children(".ui-dialog-titlebar").outerHeight() -
-		        								selfElement.parent().children(".ui-dialog-buttonpane").outerHeight() -
-		        								selfElement.children().children('.subtitle').outerHeight();
-					var contentWidth = selfElement.parent().width()-30;
+					//If both width and height is larger than the current screen - padding we maximize the window
+		        	if(self.options.defaultWidth >= dialogMaxWidth && self.options.defaultHeight >= dialogMaxHeight)
+		        	{
+		        		self.maximize();
+		        	}
+		        	else
+		        	{
+						selfElement.parent().css({
+							width:	self.options.defaultWidth, 
+							height: self.options.defaultHeight + 20
+						});
 
-					selfElement.css({
+						var castedOptions: Dynamic = cast self.options;
+						var innerHeight : Float = 	self.options.defaultHeight - 
+													selfElement.parent().children(".ui-dialog-titlebar").outerHeight() -
+			        								selfElement.parent().children(".ui-dialog-buttonpane").outerHeight() -
+			        								selfElement.children().children('.subtitle').outerHeight();
+						var contentWidth = selfElement.parent().width()-30;
+
+						selfElement.css({
 							height: innerHeight, 
 							width: contentWidth
 						});
 
-					selfElement.parent().position({
-		        			at: "middle",
-		        			my: "middle",
-		        			of: js.Browser.window
-		        		});
+						selfElement.parent().position({
+			        		at: "middle",
+			        		my: "middle",
+			        		of: js.Browser.window
+			        	});
+					}
 
 					var localStorage = js.Browser.getLocalStorage();
 					var key = "dialog_position_"+selfElement.attr('id');
@@ -406,16 +434,16 @@ extern class M3Dialog extends JQ {
 		        	}
 
 		        	if(position != null && (position.width != null || position.height != null)){
-		        		position.width = (position.width > dialogMaxWidth)?dialogMaxWidth:position.width;
-		        		position.height = (position.height > dialogMaxHeight)?dialogMaxHeight:position.height;
 
-		        		//If bth width and height is larger than the current screen - padding we maximize the window
+		        		//If both width and height is larger than the current screen - padding we maximize the window
 		        		if(position.width >= dialogMaxWidth && position.height >= dialogMaxHeight)
 		        		{
 		        			self.maximize();
 		        		}
 		        		else //we reduce the width/height until fits the window
 		        		{
+		        			position.width = (position.width > dialogMaxWidth)?dialogMaxWidth:position.width;
+		        			position.height = (position.height > dialogMaxHeight)?dialogMaxHeight:position.height;
 		        			//swap buttons to show maximize
 							self.maxIconWrapper.show();
 							self.restoreIconWrapper.hide();
@@ -432,6 +460,9 @@ extern class M3Dialog extends JQ {
 								position.left = (dialogMaxWidth - position.width + 20);
 							}
 
+							position.top = (position.top <= 0)?20:position.top;
+		        			position.left = (position.left <= 0)?20:position.left;
+
 							selfElement.parent().position({
 		        				at: "left+"+position.left+" top+"+position.top,
 		        				my: "left top",
@@ -441,7 +472,7 @@ extern class M3Dialog extends JQ {
 			        		selfElement.parent().height(position.height+20);
 		        		}
 
-						var innerHeight  =	contentHeight -
+						var innerHeight  =	selfElement.parent().outerHeight() - 25 - 
 											selfElement.parent().children(".ui-dialog-titlebar").outerHeight() - 
 		        							selfElement.parent().children(".ui-dialog-buttonpane").outerHeight() -
 		        							selfElement.children().children('.subtitle').outerHeight();
@@ -454,23 +485,24 @@ extern class M3Dialog extends JQ {
 		        close: function()
 		        {
 		        	var self: M3DialogWidgetDef = Widgets.getSelf();
-		        	var selfElement: M3Dialog = Widgets.getSelfElement();
-		        	var positionkey = "dialog_position_"+selfElement.attr('id');
-		        	var localStorage = js.Browser.getLocalStorage();
-		        	var window: JQ = new JQ(js.Browser.window);
-		        	var pos = selfElement.parent().position();
 
-		        	trace(pos);
-		        	trace(window.scrollTop());
+		        	if(self.options.positionFixed != true) //this is also handled in the open, but...
+		        	{
+			        	var selfElement: M3Dialog = Widgets.getSelfElement();
+			        	var positionkey = "dialog_position_"+selfElement.attr('id');
+			        	var localStorage = js.Browser.getLocalStorage();
+			        	var window: JQ = new JQ(js.Browser.window);
+			        	var pos = selfElement.parent().position();
 
-		        	var position = {
-		        			top:	pos.top,//relative to window
-		        			left:	pos.left-window.scrollLeft(),
-		        			width: 	selfElement.parent().width(),
-		        			height: selfElement.parent().outerHeight()-29
-		        		}
+			        	var position = {
+			        		top:	pos.top, //relative to window
+			        		left:	pos.left,
+			        		width: 	selfElement.parent().width(),
+			        		height: selfElement.parent().outerHeight()-29
+			        	}
 
-		        	localStorage.setItem(positionkey, haxe.Json.stringify(position));
+			        	localStorage.setItem(positionkey, haxe.Json.stringify(position));
+		        	}
 
 		        	self._super();
 		        }
