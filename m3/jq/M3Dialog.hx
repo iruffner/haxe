@@ -464,7 +464,7 @@ extern class M3Dialog extends JQ {
 		        	trace(window.scrollTop());
 
 		        	var position = {
-		        			top:	pos.top//relative to window
+		        			top:	pos.top,//relative to window
 		        			left:	pos.left-window.scrollLeft(),
 		        			width: 	selfElement.parent().width(),
 		        			height: selfElement.parent().outerHeight()-29
