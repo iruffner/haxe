@@ -53,12 +53,13 @@ extern class AbstractInput extends JQ {
 
 				getDefaultValue: function(): Dynamic {
 					var self: AbstractInputWidgetDef = Widgets.getSelf();
+					var value: Dynamic;
 					if(Reflect.isFunction(self.options.formItem.value)) {
-						return self.options.formItem.value();
+						value = self.options.formItem.value();
 					} else {
-						return self.options.formItem.value;
+						value = self.options.formItem.value;
 					}
-					return null;
+					return value;
 				},
 
 		        // update: function(dr: DeviceReport): Void {

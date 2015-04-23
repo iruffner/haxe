@@ -51,6 +51,7 @@ typedef FormItem = {
 	@:optional var disabled: Bool;
 	@:optional var validators: Array<Dynamic->Dynamic>;
 	@:optional var options: Dynamic;// Array<Array<String>> or a function returning Array<Array<String>>
+	@:optional var blankIsNull: Bool;
 	var formLayoutPlugin : FormLayoutPlugin;
 }
 

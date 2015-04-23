@@ -96,7 +96,6 @@ extern class Select extends AbstractInput {
 	        			self.iconDiv.show().addClass("locked");
 	        		}
 
-
 	        		var answers: Array<String> = {
 	        			if(self.options.formItem.value != null) {
 	        				if(Std.is(self.options.formItem.value, Array)) {
@@ -129,9 +128,13 @@ extern class Select extends AbstractInput {
 		        		});
 		        },	        
 
-		        result: function(): String {
+		        result: function(): Dynamic {
 		        	var self: SelectWidgetDef = Widgets.getSelf();
-					return self.input.val();
+		        	var value = self.input.val();
+		        	if((self.options.formItem.options && self.options.formItem.options.blankIsNull) && value.length == 0){
+		        		return null;
+		        	}
+		        	return value;
 	        	},
 
 		        destroy: function() {

@@ -139,7 +139,13 @@ extern class CodeInput extends AbstractInput {
 
 		        result: function(): String {
 		        	var self: CodeInputWidgetDef = Widgets.getSelf();
-					return self.editor.getValue();
+					var value = self.editor.getValue();
+
+					var val = new String(value); //I don't know why I have to do this, but compiler throws a weird error if I want to get the value
+					if((self.options.formItem.options && self.options.formItem.options.blankIsNull) && val.length == 0) {
+						value = null;
+					}
+					return value;
 	        	},
 
 		        destroy: function() {

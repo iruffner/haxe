@@ -101,10 +101,13 @@ extern class Textarea extends AbstractInput {
 						throw new ValidationException(self.options.formItem.name + " is required");
 						self.label.css("color", "red");
 					} else if(value.isBlank()) {
-						return "";
-					} else {
-						return value;
+						value = "";
 					}
+
+		        	if((self.options.formItem.options && self.options.formItem.options.blankIsNull) && value.length == 0){
+		        		return null;
+		        	}
+		        	return value;
 	        	},
 	        	
 		        destroy: function() {
