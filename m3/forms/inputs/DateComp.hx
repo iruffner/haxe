@@ -77,14 +77,30 @@ extern class DateComp extends AbstractInput {
 	        			inputElement = new JQDatepicker("<input class='ui-widget-content ui-corner-all helpFilter' type='text'/>");
 	        		}
 
+	        		if(castedQuestion.options.numberOfMonths == null){
+	        			castedQuestion.options.numberOfMonths = 1;
+	        		}
+
+	        		if(castedQuestion.options.yearRange == null){
+	        			castedQuestion.options.yearRange = "c-60:c+20";
+	        		}
+
 	        		self.input = inputElement.datepicker({
 	        				"dateFormat": "yy-mm-dd",
 	        				"changeMonth": true,
 	        				"changeYear": true,
+	        				"yearRange": castedQuestion.options.yearRange,
+	        				"numberOfMonths": castedQuestion.options.numberOfMonths,
 	        				onSelect: function(ev){
 	        					selfElement.validate();
 		        			}
 	        			});
+
+	        		if(castedQuestion.yearRange != null)
+	        		{
+	        			self.input.datepicker("option", "yearRange", castedQuestion.options.yearRange);
+	        		}
+
 					if( question.value == null) question.value = DateTools.format(Date.now(), "%Y-%m-%d");
 					self.input.val(question.value);
 					if(question.disabled) {
@@ -115,7 +131,12 @@ extern class DateComp extends AbstractInput {
 
 		        result: function(): String {
 					var self: DateWidgetDef = Widgets.getSelf();
-					return self.input.val();
+					var value = self.input.val();
+
+					if ((self.options.formItem.options && self.options.formItem.options.blankIsNull) && value.isBlank()){
+		        		return null;
+		        	}
+		        	return value;
 
 	        	},        	
 
