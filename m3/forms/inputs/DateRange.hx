@@ -81,7 +81,12 @@ extern class DateRange extends AbstractInput {
 
 				result: function(): String {
 					var self: DateRangeWidgetDef = Widgets.getSelf();
-					return self.inputFrom.val()+' - '+self.inputTo.val();
+					var fromValue = self.inputFrom.val();
+					var toValue = self.inputTo.val();
+					if ((self.options.formItem.options && self.options.formItem.options.blankIsNull()) && fromValue.length == 0 && toValue.length == 0 ){
+		        		return null;
+		        	}
+		        	return fromValue+" - "+toValue;
 	        	},
 
 				destroy: function() {

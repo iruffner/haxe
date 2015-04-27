@@ -85,6 +85,21 @@ typedef JQDatepickerOpts = {
      * Whether the datepicker should be displayed inline
     */
     @:optional var displayInline: Bool;
+
+    /**
+     * The number of months to show at once. Multiple types supported:
+		* Number: The number of months to display in a single row.
+		* Array: An array defining the number of rows and columns to display.
+    */
+    @:optional var numberOfMonths: Dynamic;//1
+
+    /**
+    * The range of years displayed in the year drop-down: either relative to today's year ("-nn:+nn"),
+    * relative to the currently selected year ("c-nn:c+nn"), absolute ("nnnn:nnnn"), or combinations
+    * of these formats ("nnnn:-nn"). Note that this option only affects what appears in the drop-down,
+    * to restrict which dates may be selected use the minDate and/or maxDate options.
+    */
+    @:optional var yearRange: String;
 }
 
 class JQDatepickerTools {

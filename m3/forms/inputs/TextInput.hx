@@ -84,7 +84,12 @@ extern class TextInput extends AbstractInput {
 
 		        result: function(): String {
 		        	var self: TextInputWidgetDef = Widgets.getSelf();
-					return self.input.val();
+
+					var value = self.input.val();
+		        	if ((self.options.formItem.options && self.options.formItem.options.blankIsNull) && value.isBlank()){
+		        		return null;
+		        	}
+		        	return value;
 	        	},
 
 		        destroy: function() {
