@@ -15,10 +15,12 @@ typedef DataTableOptions = {
 	@:optional var bDeferRender: Bool;
 	@:optional var sScrollX: String;
 	@:optional var sScrollXInner: String;
+	@:optional var sWrapper: String;
 	@:optional var bScrollCollapse: Bool;
 	@:optional var bProcessing: Bool;
 	@:optional var fnRowCallback: Dynamic->Array<Dynamic>->Int->Int->Void;
 	@:optional var fnInitComplete: Dynamic->Void;
+	@:optional var oLanguage: Dynamic;
 
     @:optional var aLengthMenu:Array<Dynamic>;    
     @:optional var bFilter: Bool;    
