@@ -126,11 +126,7 @@ extern class ACComboBox extends AbstractInput {
 
 		        result: function(): String {
 		        	var self: ACComboBoxWidgetDef = Widgets.getSelf();
-					var value = self.input.val();
-		        	if ((self.options.formItem.options && self.options.formItem.options.blankIsNull) && value.length == 0){
-		        		return null;
-		        	}
-		        	return value;
+					return self.input.val();
 	        	},
 		        
 		        destroy: function() {
