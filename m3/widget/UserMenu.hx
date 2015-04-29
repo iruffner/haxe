@@ -16,6 +16,8 @@ using DateTools;
 
 typedef UserMenuItems = {
 	var name: String;
+	@:optional var img: String;
+	@:optional var icon: String;
 	var _callback: Void->Void;
 }
 
@@ -48,6 +50,7 @@ extern class UserMenu extends JQ {
 		            mdmenus : 
 		            	[{
 		            		name: "Default", 
+		            		img: "/images/generic_profile.png",
 		            		_callback: function(){
 		            			trace("Default");
 		           			}
@@ -66,28 +69,38 @@ extern class UserMenu extends JQ {
 		        	selfElement.append(new JQ("<ul id=\"userMenuContent\" class=\"ui-state-default\"></ul>").hide());
 		        	for(i in 0...self.options.mdmenus.length){
 		        		var um: UserMenuItems = self.options.mdmenus[i];
-		        		var el: JQ = new JQ("<li class=\"ui-state-default\">"+um.name+"</li>");
-		        		new JQ("#userMenuContent").append(
-		        			el
-		        			.click(um._callback)
+		        		var iconimg : String = "";
+
+		        		var elemString: String = "<li class=\"ui-state-default\">";
+		        		if(um.img != "" && um.img != null){
+		        			elemString = elemString + "<img src=\""+um.img+"\">";
+		        		}else if(um.icon != "" && um.icon != null){
+		        			elemString = elemString + "<i class=\""+um.icon+"\"></i>";
+		        		}
+		        		elemString = elemString + "&nbsp&nbsp"+um.name+"</li>";
+
+		        		var elem: JQ = new JQ(elemString)
 			        		.hover(function(evt: JQEvent){
-                    				if(el.hasClass('ui-state-hover')){
-                    					el.removeClass('ui-state-hover');
-                    					el.addClass('ui-state-default');
-                    				}else{
-                    					el.removeClass('ui-state-default');
-                    					el.addClass('ui-state-hover');
-                    				}
-	                    		})
-	                    	);
-		        		el.append('<a>').hover(function(){});
+	                    				if(JQ.cur.hasClass('ui-state-hover')){
+	                    					JQ.cur.removeClass('ui-state-hover');
+	                    					JQ.cur.addClass('ui-state-default');
+	                    				}else{
+	                    					JQ.cur.removeClass('ui-state-default');
+	                    					JQ.cur.addClass('ui-state-hover');
+	                    				}
+		                    		})
+			        		.click(function(){
+			        			if(Reflect.isFunction(um._callback)){
+			        				um._callback();
+		        				}else{
+		        					trace('_callback not a function');
+		        				}
+        					});
+		        		new JQ("#userMenuContent").append(elem);
 	        		}
 
 					new JQ("#userMenuBtn").click(function(){
 						new JQ("#userMenuContent").toggle();
-					})
-					.focusout(function(ev:JQEvent){
-						new JQ("#userMenuContent").hide();
 					});
 		        },
 
