@@ -18,11 +18,14 @@ typedef UserMenuItems = {
 	var name: String;
 	@:optional var img: String;
 	@:optional var icon: String;
+	@:optional var separator: Bool;
 	var _callback: Void->Void;
 }
 
 typedef UserMenuOptions = {
-	var mdmenus: Array<UserMenuItems>;
+	@:optional var text : String;
+	@:optional var img: String;
+	var usermenuitems: Array<UserMenuItems>;
 }
 
 typedef UserMenuWidgetDef = {
@@ -47,9 +50,11 @@ extern class UserMenu extends JQ {
 		var defineWidget: Void->UserMenuWidgetDef = function(): UserMenuWidgetDef {
 			return {
 		        options: {
-		            mdmenus : 
+		        	text: "Default value",
+		        	img: "/images/generic_profile.png",
+		            usermenuitems : 
 		            	[{
-		            		name: "Default", 
+		            		name: "User Menu", 
 		            		img: "/images/generic_profile.png",
 		            		_callback: function(){
 		            			trace("Default");
@@ -65,19 +70,28 @@ extern class UserMenu extends JQ {
 		        		throw new Exception("Root of UserMenu must be a div element");
 		        	}
 
+		        	//arrange menu button
 		        	selfElement.addClass("_userMenu secondary");
-		        	selfElement.append(new JQ("<ul id=\"userMenuContent\" class=\"ui-state-default\"></ul>").hide());
-		        	for(i in 0...self.options.mdmenus.length){
-		        		var um: UserMenuItems = self.options.mdmenus[i];
+		        	selfElement.find(".userMenuDropdown label").text(self.options.text+"  ");
+		        	selfElement.find(".profileImage img").attr("src", self.options.img);
+
+		        	//add menu items
+		        	selfElement.append(new JQ("<ul id=\"userMenuContent\" class=\"ui-state-default nonmodalPopup\"></ul>").hide());
+		        	for(i in 0...self.options.usermenuitems.length){
+		        		var um: UserMenuItems = self.options.usermenuitems[i];
 		        		var iconimg : String = "";
 
 		        		var elemString: String = "<li class=\"ui-state-default\">";
-		        		if(um.img != "" && um.img != null){
-		        			elemString = elemString + "<img src=\""+um.img+"\">";
-		        		}else if(um.icon != "" && um.icon != null){
-		        			elemString = elemString + "<i class=\""+um.icon+"\"></i>";
+		        		if(um.separator){
+		        			elemString = "<li class=\"ui-state-default usermenu-separator\"><hr></li>";
+			        	}else{
+			        		if(um.img != "" && um.img != null){
+			        			elemString = elemString + "<img src=\""+um.img+"\">";
+			        		}else if(um.icon != "" && um.icon != null){
+			        			elemString = elemString + "<i class=\""+um.icon+"\"></i>";
+			        		}
+		        			elemString = elemString + "&nbsp&nbsp"+um.name+"</li>";
 		        		}
-		        		elemString = elemString + "&nbsp&nbsp"+um.name+"</li>";
 
 		        		var elem: JQ = new JQ(elemString)
 			        		.hover(function(evt: JQEvent){
@@ -99,10 +113,16 @@ extern class UserMenu extends JQ {
 		        		new JQ("#userMenuContent").append(elem);
 	        		}
 
-					new JQ("#userMenuBtn").click(function(){
-						new JQ("#userMenuContent").toggle();
-					});
-		        },
+					new JQ("#userMenuBtn")
+					.click(function(){
+						new JQ("#userMenuContent").show();
+						//new JQ("#userMenuContent").toggle();
+						});
+/*					.focusout(function(evt: JQEvent){
+						trace(evt);
+						new JQ("#userMenuContent").hide();
+						});
+*/		        },
 
 		        refresh: function(){
 	        	},
