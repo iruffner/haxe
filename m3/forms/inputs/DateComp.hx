@@ -93,6 +93,9 @@ extern class DateComp extends AbstractInput {
 
 					if( self.options.formItem.value == null) 
 						self.options.formItem.value = DateTools.format(Date.now(), "%Y-%m-%d");
+					if( Std.is(self.options.formItem.value, Date)) {
+						self.options.formItem.value = DateTools.format(self.options.formItem.value, "%Y-%m-%d");
+					}
 					self.input.val(self.options.formItem.value);
 					if(self.options.formItem.disabled) {
 						self.input.attr("disabled", "true").addClass("ui-state-active");
