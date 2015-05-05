@@ -19,6 +19,8 @@ using m3.forms.FormBuilder;
 typedef DateCompOptions = {
     >FormInputOptions,
     var displayInline: Bool;
+    var numberOfMonths: Int;
+    var yearRange: String;
 }
 
 typedef DateWidgetDef = {
@@ -60,50 +62,42 @@ extern class DateComp extends AbstractInput {
 
 					self._super();
 
-					var question: FormItem = self.options.formItem;
-
-                    var castedQuestion = cast question;
-
 					self.iconDiv = new JQ("<div class='iconDiv'></div>");
 	        		self.iconDiv.hide();
 
 	        		var inputElement;
-	        		if (castedQuestion.displayInline)
-	        		{
+	        		if (self.options.displayInline) {
 	        			inputElement = new JQDatepicker("<div class='ui-widget-content ui-corner-all' style='display:inline-flex; margin: 10px;'></div>");
-	        		}
-	        		else
-	        		{
+	        		} else {
 	        			inputElement = new JQDatepicker("<input class='ui-widget-content ui-corner-all helpFilter' type='text'/>");
 	        		}
 
-	        		if(castedQuestion.options.numberOfMonths == null){
-	        			castedQuestion.options.numberOfMonths = 1;
+	        		if(self.options.numberOfMonths == null) {
+	        			self.options.numberOfMonths = 1;
 	        		}
 
-	        		if(castedQuestion.options.yearRange == null){
-	        			castedQuestion.options.yearRange = "c-60:c+20";
+	        		if(self.options.yearRange == null) {
+	        			self.options.yearRange = "c-60:c+20";
 	        		}
 
 	        		self.input = inputElement.datepicker({
 	        				"dateFormat": "yy-mm-dd",
 	        				"changeMonth": true,
 	        				"changeYear": true,
-	        				"yearRange": castedQuestion.options.yearRange,
-	        				"numberOfMonths": castedQuestion.options.numberOfMonths,
+	        				"yearRange": self.options.yearRange,
+	        				"numberOfMonths": self.options.numberOfMonths,
 	        				onSelect: function(ev){
 	        					selfElement.validate();
 		        			}
 	        			});
 
-	        		if(castedQuestion.yearRange != null)
-	        		{
-	        			self.input.datepicker("option", "yearRange", castedQuestion.options.yearRange);
-	        		}
-
-					if( question.value == null) question.value = DateTools.format(Date.now(), "%Y-%m-%d");
-					self.input.val(question.value);
-					if(question.disabled) {
+					if( self.options.formItem.value == null) 
+						self.options.formItem.value = DateTools.format(Date.now(), "%Y-%m-%d");
+					if( Std.is(self.options.formItem.value, Date)) {
+						self.options.formItem.value = DateTools.format(self.options.formItem.value, "%Y-%m-%d");
+					}
+					self.input.val(self.options.formItem.value);
+					if(self.options.formItem.disabled) {
 						self.input.attr("disabled", "true").addClass("ui-state-active");
 						self.iconDiv.show().addClass("locked");
 					}
@@ -112,32 +106,11 @@ extern class DateComp extends AbstractInput {
 	        		self.input.blur(function(ev){
 	        				selfElement.validate();
 		        		});					
-
-        			/*try {
-	        			if(self.options.answers.hasValues()) {
-		        			var dateStr: String = self.options.answers[0].response;
-		        			var date: Date = null;
-		        				date = dateStr.toDate();
-		        			if(date != null)
-		        				self.input.val(date.dateYYYY_MM_DD());	
-		        			else 
-		        			self.input.val(self.options.answers[0].response);
-
-	        			}
-        			} catch (exc: Dynamic) { }*/
-		        	
-	        		// selfElement.append(self.input);
 		        },
 
 		        result: function(): String {
 					var self: DateWidgetDef = Widgets.getSelf();
-					var value = self.input.val();
-
-					if ((self.options.formItem.options && self.options.formItem.options.blankIsNull) && value.isBlank()){
-		        		return null;
-		        	}
-		        	return value;
-
+					return self.input.val();
 	        	},        	
 
 		        destroy: function() {

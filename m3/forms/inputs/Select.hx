@@ -130,11 +130,7 @@ extern class Select extends AbstractInput {
 
 		        result: function(): Dynamic {
 		        	var self: SelectWidgetDef = Widgets.getSelf();
-		        	var value = self.input.val();
-		        	if((self.options.formItem.options && self.options.formItem.options.blankIsNull) && value.length == 0){
-		        		return null;
-		        	}
-		        	return value;
+		        	return self.input.val();
 	        	},
 
 		        destroy: function() {

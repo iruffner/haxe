@@ -103,10 +103,6 @@ extern class Textarea extends AbstractInput {
 					} else if(value.isBlank()) {
 						value = "";
 					}
-
-		        	if((self.options.formItem.options && self.options.formItem.options.blankIsNull) && value.length == 0){
-		        		return null;
-		        	}
 		        	return value;
 	        	},
 	        	

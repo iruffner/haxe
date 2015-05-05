@@ -217,6 +217,11 @@ extern class FormInput extends JQ {
 
 	        		var answers: Array<String> = self._getResultFcn();
 	        		if(answers.hasValues()) {
+	        			if(self.options.formItem.blankIsNull) {
+	        				if(answers[0].isBlank()) {
+	        					answers[0] = null;
+	        				}
+	        			}
 	        			answers.unshift(self.options.formItem.name);
 	        			return answers;
 	        		} else return null;
