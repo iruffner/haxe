@@ -30,6 +30,10 @@ class InputType {
 	public static var SQL: String = "SQL";
 	public static var JSON: String = "JSON";
 	public static var HTML: String = "HTML";
+
+	public static function exists(type: String): Bool {
+		return Reflect.hasField(InputType, type.toUpperCase());
+	}
 }
 
 class FormError {
