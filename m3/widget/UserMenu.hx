@@ -115,8 +115,7 @@ extern class UserMenu extends JQ {
 
 					new JQ("#userMenuBtn")
 					.click(function(){
-						new JQ("#userMenuContent").show();
-						//new JQ("#userMenuContent").toggle();
+						new JQ("#userMenuContent").toggle();
 						});
 /*					.focusout(function(evt: JQEvent){
 						trace(evt);
