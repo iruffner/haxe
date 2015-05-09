@@ -9,6 +9,7 @@ import haxe.Json;
 import Type;
 import haxe.rtti.CType;
 import haxe.CallStack;
+import m3.util.M;
 
 using m3.serialization.TypeTools;
 using m3.helper.ArrayHelper;
@@ -86,6 +87,12 @@ class Serializer {
 		var reader: JsonReader<T> = cast createReader(strict);
 		reader.read(fromJson, clazz);
 		return reader;
+	}
+
+	public function fromJsonArrayX<T>(fromJson: Dynamic, clazz: Class<T>, ?strict: Bool): Array<T> {
+		var arr: Array<Dynamic> = fromJson;
+		var result = arr.map(M.fn1(fromJsonX(it, clazz, strict)));
+		return result;
 	}
 
 	public function toJson(value: Dynamic) : Dynamic {
