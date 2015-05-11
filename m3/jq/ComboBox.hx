@@ -255,22 +255,24 @@ extern class ComboBox extends JQ {
 			        self.input.tooltip({
 			            tooltipClass: "ui-state-highlight"
 			          });
-			 
+			 		
+			 		self.input.focus(function(evt: JQEvent) {
+			 				JQ.cur.select();
+			 			});
 			        self._on( self.input, {
 			          autocompleteselect: function( event: JQEvent, ui: {item: {label: String, option: Dynamic, value: String, id: String}} ) {
-			            ui.item.option.selected = true;
-			            self._trigger( "select", event, {
-			              item: ui.item.option
-			            });
-			            selfElement.val(ui.item.id);
-			            selfElement.trigger("change");
-			          },
-			 
+				            ui.item.option.selected = true;
+				            self._trigger( "select", event, {
+				              item: ui.item.option
+				            });
+				            selfElement.val(ui.item.id);
+				            selfElement.trigger("change");
+				          },
 			          autocompletechange: "_removeIfInvalid",
 			          mouseout: function(){
-				          		var tooltip: JQTooltip = new JQTooltip(self.input);
-			          			tooltip.tooltip("close");
-			          		}
+			          		var tooltip: JQTooltip = new JQTooltip(self.input);
+		          			tooltip.tooltip("close");
+			          	  }
 			        });
 			      },
 			 
