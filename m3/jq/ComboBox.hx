@@ -265,7 +265,9 @@ extern class ComboBox extends JQ {
 			            selfElement.val(ui.item.id);
 			            selfElement.trigger("change");
 			          },
-			 
+			 			click: function() {
+			 				JQ.cur.select();
+			 			},
 			          autocompletechange: "_removeIfInvalid",
 			          mouseout: function(){
 				          		var tooltip: JQTooltip = new JQTooltip(self.input);
