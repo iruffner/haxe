@@ -82,7 +82,7 @@ extern class CodeInput extends AbstractInput {
     				self.editor.getSession().setMode(mode);
 
 					self.input = self.editorDiv;
-	        		if(self.getDefaultValue() != null) self.editor.setValue(self.options.formItem.value);
+	        		if(self.getDefaultValue() != null) self.editor.setValue(Std.string(self.options.formItem.value));
 
     				//set style after we know the dim after content
     				var dialogoffset = 200;
