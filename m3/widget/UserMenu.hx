@@ -16,6 +16,7 @@ using DateTools;
 
 typedef UserMenuItems = {
 	var name: String;
+	@:optional var id: String;
 	@:optional var img: String;
 	@:optional var icon: String;
 	@:optional var separator: Bool;
@@ -109,7 +110,8 @@ extern class UserMenu extends JQ {
 		        				}else{
 		        					trace('_callback not a function');
 		        				}
-        					});
+        					})
+        					.attr("id", um.id);
 		        		new JQ("#userMenuContent").append(elem);
 	        		}
 
