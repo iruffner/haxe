@@ -110,7 +110,8 @@ extern class UserMenu extends JQ {
 		        				}else{
 		        					trace('_callback not a function');
 		        				}
-        					});
+        					})
+        					.attr("id", um.id);
 		        		new JQ("#userMenuContent").append(elem);
 	        		}
 
