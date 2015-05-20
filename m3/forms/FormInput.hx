@@ -141,8 +141,8 @@ extern class FormInput extends JQ {
 			        	 			return [t.result()];
 			        	 		}
 		        			case InputType.ACCOMBOBOX:
-	        					var t: ACComboBox = new ACComboBox(selfElement)
-		        					.accomboBox({formItem: formItem});
+	        					var t: ComboBoxInput = new ComboBoxInput(selfElement)
+		        					.comboBoxInput({formItem: formItem});
 		        				self.input = t;
 		        				self._getResultFcn = function(): Array<String> {
 			        	 			return [t.result()];

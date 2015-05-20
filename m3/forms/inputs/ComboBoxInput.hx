@@ -17,7 +17,7 @@ using m3.forms.FormInput;
 using m3.forms.FormBuilder;
 
 
-typedef ACComboBoxWidgetDef = {
+typedef ComboBoxInputWidgetDef = {
 	@:optional var options: FormInputOptions;
 	var _create: Void->Void;
 	var result: Void->String;
@@ -30,32 +30,32 @@ typedef ACComboBoxWidgetDef = {
 	@:optional var getDefaultValue: Dynamic;
 }
 
-class ACComboBoxHelper {
-	public static function result(s: ACComboBox): String {
-		return s.accomboBox("result");
+class ComboBoxInputHelper {
+	public static function result(s: ComboBoxInput): String {
+		return s.comboBoxInput("result");
 	}
 }
 
 @:native("$")
-extern class ACComboBox extends AbstractInput {
+extern class ComboBoxInput extends AbstractInput {
 	@:overload(function<T>(cmd : String):T{})
 	@:overload(function<T>(cmd : String, arg: Dynamic):T{})
-	@:overload(function(cmd : String, opt: String, newVal: Dynamic):ACComboBox{})
-	function accomboBox(opts: FormInputOptions): ACComboBox;
+	@:overload(function(cmd : String, opt: String, newVal: Dynamic):ComboBoxInput{})
+	function comboBoxInput(opts: FormInputOptions): ComboBoxInput;
 	
-	@:overload(function( selector: JQ ) : ACComboBox{})
-	@:overload(function( selector: Element ) : ACComboBox{})
-	override function appendTo( selector: String ): ACComboBox;
+	@:overload(function( selector: JQ ) : ComboBoxInput{})
+	@:overload(function( selector: Element ) : ComboBoxInput{})
+	override function appendTo( selector: String ): ComboBoxInput;
 
 	private static function __init__(): Void {
 
-		var defineWidget: Void->ACComboBoxWidgetDef = function(): ACComboBoxWidgetDef {
+		var defineWidget: Void->ComboBoxInputWidgetDef = function(): ComboBoxInputWidgetDef {
 			return {
 				_create: function(): Void {
-					var self: ACComboBoxWidgetDef = Widgets.getSelf();
+					var self: ComboBoxInputWidgetDef = Widgets.getSelf();
 					var selfElement: FormInput = Widgets.getSelfElement();
 
-		        	selfElement.addClass("_accomboBox center");
+		        	selfElement.addClass("_ComboBoxInput center");
 	 				self._super();
 
 		        	var question: FormItem = self.options.formItem;
@@ -125,7 +125,7 @@ extern class ACComboBox extends AbstractInput {
 		        },
 
 		        result: function(): String {
-		        	var self: ACComboBoxWidgetDef = Widgets.getSelf();
+		        	var self: ComboBoxInputWidgetDef = Widgets.getSelf();
 					return self.input.val();
 	        	},
 		        
@@ -134,6 +134,6 @@ extern class ACComboBox extends AbstractInput {
 		        }
 		    }
 		}
-		JQ.widget( "ui.accomboBox", (untyped $.ui.abstractInput), defineWidget());
+		JQ.widget( "ui.comboBoxInput", (untyped $.ui.abstractInput), defineWidget());
 	}
 }
