@@ -68,6 +68,7 @@ typedef FormBuilderOptions = {
 	@:optional var onCancel: Void->Void;
 	@:optional var formPlugin: FormPlugin;
 	@:optional var formLayoutPlugin: FormLayoutPlugin;
+	@:optional var layout: String;
 	@:optional var validate: Void->Dynamic;
 }
 

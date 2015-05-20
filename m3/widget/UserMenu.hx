@@ -16,6 +16,7 @@ using DateTools;
 
 typedef UserMenuItems = {
 	var name: String;
+	@:optional var id: String;
 	@:optional var img: String;
 	@:optional var icon: String;
 	@:optional var separator: Bool;
