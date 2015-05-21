@@ -5,6 +5,7 @@ import js.html.Element;
 import m3.jq.ComboBox;
 import m3.jq.JQ;
 import m3.jq.JQTooltip;
+import m3.util.UidGenerator;
 import m3.widget.Widgets;
 
 import m3.exception.Exception;
@@ -66,7 +67,44 @@ extern class ComboBoxInput extends AbstractInput {
 	        		var multi: String = "";
 	        		var defaultValue : String = "No data available...";
         			var choices: Array<Array<String>> = {
-        				if(Reflect.isFunction(question.options)) {
+        				if(question.dependency != null) {
+
+		                    // if(filterDef.dependsOn.isNotBlank() && filterDef.mdview != null) {
+		                    //     var column: CubeField = CubeTools.getFieldFromDataType(MDViewTools.getCube(filterDef.mdview), filterDef.dependsOn);
+		                    //     if(column != null) {
+		                    //         dependsOn = column.name;
+		                    //     }
+		                    // }
+		                    var dependency = new JQ(".formItemInput");
+		                    if(!dependency.exists()) {
+		                        Logga.DEFAULT.error("cannot find the dependency " + question.dependency.name);
+		                        [];
+		                    } else {
+		                        dependency.change(function(evt: JQEvent): Void {
+		                        	// if(filterDef.type != "multiselect") {
+		                            	untyped self.input[0].selectedIndex = -1;
+		                            // }
+		                            self.input.change();
+		                            var uid = UidGenerator.create(8);
+	                          //       self._loadOptions(el, JQ.cur, function(opts: Dynamic) {
+	                          //           self._addOption(el, opts);
+	                          //           if(FilterTypeEnum.multiselect.equals(filterDef.type) && filterDef.val == null) {
+			                        //     	untyped self.input[0].selectedIndex = -1;
+			                        //     }
+			                        //     try {
+	                          //       		if(self.input.hasClass("_multiselect")) {
+					                    		// var ms: Multiselect = cast self.input;
+	                          //       			ms.refresh();
+	                          //       		}
+	                          //   		} catch (err: Dynamic) { }
+	                          //       });
+		                        });
+		                        if(dependency.val().isNotBlank()) {
+		                            dependency.change();
+		                        }
+		                    }
+        					[];
+    					} else if(Reflect.isFunction(question.options)) {
         					question.options();
         				} else {
         					question.options;
