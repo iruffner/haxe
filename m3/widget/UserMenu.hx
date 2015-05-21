@@ -3,6 +3,7 @@ package m3.widget;
 import js.html.Element;
 
 import m3.jq.JQ;
+import embi.App;
 import m3.observable.OSet;
 import m3.widget.Widgets;
 
@@ -108,7 +109,7 @@ extern class UserMenu extends JQ {
 			        			if(Reflect.isFunction(um._callback)){
 			        				um._callback();
 		        				}else{
-		        					trace('_callback not a function');
+		        					App.LOGGER.error('_callback not a function');
 		        				}
         					})
         					.attr("id", um.id);
@@ -119,11 +120,7 @@ extern class UserMenu extends JQ {
 					.click(function(){
 						new JQ("#userMenuContent").toggle();
 						});
-/*					.focusout(function(evt: JQEvent){
-						trace(evt);
-						new JQ("#userMenuContent").hide();
-						});
-*/		        },
+		        },
 
 		        refresh: function(){
 	        	},
