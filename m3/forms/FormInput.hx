@@ -161,17 +161,13 @@ extern class FormInput extends JQ {
 	        					self._getResultFcn = function(): Array<String> {
 			        	 			return [s.result()];
 			        	 		}
-/*		        			case InputType.COMBOBOX: 
-		        				var s: Select = new Select(selfElement)
-		        					.selectComp({formItem: formItem});
-	        					input = s;
-	        					self._getResultFcn = function(): Array<String> {
-			        	 			return [s.result()];
-			        	 		}
-*/		        			case _:
+		        			case _:
 
 		        		}
 		        	}
+		        	self.input.change(function(e: JQEvent) {
+		        			// selfElement.change();
+		        		});
 		        },
 
 		        validate: function(): Array<FormError> {
