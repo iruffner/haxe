@@ -59,7 +59,6 @@ extern class UserMenu extends JQ {
 		            		name: "User Menu", 
 		            		img: "/images/generic_profile.png",
 		            		_callback: function(){
-		            			trace("Default");
 		           			}
 		           		}]
 		        },
