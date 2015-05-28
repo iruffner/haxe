@@ -30,6 +30,7 @@ typedef DataTableOptions = {
 
 typedef DataTableColumnFilterDef = {
 	var aoColumns:Array<Dynamic>;
+	@:optional var bUseColVis: Bool;
 	@:optional var sPlaceHolder:String;
 	@:optional var sRangeSeparator:String;
 	@:optional var sRangeFormat:String;

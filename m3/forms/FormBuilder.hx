@@ -6,6 +6,7 @@ import m3.exception.Exception;
 import m3.forms.FormInput;
 import m3.forms.FormLayoutPlugin.DefaultFormLayout;
 import m3.forms.FormPlugin.IdentityFP;
+import m3.forms.inputs.AbstractInput;
 import m3.forms.inputs.Select;
 import m3.jq.JQ;
 import m3.widget.Widgets;
@@ -56,6 +57,8 @@ typedef FormItem = {
 	@:optional var validators: Array<Dynamic->Dynamic>;
 	@:optional var options: Dynamic;// Array<Array<String>> or a function returning Array<Array<String>>
 	@:optional var blankIsNull: Bool;
+	@:optional var dependency: FormItem;
+	@:optional var onChange: AbstractInput->Void;
 	var formLayoutPlugin : FormLayoutPlugin;
 }
 
@@ -68,6 +71,7 @@ typedef FormBuilderOptions = {
 	@:optional var onCancel: Void->Void;
 	@:optional var formPlugin: FormPlugin;
 	@:optional var formLayoutPlugin: FormLayoutPlugin;
+	@:optional var layout: String;
 	@:optional var validate: Void->Dynamic;
 }
 

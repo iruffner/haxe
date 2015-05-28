@@ -3,6 +3,7 @@ package m3.widget;
 import js.html.Element;
 
 import m3.jq.JQ;
+import embi.App;
 import m3.observable.OSet;
 import m3.widget.Widgets;
 
@@ -16,6 +17,7 @@ using DateTools;
 
 typedef UserMenuItems = {
 	var name: String;
+	@:optional var id: String;
 	@:optional var img: String;
 	@:optional var icon: String;
 	@:optional var separator: Bool;
@@ -57,7 +59,6 @@ extern class UserMenu extends JQ {
 		            		name: "User Menu", 
 		            		img: "/images/generic_profile.png",
 		            		_callback: function(){
-		            			trace("Default");
 		           			}
 		           		}]
 		        },
@@ -107,9 +108,10 @@ extern class UserMenu extends JQ {
 			        			if(Reflect.isFunction(um._callback)){
 			        				um._callback();
 		        				}else{
-		        					trace('_callback not a function');
+		        					App.LOGGER.error('_callback not a function');
 		        				}
-        					});
+        					})
+        					.attr("id", um.id);
 		        		new JQ("#userMenuContent").append(elem);
 	        		}
 
@@ -120,11 +122,7 @@ extern class UserMenu extends JQ {
 						new JQ("#pageMenuBtn button.ui-state-hover").removeClass("ui-state-hover");
 						new JQ(".categoryMenuContainer").hide();
 						});
-/*					.focusout(function(evt: JQEvent){
-						trace(evt);
-						new JQ("#userMenuContent").hide();
-						});
-*/		        },
+		        },
 
 		        refresh: function(){
 	        	},

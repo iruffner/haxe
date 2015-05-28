@@ -16,8 +16,8 @@ import m3.exception.ValidationException;
 using m3.forms.inputs.Select;
 using m3.forms.inputs.TextInput;
 using m3.forms.inputs.Textarea;
-using m3.forms.inputs.ACComboBox;
 using m3.forms.inputs.CheckboxInput;
+using m3.forms.inputs.ComboBoxInput;
 using m3.forms.inputs.DateComp;
 using m3.forms.inputs.DateRange;
 using m3.forms.inputs.CodeInput;
@@ -140,9 +140,9 @@ extern class FormInput extends JQ {
 		        				self._getResultFcn = function(): Array<String> {
 			        	 			return [t.result()];
 			        	 		}
-		        			case InputType.ACCOMBOBOX:
-	        					var t: ACComboBox = new ACComboBox(selfElement)
-		        					.accomboBox({formItem: formItem});
+		        			case InputType.ACCOMBOBOX, InputType.COMBOBOX:
+	        					var t: ComboBoxInput = new ComboBoxInput(selfElement)
+		        					.comboBoxInput({formItem: formItem});
 		        				self.input = t;
 		        				self._getResultFcn = function(): Array<String> {
 			        	 			return [t.result()];
@@ -161,17 +161,13 @@ extern class FormInput extends JQ {
 	        					self._getResultFcn = function(): Array<String> {
 			        	 			return [s.result()];
 			        	 		}
-/*		        			case InputType.COMBOBOX: 
-		        				var s: Select = new Select(selfElement)
-		        					.selectComp({formItem: formItem});
-	        					input = s;
-	        					self._getResultFcn = function(): Array<String> {
-			        	 			return [s.result()];
-			        	 		}
-*/		        			case _:
+		        			case _:
 
 		        		}
 		        	}
+		        	self.input.change(function(e: JQEvent) {
+		        			// selfElement.change();
+		        		});
 		        },
 
 		        validate: function(): Array<FormError> {

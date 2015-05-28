@@ -566,7 +566,7 @@ extern class JQ implements ArrayAccess<Element> {
 	        return intersects;
 		};
 		__feature__('m3.jq.JQ.iterator',
-			q.fn.iterator = function() return { pos : 0, j : __this__, hasNext : function() return __this__.pos < __this__.j.length, next : function() return $(__this__.j[__this__.pos++]) }
+			$.fn.iterator = function() return { pos : 0, j : __this__, hasNext : function() return __this__.pos < __this__.j.length, next : function() return $(__this__.j[__this__.pos++]) }
 		);
 	}
 }

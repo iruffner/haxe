@@ -103,7 +103,7 @@ extern class CheckboxInput extends AbstractInput {
 
 		        result: function(): Array<String> {
 		        	var self: CheckboxInputWidgetDef = Widgets.getSelf();
-		        	return [(self.input.val() == "on") ? "Y" : "N"];
+		        	return [(self.input.prop("checked")) ? "TRUE" : "FALSE"];
 		        },
 /*					var self: CheckboxInputWidgetDef = Widgets.getSelf();
 					var selfElement: JQ = Widgets.getSelfElement();
