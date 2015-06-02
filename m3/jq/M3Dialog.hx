@@ -214,7 +214,8 @@ extern class M3Dialog extends JQ {
 					self.restoreIconWrapper.hide();
 					self.maxIconWrapper.show();
 					self.options.onMaxToggle();
-
+	                new JQ("._pageMenuCategoryContainer, .categoryMenuItemsContainer, .categoryMenuContainer").hide();
+	                new JQ("a.ui-state-default").removeClass("ui-state-default");
 					//self._super();
 				},
 
