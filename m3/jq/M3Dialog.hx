@@ -1,5 +1,6 @@
 package m3.jq;
 
+import js.Browser;
 import m3.jq.JQ;
 import m3.widget.Widgets;
 import m3.log.Logga;
@@ -188,7 +189,7 @@ extern class M3Dialog extends JQ {
 						}
 					);
 
-					selfElement.parent().on("resize", function(event: js.JQuery.JqEvent, ui: Dynamic): Void {
+					selfElement.parent().on("resize", function(event: JQEvent, ui: Dynamic): Void {
 						self.resize();
 					});
 		        },
@@ -222,7 +223,7 @@ extern class M3Dialog extends JQ {
 		        restore: function() {
 		        	var self: M3DialogWidgetDef = Widgets.getSelf();
 					var selfElement: M3Dialog = Widgets.getSelfElement();
-					var window: JQ = new JQ(js.Browser.window);
+					var window: JQ = new JQ(Browser.window);
  
 					var dialogMaxWidth = Math.round(window.width() - 50);
 		        	var dialogMaxHeight = Math.round(window.height() - 50);
