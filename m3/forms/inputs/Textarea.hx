@@ -70,7 +70,6 @@ extern class Textarea extends AbstractInput {
 	        		self.input = new JQ("<textarea name='" + question.name + "' id='quest" + question.name + "'></textarea>")
 	        		.css({
 						position: "relative",
-						top: -15,
 						right: 0,
 						bottom: 0,
 						left: 0,
