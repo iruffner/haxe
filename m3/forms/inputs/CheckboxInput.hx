@@ -69,10 +69,14 @@ extern class CheckboxInput extends AbstractInput {
 
 	        		self.input = new JQ( "<input type='checkbox'/>" )
 	        								//.attr("id", "ans" + choice.uid)
-	        								.attr("value", question.value)
+	        								// .attr("value", question.value)
 	        								.appendTo(selfElement);
 
-	        		if(self.getDefaultValue() != null) self.input.val(self.options.formItem.value);
+	        		if(question.value != null) {
+	        			if(question.value == true) self.input.attr("checked", "checked");
+        			} else if(self.getDefaultValue() != null)
+        			 	if(self.getDefaultValue() == true) self.input.attr("checked", "checked");
+        				// self.input.val(self.options.formItem.value);
 	        		if(question.disabled) {
 	        			self.input.attr("disabled", "true").addClass("ui-state-active");
 	        			self.iconDiv.show().addClass("locked");

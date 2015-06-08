@@ -113,6 +113,7 @@ extern class JQ implements ArrayAccess<Element> {
 
 	var context(default,null) : Element;
 	var length(default, null) : Int;
+	var offsetTop : Int;
 
 	static var ui(default, null): {keyCode: KeyCode, dialog: Dynamic, contains: Dynamic, autocomplete: Dynamic, menu: Dynamic};
 	static var fn(default, null): Dynamic;

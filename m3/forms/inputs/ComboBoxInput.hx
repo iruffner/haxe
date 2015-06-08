@@ -30,8 +30,6 @@ typedef ComboBoxInputWidgetDef = {
 	@:optional var _super: Dynamic;
 	@:optional var getDefaultValue: Dynamic;
 	var _processChoices: Array<Array<String>>->Array<String>->Void;
-	var _loadOptions: FormInput->JQ->(Dynamic->Void)->Array<Array<String>>;
-	var _addOption: FormInput->Array<Array<String>>->Void;
 }
 
 class ComboBoxInputHelper {
@@ -143,18 +141,22 @@ extern class ComboBoxInput extends AbstractInput {
 				    	wrapAll: true
 			    	});
 
-	        		self.input.change(function(ev){
-        				selfElement.validate();
-	        		});
+			        // CHANGE ON THIS INPUT IS CALLED WHEN DEPENDENT INPUT CHANGES, CAUSING VALIDATION ERROR EVEN THO USER HASN'T EVEN MESSED WITH THIS INPUT YET
+	        		// self.input.change(function(ev){
+        			// 	selfElement.validate();
+	        		// });
 
-	        		selfElement.find(".ui-autocomplete-input").blur(function(ev){
-        				selfElement.validate();
-	        		});
+					// BLUR ON THIS INPUT OCCURS WHEN THE DROPDOWN ERROR IS CLICKED, CAUSING VALIDATION ERROR EVEN THO USER HASN'T BEEN ABLE TO SELECT SOMETHING YET
+	        		// selfElement.find(".ui-autocomplete-input").blur(function(ev){
+        			// 	selfElement.validate();
+	        		// });
 
 		        },
 
 		        _processChoices: function(choices: Array<Array<String>>, answers: Array<String>): Void {
 					var self: ComboBoxInputWidgetDef = Widgets.getSelf();
+
+					self.input.children("option:not(:first-child)").remove();
 		        	
 		        	if(choices != null && choices.length != 0){
 			        	for(option in choices) {
@@ -166,112 +168,6 @@ extern class ComboBoxInput extends AbstractInput {
 			        	}
 			        }
 	        	},
-
-		        _addOption: function(el: FormInput, optArray: Array<Array<String>>): Void {
-		        	var self: ComboBoxInputWidgetDef = Widgets.getSelf();
-
-	                var settings: FormInputOptions = self.options;
-	                var selectHtml: String = "";
-	                var firstOptionSelected: String = 'selected="selected"';
-	                if(optArray.hasValues()) {
-	                    var numberOfOptions: Int = optArray.length;
-	                    var wasASelection: Bool = false;
-	                    for(i in 0...numberOfOptions) {
-	                        var shouldBeSelected = {
-	                        	settings.formItem.value == optArray[i][0];
-	                        }
-	                        var selected = "";
-	                        if(shouldBeSelected) {
-	                            wasASelection = true;
-	                            selected = "selected='selected'";
-	                            firstOptionSelected = "";
-	                        }
-	                        var label = optArray[i][1];
-	                        selectHtml += "<option value='" + optArray[i][0] + "'" + selected + ">" + label + "</option>";
-	                    }
-	                    
-	                 //    if(FilterTypeEnum.dropdown.equals(self.options.type)) {
-		                //     if(settings.filter.required == true) {
-		                //         selectHtml = '<option value="' + settings.unselectedRequiredValue  + '" ' + firstOptionSelected + '>' + settings.unselectedRequiredText + '</option>' + selectHtml;
-		                //     } else {
-		                //         selectHtml = '<option value="' + settings.unselectedValue  + '" ' + firstOptionSelected + '>' + settings.unselectedText + '</option>' + selectHtml;
-		                //     }
-		                // }
-	                    
-	                    var filter = self.input.html(selectHtml);
-	                    if(!wasASelection && numberOfOptions == 1) {
-	                        filter.children('option:eq(1)').attr('selected', 'selected');
-	                    }
-	                    filter.change();
-	                } else {
-	                	self.input.html(selectHtml);
-	                }
-	            },
-
-		        _loadOptions: function(el: FormInput, dependency: JQ, callbak: Dynamic->Void): Array<Array<String>> {
-		        	var self: ComboBoxInputWidgetDef = Widgets.getSelf();
-
-		        	// var t: FormInputOptions = self.options;
-		         //    var opts: Array<Array<String>> = null;
-		         //    var parameters: Dynamic = {};
-		         //    if(t.formItem.dependency != null) {
-		         //        var dataType = DataTypeTools.getDataTypeFromName(t.dependsOn);
-		         //        var val: String;
-		         //        if(dependency.hasClass("_multiselect")) {
-		         //        	var values: Array<String> = cast dependency.val();
-		         //        	if(values.hasValues()) {
-		         //        		if(values.length == 1) {
-		         //        			val = values[0];
-		         //        		} else {
-		         //        			//multiple parent values are not currently supported
-		         //        			val = null;
-		         //        		}
-	          //       		} else {
-	          //       			val = null;
-	          //       		}
-		         //        } else {
-		         //        	val = dependency.val();	
-		         //        }
-
-		         //        if(val.isBlank()) {
-		         //            if(Reflect.isFunction(callbak)) {
-		         //                callbak(opts);
-		         //            }
-		         //            return opts;
-		         //        }
-		         //        Reflect.setField(parameters, dataType.parameter, val);
-		         //        var parentDataType = DataTypeTools.getDataTypeFromName(t.dependsOn);
-		         //        while(parentDataType != null && parentDataType.dependsOn != null) {
-		         //            var parentDependency: DataType = DataTypeTools.getDataTypeFromName(parentDataType.dependsOn.name);
-		         //            if(parentDependency != null) {
-		         //                var dependsOn: DataType = parentDataType.dependsOn;
-		         //                if(parentDataType.dependsOn != null && t.mdview != null) {
-		         //                    var column = t.mdview.getCube().getFieldFromDataType(parentDataType.dependsOn.name);
-		         //                    if(column != null) {
-		         //                        dependsOn = DataTypeTools.getDataTypeFromName(column.name);
-		         //                    }
-		         //                }
-		         //                var parentDependencyElement = new JQ(dependency).parent("span").siblings("span").children('#' + dependsOn);
-		         //                val = parentDependencyElement.val();
-		         //                if(val.isBlank()) {
-		         //                    if(Reflect.isFunction(callbak)) {
-		         //                        callbak(opts);
-		         //                    }
-		         //                    return opts;
-		         //                }
-		         //                Reflect.setField(parameters, parentDependency.parameter, val);
-		         //                if(parentDependency.dependsOn != null) {
-		         //                    parentDataType = DataTypeTools.getDataTypeFromName(parentDependency.name);
-		         //                } else {
-		         //                    parentDataType = null;
-		         //                }
-		         //            }
-		         //        }
-		         //    }
-		            
-		         //    return DatatypeCache.loadOptions(t.lookupName, parameters, callbak);
-		         return null;
-		        },
 
 		        result: function(): String {
 		        	var self: ComboBoxInputWidgetDef = Widgets.getSelf();

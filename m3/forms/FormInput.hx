@@ -165,9 +165,9 @@ extern class FormInput extends JQ {
 
 		        		}
 		        	}
-		        	self.input.change(function(e: JQEvent) {
+		        	// self.input.change(function(e: JQEvent) {
 		        			// selfElement.change();
-		        		});
+		        		// });
 		        },
 
 		        validate: function(): Array<FormError> {
