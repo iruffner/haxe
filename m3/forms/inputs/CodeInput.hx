@@ -23,6 +23,7 @@ typedef CodeInputWidgetDef = {
  	@:optional var options: CodeInputOptions;
 	var _create: Void->Void;
 	var result: Void->String;
+	var editableValue: Void->String;
 	var destroy: Void->Void;
 	@:optional var input: JQ;
 	@:optional var iconDiv: JQ;
@@ -40,6 +41,9 @@ typedef CodeInputOptions = {
 class CodeInputHelper {
 	public static function result(s: CodeInput): String {
 		return s.codeInput("result");
+	}
+	public static function editableValue(s: CodeInput): String {
+		return s.codeInput("editableValue");
 	}
 }
 
@@ -82,7 +86,10 @@ extern class CodeInput extends AbstractInput {
     				self.editor.getSession().setMode(mode);
 
 					self.input = self.editorDiv;
-	        		if(self.getDefaultValue() != null) self.editor.setValue(Std.string(self.options.formItem.value));
+					
+
+					
+	        		if(self.getDefaultValue() != null) self.editor.setValue(self.editableValue());
 
     				//set style after we know the dim after content
     				var dialogoffset = 200;
@@ -136,6 +143,18 @@ extern class CodeInput extends AbstractInput {
 	        				selfElement.validate();
 		        		});
 		        },
+
+		        editableValue: function(): String {
+		        	var originalValue = Widgets.getSelf().options.formItem.value;
+		        	var editable: String = "";
+		        	trace(originalValue);
+		        	if (Std.is(originalValue, String)) {
+		        		editable = originalValue;
+		        	} else {
+		        		editable = haxe.Json.stringify(originalValue, null, "\t");
+		        	}
+		        	return editable;
+	        	},
 
 		        result: function(): String {
 		        	var self: CodeInputWidgetDef = Widgets.getSelf();
