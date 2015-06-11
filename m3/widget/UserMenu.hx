@@ -15,6 +15,8 @@ using m3.helper.StringFormatHelper;
 using a8.qubes.model.Zoolander.Menu;
 using DateTools;
 
+using embi.widgets.PageMenus;
+
 typedef UserMenuItems = {
 	var name: String;
 	@:optional var id: String;
@@ -37,8 +39,11 @@ typedef UserMenuWidgetDef = {
 	var _create: Void->Void;
 	var destroy: Void->Void;
 
-	var refresh: Void->Void;
+	var open: Void->Void;
 	var close: Void->Void;
+	var toggle: Void->Void;
+
+	var refresh: Void->Void;
 }
 
 @:native("$")
@@ -47,6 +52,8 @@ extern class UserMenu extends JQ {
 	@:overload(function(cmd : String, arg: Dynamic):Void{})
 	@:overload(function(cmd:String, opt:String, newVal:Dynamic):JQ{})
 	function userMenu(?opts: UserMenuOptions): UserMenu;
+
+	private static var content: JQ;
 
 	private static function __init__(): Void {
 		var defineWidget: Void->UserMenuWidgetDef = function(): UserMenuWidgetDef {
@@ -77,7 +84,9 @@ extern class UserMenu extends JQ {
 		        	selfElement.find(".profileImage img").attr("src", self.options.img);
 
 		        	//add menu items
-		        	selfElement.append(new JQ("<ul id=\"userMenuContent\" class=\"ui-state-default nonmodalPopup\"></ul>").hide());
+		        	content = new JQ("<ul id=\"userMenuContent\" class=\"ui-state-default nonmodalPopup\"></ul>");
+		        	content.hide();
+		        	selfElement.append(content);
 		        	for(i in 0...self.options.usermenuitems.length){
 		        		var um: UserMenuItems = self.options.usermenuitems[i];
 		        		var iconimg : String = "";
@@ -117,7 +126,7 @@ extern class UserMenu extends JQ {
 
 					new JQ("#userMenuBtn")
 					.click(function(){
-						new JQ("#userMenuContent").toggle();
+						self.toggle();
 						new JQ("._pageMenus button.ui-state-hover").removeClass("ui-state-hover");
 						new JQ("#pageMenuBtn button.ui-state-hover").removeClass("ui-state-hover");
 						new JQ(".categoryMenuContainer").hide();
@@ -127,7 +136,21 @@ extern class UserMenu extends JQ {
 		        refresh: function(){
 	        	},
 
+	        	toggle: function() {
+	        		if (content.isVisible()) {
+	        			Widgets.getSelf().close();
+	        		} else {
+	        			Widgets.getSelf().open();
+	        		}
+	        	},
+
+	        	open: function() {
+	        		content.show();
+	        		App.PAGE_MENUS.close();
+	        	},
+
 		        close: function(){
+		        	content.hide();
 	        	},
 
 		        destroy: function() {
