@@ -199,4 +199,27 @@ class ArrayHelper {
 
         return false;
     }
+
+    public static function removeElement<T,V>(array:Array<T>, value:V, fcn:T->V, ?caseInsensitive: Bool=true, ?startingIndex:Int=0): Bool {
+        var result = false;
+        if(array == null) return result;
+        if(caseInsensitive && Std.is(value, String)) {
+            value = cast Std.string(value).toLowerCase();
+        }
+        for(idx_ in startingIndex...array.length) {
+            var comparisonValue: V = {
+                if(fcn == null) cast array[idx_];
+                else fcn(array[idx_]);
+            }
+            if(caseInsensitive && Std.is(comparisonValue, String)) {
+                comparisonValue = cast Std.string(comparisonValue).toLowerCase();
+            }
+            if(value == comparisonValue) {
+                array.splice(idx_, 1);
+                result = true;
+                break;
+            }
+        }
+        return result;
+    }
 }

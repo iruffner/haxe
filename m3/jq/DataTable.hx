@@ -76,7 +76,10 @@ extern class DataTable extends JQ{
 	//             oAddNewRowFormOptions: mdjq.JQ.DialogOptions
 	//         }):Void;
 	public function fnDraw(): Void;
+	
+	@:overload(function(node: Element): Int{})
 	public function fnGetPosition(node: Element): Array<Int>;
+	
 	@:overload(function(node: Element, ?int: Int): Dynamic{})
 	public function fnGetData(?row: Int, ?col: Int): Dynamic;
 	public function fnGetNodes(?int: Int): Dynamic;
