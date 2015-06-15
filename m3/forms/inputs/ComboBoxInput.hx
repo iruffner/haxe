@@ -112,16 +112,20 @@ extern class ComboBoxInput extends AbstractInput {
 	        			self.iconDiv.show().addClass("locked");
 	        		}
 
+	        		var getAnswers = null;
+	        		getAnswers = function(valueToProcess: Dynamic): Array<String> {
+        				if(Std.is(valueToProcess, Array)) {
+        					return valueToProcess;
+        				} else if(Reflect.isFunction(valueToProcess)) {
+        					return getAnswers(valueToProcess());
+        				} else {
+        					return [valueToProcess];
+        				}
+	        		}
 
 	        		var answers: Array<String> = {
 	        			if(self.options.formItem.value != null) {
-	        				if(Std.is(self.options.formItem.value, Array)) {
-	        					self.options.formItem.value;
-	        				} else if(Reflect.isFunction(self.options.formItem.value)) {
-	        					self.options.formItem.value();
-	        				} else {
-	        					[self.options.formItem.value];
-	        				}
+	        				getAnswers(self.options.formItem.value);
         				} else {
 						 	[];
         				};
