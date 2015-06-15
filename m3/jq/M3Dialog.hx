@@ -212,11 +212,12 @@ extern class M3Dialog extends JQ {
 
 				resize: function(): Void{
 					var self: M3DialogWidgetDef = Widgets.getSelf();
+					var selfElement: M3Dialog = Widgets.getSelfElement();
 					self.restoreIconWrapper.hide();
 					self.maxIconWrapper.show();
 					self.options.onMaxToggle();
 	                new JQ("._pageMenuCategoryContainer, .categoryMenuItemsContainer, .categoryMenuContainer").hide();
-	                new JQ("a.ui-state-default").removeClass("ui-state-default");
+	                new JQ("a.ui-state-default", selfElement).removeClass("ui-state-default");
 					//self._super();
 				},
 
