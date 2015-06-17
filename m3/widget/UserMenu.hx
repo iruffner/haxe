@@ -91,9 +91,9 @@ extern class UserMenu extends JQ {
 		        		var um: UserMenuItems = self.options.usermenuitems[i];
 		        		var iconimg : String = "";
 
-		        		var elemString: String = '<li>';
+		        		var elemString: String = '<li class=\"ui-state-default\"">';
 		        		if(um.separator){
-		        			elemString = "<li class=\"usermenu-separator\"><hr></li>";
+		        			elemString = "<li class=\"usermenu-separator ui-state-default\"><hr></li>";
 			        	}else{
 			        		if(um.img != "" && um.img != null){
 			        			elemString = elemString + "<img src=\""+um.img+"\">";
@@ -130,6 +130,7 @@ extern class UserMenu extends JQ {
 						new JQ("._pageMenus button.ui-state-hover").removeClass("ui-state-hover");
 						new JQ("#pageMenuBtn button.ui-state-hover").removeClass("ui-state-hover");
 						new JQ(".categoryMenuContainer").hide();
+						new JQ(".contextMenu").hide();
 						});
 		        },
 
