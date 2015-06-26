@@ -126,12 +126,8 @@ extern class UserMenu extends JQ {
 
 					new JQ("#userMenuBtn")
 					.click(function(){
-						self.toggle();
-						new JQ("._pageMenus button.ui-state-hover").removeClass("ui-state-hover");
-						new JQ("#pageMenuBtn button.ui-state-hover").removeClass("ui-state-hover");
-						new JQ(".categoryMenuContainer").hide();
-						new JQ(".contextMenu").hide();
-						});
+						self.toggle();	
+					});
 		        },
 
 		        refresh: function(){
@@ -148,6 +144,11 @@ extern class UserMenu extends JQ {
 	        	open: function() {
 	        		content.show();
 	        		App.PAGE_MENUS.close();
+	        		var menuActiveClass = "active";
+	        		new JQ("._pageMenus button." + menuActiveClass).removeClass(menuActiveClass);
+	        		new JQ("#pageMenuBtn button." + menuActiveClass).removeClass(menuActiveClass);
+	        		new JQ(".categoryMenuContainer").hide();
+	        		new JQ(".contextMenu").hide();
 	        	},
 
 		        close: function(){
