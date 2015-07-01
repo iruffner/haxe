@@ -15,6 +15,7 @@ import m3.exception.ValidationException;
 
 using m3.forms.inputs.Select;
 using m3.forms.inputs.TextInput;
+using m3.forms.inputs.PasswordInput;
 using m3.forms.inputs.Textarea;
 using m3.forms.inputs.CheckboxInput;
 using m3.forms.inputs.ComboBoxInput;
@@ -129,6 +130,13 @@ extern class FormInput extends JQ {
 		        			case InputType.TEXT:
 	        					var t: TextInput = new TextInput(selfElement)
 		        					.textInput({formItem: formItem});
+		        				self.input = t;
+		        				self._getResultFcn = function(): Array<String> {
+			        	 			return [t.result()];
+			        	 		}		        			
+		        	 		case InputType.PASSWORD:
+	        					var t: PasswordInput = new PasswordInput(selfElement)
+		        					.passwordInput({formItem: formItem});
 		        				self.input = t;
 		        				self._getResultFcn = function(): Array<String> {
 			        	 			return [t.result()];
