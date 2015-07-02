@@ -17,7 +17,7 @@ typedef AuthResponse = {
 }
 
 class FBPermissionsResponse {
-	public var data: Array<FBPermissions>;
+	public var data: Array<FBPermission>;
 	public var paging: FBPaging;
 }
 
@@ -99,6 +99,11 @@ class AppFriendProfile {
 class FBAppFriendsResponse extends FBResponse {
 	public var data: Array<AppFriendProfile>;
 	@:optional public var paging: FBPaging;
+}
+
+class FBPermission {
+	public var permission: String;
+	public var status: String;
 }
 
 class FBPermissions {
