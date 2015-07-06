@@ -23,6 +23,7 @@ typedef PasswordInputWidgetDef = {
 	var destroy: Void->Void;
 	@:optional var blur: Void->Bool;
 	@:optional var input: JQ;
+	@:optional var input1: JQ;
 	@:optional var iconDiv: JQ;
 
 	@:optional var _super: Dynamic;
@@ -55,6 +56,7 @@ extern class PasswordInput extends AbstractInput {
 		        _create: function(): Void {
 		        	var self: PasswordInputWidgetDef = Widgets.getSelf();
 					var selfElement: FormInput = Widgets.getSelfElement();
+					var confirmDiv: JQ = null;
 
 		        	if(!selfElement.is("div")) {
 		        		throw new Exception("Root of PasswordInput must be a div element");
@@ -70,13 +72,21 @@ extern class PasswordInput extends AbstractInput {
 	        		self.iconDiv.hide();
 
 	        		self.input = new JQ("<input class='ui-widget-content ui-corner-all helpFilter' type='password' name='" + question.name + "' id='" + question.name + "'/>");
+	        		/*if(self.options.formItem.passwordConfirm){
+	        			confirmDiv = new JQ("<div class=\"_forminput _PasswordInput center _abstractInput\"></div>");
+		        		selfElement.parent().append(confirmDiv);
+		        		confirmDiv.append(new JQ("<label for='" + self.options.formItem.name + "'>Confirm</label>"));
+	        			self.input1 = new JQ("<input class='ui-widget-content ui-corner-all helpFilter' type='password' name='" + question.name + "1' id='" + question.name + "1'/>").appendTo(confirmDiv);
+	        			self.input1.val(self.options.formItem.value);
+	        		}*/
+
 	        		if(self.getDefaultValue() != null) self.input.val(self.options.formItem.value);
 	        		if(question.disabled) {
 	        			self.input.attr("disabled", "true").addClass("ui-state-active");
 	        			self.iconDiv.show().addClass("locked");
 	        		}
 
-	        		selfElement.append("&nbsp;").append(self.input).append(self.iconDiv);
+	        		selfElement.append(self.input).append(self.iconDiv);
 	        		self.input.blur(function(ev){
 	        				selfElement.validate();
 		        		});

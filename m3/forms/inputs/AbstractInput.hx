@@ -47,8 +47,6 @@ extern class AbstractInput extends JQ {
 		        		self.options.formItem.label.isNotBlank() ? self.options.formItem.label : self.options.formItem.name.capitalizeFirstLetter();
 		        	
 		        	self.label = new JQ("<label for='" + self.options.formItem.name + "'>" + label + "</label>").appendTo(selfElement);
-		        	
-
 		        },
 
 				getDefaultValue: function(): Dynamic {
