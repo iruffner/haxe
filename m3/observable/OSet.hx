@@ -62,7 +62,7 @@ class EventManager<T> {
 				try {
 					l(t, type);
 				} catch (err: Dynamic) {
-					Logga.DEFAULT.error("Error processing listener on " + _set.getVisualId(),  Logga.getExceptionInst(err));
+					Logga.DEFAULT.error("Error processing listener on " + _set.getVisualId(),  err);
 				}
 			}
 		);

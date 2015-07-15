@@ -193,7 +193,7 @@ class Logga {
         log(statement, LogLevel.ERROR, exception, posInfo);
     }
 
-    public static function getExceptionInst(err: Dynamic): Dynamic {
+    public function getExceptionInst(err: Dynamic): Dynamic {
         if(Std.is(err, Error)) {
             return err;
         } else if(Std.is(err, String)) {
