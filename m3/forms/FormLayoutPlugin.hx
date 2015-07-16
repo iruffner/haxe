@@ -57,7 +57,7 @@ class DefaultFormLayout implements FormLayoutPlugin {
 	}
 
 	public function renderInputValidation(formInput: FormInput, errors: Array<FormError>): Void {
-		formInput.children(".iconDiv").removeClass("error");
+		formInput.children().removeClass("error");
 		if(errors.hasValues()) {
 			for(err_ in errors) {
 				err_.input.children(".iconDiv, label, input").addClass("error");
