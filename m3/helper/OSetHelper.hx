@@ -38,21 +38,21 @@ class OSetHelper {
         return result;
     }
 
-    public static function getElementComplex2<T>(oset: OSet<T>, criteriaFunc:T->Bool): T {
-        if(oset == null) return null;
-        if(criteriaFunc == null) { return null; }
+    // public static function getElementComplex2<T>(oset: OSet<T>, criteriaFunc:T->Bool): T {
+    //     if(oset == null) return null;
+    //     if(criteriaFunc == null) { return null; }
 
-        var result: T = null;
-        var iter: Iterator<T> = oset.iterator();
-        while(iter.hasNext()) {
-            var comparisonT: T = iter.next();
-            if (criteriaFunc(comparisonT)) {
-                result = comparisonT;
-                break;
-            }
-        }
-        return result;
-    }
+    //     var result: T = null;
+    //     var iter: Iterator<T> = oset.iterator();
+    //     while(iter.hasNext()) {
+    //         var comparisonT: T = iter.next();
+    //         if (criteriaFunc(comparisonT)) {
+    //             result = comparisonT;
+    //             break;
+    //         }
+    //     }
+    //     return result;
+    // }
 
     // public static function getElementComplexInSubArray<T>(array:Array<T>, value:Dynamic, subArrayProp:String, ?startingIndex:Int=0):T {
     //     if(array == null) return null;
@@ -100,11 +100,12 @@ class OSetHelper {
     //     return result;
     // }
 
-    // public static function contains<T>(array:Array<T>, value:T):Bool {
-    //     if(array == null) return false;
-    //     var contains = Lambda.indexOf(array, value);
-    //     return contains > -1;
-    // }
+    /*
+     *  Checks for existance of the identifer (@parm value) in the OSet
+     */
+    public static function contains<T>(oset: OSet<T>, value:String, ?startingIndex:Int=0):Bool {
+        return containsComplex(oset, value, cast oset.identifier, startingIndex);
+    }
 
     // public static function containsAny<T>(array:Array<T>, valueArray:Array<T>):Bool {
     //     if(array == null || valueArray == null) return false;
@@ -131,11 +132,11 @@ class OSetHelper {
     //     return !anyFailures;
     // }
 
-    // public static function containsComplex<T>(array:Array<T>, value:Dynamic, propOrFcn:Dynamic, ?startingIndex:Int=0):Bool {
-    //     if(array == null) return false;
-    //     var contains = indexOfComplex(array, value, propOrFcn, startingIndex);
-    //     return contains > -1;
-    // }
+    public static function containsComplex<T>(oset: OSet<T>, value:Dynamic, propOrFcn:Dynamic, ?startingIndex:Int=0):Bool {
+        if(oset == null) return false;
+        var element = getElement(oset, value, propOrFcn, startingIndex);
+        return element != null;
+    }
 
     // public static function containsComplexInSubArray<T>(array:Array<T>, value:Dynamic, subArrayProp:String, ?startingIndex:Int=0):Bool {
     //     if(array == null) return false;

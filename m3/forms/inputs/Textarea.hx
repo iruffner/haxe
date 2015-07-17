@@ -58,7 +58,7 @@ extern class Textarea extends AbstractInput {
 
 		        	var question: FormItem = self.options.formItem;
 
-	        		self.label = new JQ("<label for='quest" + question.name + "'>" + question.name + "</label>").appendTo(selfElement)
+	        		self.label = new JQ("<label for='quest" + question.name + "'>" + question.label + "</label>").appendTo(selfElement)
 	        		.css({
 	        			"padding-top":"2%",	
         			});
