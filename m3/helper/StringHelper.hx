@@ -5,6 +5,8 @@ import m3.jq.JQ;
 using StringTools;
 using m3.helper.DateHelper;
 
+// this is exposed for BI
+@:expose
 class StringHelper {
 
     public static function compare( left: String, right: String):Int {

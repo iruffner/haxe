@@ -403,10 +403,10 @@ extern class M3Dialog extends JQ {
 		        	var position = null;
 		        	if(pos != null && self.options.positionFixed != true) {
 			        	position = {
-			        			top:	Std.parseInt(pos.top),
-			        			left:	Std.parseInt(pos.left),
-			        			width:	Std.parseInt(pos.width),
-			        			height: Std.parseInt(pos.height)
+			        			top:	Std.parseInt(Std.string(pos.top)),
+			        			left:	Std.parseInt(Std.string(pos.left)),
+			        			width:	Std.parseInt(Std.string(pos.width)),
+			        			height: Std.parseInt(Std.string(pos.height))
 			        		}
 		        	}
 		        	else
